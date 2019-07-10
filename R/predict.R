@@ -1,60 +1,187 @@
 
-predict.ada <- function(object, type = "class", n.iter = NULL, ...){
+#' predict.ada.prmdt
+#'
+#'
+#' @return
+#' @export
+#' @exportMethod
+#'
+predict.ada.prmdt <- function(object, newdata, type = "class", n.iter = NULL, ...){
   type <- ifelse(type == "class", "vector", type)
-  ans <- ada:::predict.ada(object, get.test.less.predict(), type, n.iter, ...)
-  type.correction(ans, type == "vector")
+  ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), type, n.iter, ...)
+  if(type == "prob"){
+    colnames(ans) <- object$prmdt$levels
+    return(ans)
+  }else{
+    return(type_correction(object, ans, type == "vector"))
+  }
 }
 
-predict.naiveBayes <- function(object, type = "class", threshold = 0.001, eps = 0, ...){
+#' predict.bayes.prmdt
+#'
+#'
+#' @return
+#' @export
+#' @exportMethod
+#'
+predict.bayes.prmdt <- function(object, newdata, type = "class", threshold = 0.001, eps = 0, ...){
   type <- ifelse(type == "prob", "raw", type)
-  ans <- e1071:::predict.naiveBayes(object, get.test.less.predict(), type, threshold, eps, ...)
-  type.correction(ans, type == "class")
+  ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), type, threshold, eps, ...)
+  type_correction(object, ans, type == "class")
 }
 
-predict.train.kknn <- function(object, type = "class", ...){
+#' predict.knn.prmdt
+#'
+#'
+#' @return
+#' @export
+#' @exportMethod
+#'
+predict.knn.prmdt <- function(object, newdata, type = "class", ...){
   type <- ifelse(type == "class", "raw", type)
-  ans <- kknn:::predict.train.kknn(object, type = type, get.test.less.predict(), ...)
-  type.correction(ans, type == "raw") # ojo
+  ans <- predict(original_model(object), type = type, get_test_less_predict(newdata, object$prmdt$var.pred), ...)
+  type_correction(object, ans, type == "raw") # ojo
 }
 
-predict.nnet <- function(object, type = "class", ...){
+#' predict.nnet.prmdt
+#'
+#'
+#' @return
+#' @export
+#' @exportMethod
+#'
+predict.nnet.prmdt <- function(object, newdata, type = "class", ...){
   type <- ifelse(type == "prob", "raw", type)
-  ans <- nnet:::predict.nnet(object,  get.test.less.predict(), type, ...)
-  type.correction(ans, type == "class")
+  ans <- predict(original_model(object),  get_test_less_predict(newdata, object$prmdt$var.pred), type, ...)
+
+  num.class <- length(object$prmdt$levels)
+
+  if(type == "raw"){
+    if(num.class == 2){
+      ans <- cbind(1 - ans, ans)
+      colnames(ans) <- object$prmdt$levels
+    }
+  }
+  ans <- type_correction(object, ans, type == "class")
+  return(ans)
 }
 
-predict.randomForest <- function(object, type = "class", norm.votes = TRUE, predict.all = FALSE, proximity = FALSE, nodes = FALSE, cutoff, ...){
-  type <- ifelse(type == "class", "response", type)
-  ans <- randomForest:::predict.randomForest(object, get.test.less.predict(), type, norm.votes, predict.all, proximity, nodes, cutoff, ...)
-  type.correction(ans, type == "response")
-}
+#' predict.neuralnet.prmdt
+#'
+#'
+#' @return
+#' @export
+#' @exportMethod
+#'
+predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
 
-predict.rpart <- function(object, type = "class", na.action = na.pass, ...){
-  ans <- rpart:::predict.rpart(object, .data$test, type, na.action, ...)
-  type.correction(ans, type == "class")
-}
+  selector <- unlist(lapply(newdata, is.ordered))
 
-predict.svm <- function(object, decision.values = FALSE, probability = FALSE, ..., na.action = na.omit){
-  ans <- e1071:::predict.svm(object, get.test.less.predict(), decision.values, probability, ..., na.action = na.action)
-  type.correction(ans,  probability == FALSE)
-}
-
-predict.xgb.Booster <- function(object, type = "class", missing = NA, outputmargin = FALSE, ntreelimit = NULL, predleaf = FALSE, predcontrib = FALSE,
-                                approxcontrib = FALSE, predinteraction = FALSE, reshape = FALSE, ...){
-
-  test_aux <- .data$test %>% select_on_class(c("numeric","integer", "factor"))
-  test_aux[] <- lapply(test_aux, as.numeric)
-
-  if(min(test_aux[,.data$var.pred]) != 0){
-    test_aux[,.data$var.pred]  <- test_aux[,.data$var.pred]  - 1
+  if(any(selector)){
+    newdata[,selector] <- lapply(newdata[,selector, drop = FALSE], factor, ordered  = FALSE)
   }
 
-  selector <- which(colnames(test_aux) == .data$var.pred)
+  var.predict <- object$prmdt$var.pred
+  selector <- which(colnames(newdata) == var.predict)
+  suppressWarnings(newdata <- cbind(dummy.data.frame(newdata[, -selector]), newdata[selector]))
+
+  selector <- which(colnames(newdata) == var.predict)
+  newdata[, -selector] <- scale(newdata[, -selector])
+
+  ans <- neuralnet::compute(original_model(object), newdata[, -selector])
+
+  if(type == "all"){
+    return(ans)
+  }
+
+  ans <- ans$net.result
+  colnames(ans) <- object$prmdt$levels
+
+  if(type == "class"){
+    ans <- max_col(ans)
+    ans <- numeric_to_predict(newdata[, selector], ans)
+    ans <- type_correction(object, ans, type == "class")
+  }
+
+  return(ans)
+}
+
+#' predict.randomForest.prmdt
+#'
+#'
+#' @return
+#' @export
+#' @exportMethod
+#'
+predict.randomForest.prmdt <- function(object, newdata, type = "class", norm.votes = TRUE, predict.all = FALSE, proximity = FALSE, nodes = FALSE, cutoff, ...){
+  type <- ifelse(type == "class", "response", type)
+  ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), type, norm.votes, predict.all, proximity, nodes, cutoff, ...)
+  if(type == "prob"){
+    class(ans) <- "matrix"
+    return(ans)
+  }else{
+    return(type_correction(object, ans, type == "response"))
+  }
+}
+
+#' predict.rpart.prmdt
+#'
+#' @return
+#' @export
+#' @exportMethod
+#'
+predict.rpart.prmdt <- function(object, newdata, type = "class", na.action = na.pass, ...){
+  ans <- predict(original_model(object), newdata, type, na.action, ...)
+  type_correction(object, ans, type == "class")
+}
+
+#' predict.svm.prmdt
+#'
+#' @return
+#' @export
+#' @exportMethod
+#'
+predict.svm.prmdt <- function(object, newdata, type = "class", decision.values = FALSE, ..., na.action = na.omit){
+  ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), decision.values, probability = type == "prob", ..., na.action = na.action)
+  if(type == "prob"){
+    ans <- attributes(ans)$probabilities
+    ans <- ans[,object$prmdt$levels]
+    return(ans)
+  }else{
+    return(type_correction(object, ans,  type == "class"))
+  }
+}
+
+#' predict.xgb.Booster
+#'
+#' @return
+#' @export
+#' @exportMethod
+#'
+predict.xgb.Booster.prmdt <- function(object, newdata, type = "class", missing = NA, outputmargin = FALSE, ntreelimit = NULL, predleaf = FALSE, predcontrib = FALSE,
+                                approxcontrib = FALSE, predinteraction = FALSE, reshape = FALSE, ...){
+
+  .colnames <- all.vars(object$prmdt$vars)
+  var.pred <-  object$prmdt$var.pred
+  selector <- which(colnames(newdata) == var.pred)
+
+  if(length(.colnames) == 1 && .colnames == "."){
+    .colnames <- colnames(newdata[,-selector, drop = FALSE])
+  }
+
+  test_aux <- newdata %>% select(c(.colnames,var.pred))  %>% select_on_class(c("numeric","integer", "factor"))
+  test_aux[] <- lapply(test_aux, as.numeric)
+
+  if(min(test_aux[,var.pred]) != 0){
+    test_aux[,var.pred]  <- test_aux[,var.pred]  - 1
+  }
+
+  selector <- which(colnames(test_aux) == var.pred)
   test_aux  <- xgb.DMatrix(data = data.matrix(test_aux[,-selector]), label = data.matrix(test_aux[,selector]))
 
-  ans <- xgboost:::predict.xgb.Booster(object, test_aux, missing, outputmargin, ntreelimit, predleaf, predcontrib, approxcontrib, predinteraction, reshape, ...)
+  ans <- predict(original_model(object), test_aux, missing, outputmargin, ntreelimit, predleaf, predcontrib, approxcontrib, predinteraction, reshape, ...)
 
-  num.class <- length(levels(.data$data[,.data$var.pred]))
+  num.class <- length(object$prmdt$levels)
 
   if(type == "class"){
     if(num.class > 2){
@@ -62,13 +189,18 @@ predict.xgb.Booster <- function(object, type = "class", missing = NA, outputmarg
     }else{
       ans <- ifelse(ans > 0.5, 2, 1)
     }
-    ans <- numeric.to.predict(ans)
+    ans <- numeric_to_predict(newdata[,var.pred], ans)
   }
 
   if(type == "prob"){
-    ans <- matrix(ans, ncol = num.class, byrow = TRUE)
+    if(num.class > 2){
+      ans <- matrix(ans, ncol = num.class, byrow = TRUE)
+    }else{
+      ans <- matrix(ans, ncol = 1, byrow = TRUE)
+      ans <- cbind(1 - ans, ans)
+    }
+    colnames(ans) <- object$prmdt$levels
   }
 
-  type.correction(ans, type == "class")
+  type_correction(object, ans, type == "class")
 }
-

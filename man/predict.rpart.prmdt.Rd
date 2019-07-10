@@ -10,3 +10,4 @@
 \description{
 predict.rpart.prmdt
 }
+\keyword{internal}

@@ -9,3 +9,4 @@
 \description{
 predict.nnet.prmdt
 }
+\keyword{internal}

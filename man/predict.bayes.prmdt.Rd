@@ -10,3 +10,4 @@
 \description{
 predict.bayes.prmdt
 }
+\keyword{internal}

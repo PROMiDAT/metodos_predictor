@@ -2,13 +2,15 @@
 % Please edit documentation in R/Utilities.R
 \name{print.prmdt}
 \alias{print.prmdt}
-\title{print.prmdt}
+\title{Printing prmdt models}
 \usage{
 \method{print}{prmdt}(x, ...)
 }
 \arguments{
-\item{...}{}
+\item{x}{A prmdt models}
+
+\item{...}{optional arguments to print o format method}
 }
 \description{
-print.prmdt
+Printing prmdt models
 }

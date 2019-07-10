@@ -10,3 +10,4 @@
 \description{
 predict.svm.prmdt
 }
+\keyword{internal}

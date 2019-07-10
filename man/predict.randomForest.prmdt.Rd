@@ -11,3 +11,4 @@
 \description{
 predict.randomForest.prmdt
 }
+\keyword{internal}

@@ -7,8 +7,25 @@
 train.nnet(formula, data, weights, ..., subset, na.action,
   contrasts = NULL)
 }
+\arguments{
+\item{formula}{A formula of the form class ~ x1 + x2 + ...}
+
+\item{data}{Data frame from which variables specified in formula are preferentially to be taken.}
+
+\item{weights}{(case) weights for each example – if missing defaults to 1.}
+
+\item{...}{arguments passed to or from other methods.}
+
+\item{subset}{An index vector specifying the cases to be used in the training sample. (NOTE: If given, this argument must be named.)}
+
+\item{na.action}{A function to specify the action to be taken if NAs are found. The default action is for the
+procedure to fail. An alternative is na.omit, which leads to rejection of cases with missing
+values on any required variable. (NOTE: If given, this argument must be named.)}
+
+\item{contrasts}{a list of contrasts to be used for some or all of the factors appearing as variables in the model formula.}
+}
 \description{
-train.nnet
+Provides a wrapping function for the \code{\link[nnet]{nnet}}.
 }
 \examples{
 
@@ -29,4 +46,7 @@ prediccion <- predict(modelo.nn, data.test, type = "class")
 prediccion
 table(real, prediccion)
 
+}
+\seealso{
+\code{\link[nnet]{nnet}}
 }

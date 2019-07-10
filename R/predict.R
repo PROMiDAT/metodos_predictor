@@ -4,7 +4,7 @@
 #'
 #' @return
 #' @export
-#' @exportMethod
+#' @keywords internal
 #'
 predict.ada.prmdt <- function(object, newdata, type = "class", n.iter = NULL, ...){
   type <- ifelse(type == "class", "vector", type)
@@ -22,7 +22,7 @@ predict.ada.prmdt <- function(object, newdata, type = "class", n.iter = NULL, ..
 #'
 #' @return
 #' @export
-#' @exportMethod
+#' @keywords internal
 #'
 predict.bayes.prmdt <- function(object, newdata, type = "class", threshold = 0.001, eps = 0, ...){
   type <- ifelse(type == "prob", "raw", type)
@@ -35,7 +35,7 @@ predict.bayes.prmdt <- function(object, newdata, type = "class", threshold = 0.0
 #'
 #' @return
 #' @export
-#' @exportMethod
+#' @keywords internal
 #'
 predict.knn.prmdt <- function(object, newdata, type = "class", ...){
   type <- ifelse(type == "class", "raw", type)
@@ -48,7 +48,7 @@ predict.knn.prmdt <- function(object, newdata, type = "class", ...){
 #'
 #' @return
 #' @export
-#' @exportMethod
+#' @keywords internal
 #'
 predict.nnet.prmdt <- function(object, newdata, type = "class", ...){
   type <- ifelse(type == "prob", "raw", type)
@@ -71,7 +71,7 @@ predict.nnet.prmdt <- function(object, newdata, type = "class", ...){
 #'
 #' @return
 #' @export
-#' @exportMethod
+#' @keywords internal
 #'
 predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
 
@@ -83,7 +83,7 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
 
   var.predict <- object$prmdt$var.pred
   selector <- which(colnames(newdata) == var.predict)
-  suppressWarnings(newdata <- cbind(dummy.data.frame(newdata[, -selector]), newdata[selector]))
+  suppressWarnings(newdata <- cbind(dummy.data.frame(newdata[, -selector], dummy.classes = c("factor","character")), newdata[selector]))
 
   selector <- which(colnames(newdata) == var.predict)
   newdata[, -selector] <- scale(newdata[, -selector])
@@ -111,7 +111,7 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
 #'
 #' @return
 #' @export
-#' @exportMethod
+#' @keywords internal
 #'
 predict.randomForest.prmdt <- function(object, newdata, type = "class", norm.votes = TRUE, predict.all = FALSE, proximity = FALSE, nodes = FALSE, cutoff, ...){
   type <- ifelse(type == "class", "response", type)
@@ -128,7 +128,7 @@ predict.randomForest.prmdt <- function(object, newdata, type = "class", norm.vot
 #'
 #' @return
 #' @export
-#' @exportMethod
+#' @keywords internal
 #'
 predict.rpart.prmdt <- function(object, newdata, type = "class", na.action = na.pass, ...){
   ans <- predict(original_model(object), newdata, type, na.action, ...)
@@ -139,7 +139,7 @@ predict.rpart.prmdt <- function(object, newdata, type = "class", na.action = na.
 #'
 #' @return
 #' @export
-#' @exportMethod
+#' @keywords internal
 #'
 predict.svm.prmdt <- function(object, newdata, type = "class", decision.values = FALSE, ..., na.action = na.omit){
   ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), decision.values, probability = type == "prob", ..., na.action = na.action)
@@ -156,7 +156,7 @@ predict.svm.prmdt <- function(object, newdata, type = "class", decision.values =
 #'
 #' @return
 #' @export
-#' @exportMethod
+#' @keywords internal
 #'
 predict.xgb.Booster.prmdt <- function(object, newdata, type = "class", missing = NA, outputmargin = FALSE, ntreelimit = NULL, predleaf = FALSE, predcontrib = FALSE,
                                 approxcontrib = FALSE, predinteraction = FALSE, reshape = FALSE, ...){

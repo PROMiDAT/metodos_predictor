@@ -7,8 +7,25 @@
 train.svm(formula, data, ..., subset, na.action = na.omit,
   scale = TRUE)
 }
+\arguments{
+\item{formula}{a symbolic description of the model to be fit.}
+
+\item{data}{an optional data frame containing the variables in the model. By default the variables are taken from the environment which ‘svm’ is called from.}
+
+\item{...}{additional parameters for the low level fitting function svm.default}
+
+\item{subset}{An index vector specifying the cases to be used in the training sample. (NOTE: If given, this argument must be named.)}
+
+\item{na.action}{A function to specify the action to be taken if NAs are found. The default action is
+na.omit, which leads to rejection of cases with missing values on any required variable.
+An alternative is na.fail, which causes an error if NA cases are found. (NOTE: If given, this argument must be named.)}
+
+\item{scale}{A logical vector indicating the variables to be scaled. If scale is of length 1, the value is
+recycled as many times as needed. Per default, data are scaled internally (both x and y variables) to zero mean and unit variance.
+The center and scale values are returned and used for later predictions.}
+}
 \description{
-train.svm
+Provides a wrapping function for the \code{\link[e1071]{svm}}.
 }
 \examples{
 
@@ -29,4 +46,7 @@ prediccion <- predict(modelo.svm, data.test , type = "class")
 prediccion
 table(real, prediccion)
 
+}
+\seealso{
+\code{\link[e1071]{svm}}
 }

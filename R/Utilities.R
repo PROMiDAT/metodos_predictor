@@ -98,15 +98,12 @@ get_test_less_predict <- function(data, var.pred){
 }
 
 
-#' print.prmdt
+#' Printing prmdt models
 #'
-#' @param x
-#' @param ...
+#' @param x A prmdt models
+#' @param ... optional arguments to print o format method
 #'
-#' @return
 #' @export
-#' @exportMethod
-#'
 print.prmdt <- function(x, ...){
   print(original_model(x), ...)
 }

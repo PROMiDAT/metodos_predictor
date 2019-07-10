@@ -10,3 +10,4 @@
 \description{
 predict.ada.prmdt
 }
+\keyword{internal}

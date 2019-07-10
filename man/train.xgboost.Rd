@@ -13,8 +13,49 @@ train.xgboost(formula, data, nrounds, watchlist = list(), obj = NULL,
   eta = 0.3, gamma = 0, max_depth = 6, min_child_weight = 1,
   subsample = 1, colsample_bytree = 1, ...)
 }
+\arguments{
+\item{data}{training dataset. xgb.train accepts only an xgb.DMatrix as the input. xgboost, in addition, also accepts matrix, dgCMatrix, or name of a local data file.}
+
+\item{nrounds}{max number of boosting iterations.}
+
+\item{watchlist}{named list of xgb.DMatrix datasets to use for evaluating model performance.
+Metrics specified in either eval_metric or feval will be computed for each of these
+datasets during each boosting iteration, and stored in the end as a field named evaluation_log in the resulting object.
+ When either verbose>=1 or cb.print.evaluation callback is engaged, the performance results are continuously printed out
+ during the training. E.g., specifying watchlist=list(validation1=mat1, validation2=mat2) allows to track the performance
+ of each round's model on mat1 and mat2.}
+
+\item{obj}{customized objective function. Returns gradient and second order gradient with given prediction and dtrain.}
+
+\item{feval}{custimized evaluation function. Returns list(metric='metric-name', value='metric-value') with given prediction and dtrain.}
+
+\item{verbose}{If 0, xgboost will stay silent. If 1, it will print information about performance. If 2, some additional information will be printed out.
+Note that setting verbose > 0 automatically engages the cb.print.evaluation(period=1) callback function.}
+
+\item{print_every_n}{Print each n-th iteration evaluation messages when verbose>0. Default is 1 which means all messages are printed.
+This parameter is passed to the cb.print.evaluation callback.}
+
+\item{early_stopping_rounds}{If NULL, the early stopping function is not triggered. If set to an integer k,
+training with a validation set will stop if the performance doesn't improve for k rounds.
+Setting this parameter engages the cb.early.stop callback.}
+
+\item{maximize}{If feval and early_stopping_rounds are set, then this parameter must be set as well. When it is TRUE, it means the larger
+the evaluation score the better. This parameter is passed to the cb.early.stop callback.}
+
+\item{save_period}{when it is non-NULL, model is saved to disk after every save_period rounds, 0 means save at the end. The saving is handled by the cb.save.model callback.}
+
+\item{save_name}{the name or path for periodically saved model file.}
+
+\item{xgb_model}{a previously built model to continue the training from. Could be either an object of class xgb.Booster, or its raw data, or the name
+of a file with a previously saved model.}
+
+\item{callbacks}{a list of callback functions to perform various task during boosting. See callbacks. Some of the callbacks are automatically created
+depending on the parameters' values. User can provide either existing or their own callback methods in order to customize the training process.}
+
+\item{...}{other parameters to pass to params.}
+}
 \description{
-train.xgboost
+Provides a wrapping function for the \code{\link[xgboost]{xgb.train}}.
 }
 \examples{
 
@@ -35,4 +76,7 @@ prediccion <- predict(modelo.xg, data.test, type = "class")
 prediccion
 table(real, prediccion)
 
+}
+\seealso{
+\code{\link[xgboost]{xgb.train}}
 }

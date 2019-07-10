@@ -12,3 +12,4 @@
 \description{
 predict.xgb.Booster
 }
+\keyword{internal}

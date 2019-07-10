@@ -313,7 +313,7 @@ train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts
   }else{
     if((!missing(weights)) & (!missing(subset))){
       assign("sub_set_aux", subset, envir = .GlobalEnv)
-      model <- nnet(formula = formula, data = data, weights = weights, ... =  ..., subset =  sub_set_aux, na.action = na.action, contrasts = contrasts)
+      model <- nnet(formula = formula, data = data, weights = weights, ... =  ..., subset = sub_set_aux, na.action = na.action, contrasts = contrasts)
       rm("sub_set_aux", envir = .GlobalEnv)
     }else{
       if(!missing(weights)){
@@ -402,7 +402,7 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
   var.predict <- as.character(formula[2])
   selector <- which(colnames(data) == var.predict)
 
-  suppressWarnings(data <- cbind(dummy.data.frame(data[, -selector], drop = FALSE), data[,selector]))
+  suppressWarnings(data <- cbind(dummy.data.frame(data[, -selector, drop = FALSE], drop = FALSE, dummy.classes = c("factor","character") ), data[,selector]))
   colnames(data) <- c(colnames(data)[-ncol(data)], var.predict)
 
   selector <- which(colnames(data) == var.predict)

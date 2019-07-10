@@ -55,5 +55,5 @@ table(real, prediccion)
 
 }
 \seealso{
-\code{\link[kknn]{train.kknn}}.
+\code{\link[kknn]{train.kknn}}
 }

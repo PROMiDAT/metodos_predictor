@@ -9,3 +9,4 @@
 \description{
 predict.knn.prmdt
 }
+\keyword{internal}

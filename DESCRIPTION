@@ -1,4 +1,4 @@
-Package: Prueba
+Package: metodos.predictor
 Type: Package
 Title: Standardization of some prediction methods
 Version: 1.0.0
@@ -19,8 +19,7 @@ Imports:
     ada (>= 2.0-5),
     nnet (>= 7.3-12),
     dummies (>= 1.5.6)
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: Standardization of some prediction methods.
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true

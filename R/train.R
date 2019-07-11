@@ -312,7 +312,7 @@ train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts
   if (is.matrix(eval.parent(m$data))){
     m$data <- as.data.frame(data)
   }
-  m[[1L]] <- quote(nnet)
+  m[[1L]] <- quote(nnet::nnet)
   my.list <- as.list(m$...)
   for(.name in names(my.list)) {
     m[[.name]] <- my.list[[.name]]

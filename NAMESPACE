@@ -1,4 +1,4 @@
-export(train.ada, train.rpart, train.bayes, train.randomForest, train.knn, train.nnet, train.neuralnet, train.svm, train.xgboost)
+export(train.ada, train.rpart, train.bayes, train.randomForest, train.knn, train.nnet, train.neuralnet, train.svm, train.xgboost, contr.dummy, contr.ordinal)
 
 importFrom("stats", "na.fail", "na.omit", "na.pass", "update", "as.formula", "predict")
 importFrom("utils", "head")

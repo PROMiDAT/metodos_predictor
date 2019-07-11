@@ -8,12 +8,13 @@ train.xgboost(formula, data, nrounds, watchlist = list(), obj = NULL,
   feval = NULL, verbose = 1, print_every_n = 1L,
   early_stopping_rounds = NULL, maximize = NULL, save_period = NULL,
   save_name = "xgboost.model", xgb_model = NULL, callbacks = list(),
-  early_stop_round = 10, eval_metric = "mlogloss",
-  extra_params = NULL, booster = "gbtree", objective = NULL,
-  eta = 0.3, gamma = 0, max_depth = 6, min_child_weight = 1,
-  subsample = 1, colsample_bytree = 1, ...)
+  eval_metric = "mlogloss", extra_params = NULL, booster = "gbtree",
+  objective = NULL, eta = 0.3, gamma = 0, max_depth = 6,
+  min_child_weight = 1, subsample = 1, colsample_bytree = 1, ...)
 }
 \arguments{
+\item{formula}{a symbolic description of the model to be fit.}
+
 \item{data}{training dataset. xgb.train accepts only an xgb.DMatrix as the input. xgboost, in addition, also accepts matrix, dgCMatrix, or name of a local data file.}
 
 \item{nrounds}{max number of boosting iterations.}
@@ -51,6 +52,45 @@ of a file with a previously saved model.}
 
 \item{callbacks}{a list of callback functions to perform various task during boosting. See callbacks. Some of the callbacks are automatically created
 depending on the parameters' values. User can provide either existing or their own callback methods in order to customize the training process.}
+
+\item{eval_metric}{eval_metric evaluation metrics for validation data. Users can pass a self-defined function to it. Default: metric will be assigned
+according to objective(rmse for regression, and error for classification, mean average precision for ranking). List is
+provided in detail section.}
+
+\item{extra_params}{the list of parameters. The complete list of parameters is available at http://xgboost.readthedocs.io/en/latest/parameter.html.}
+
+\item{booster}{booster which booster to use, can be gbtree or gblinear. Default: gbtree.}
+
+\item{objective}{objective specify the learning task and the corresponding learning objective, users can pass a self-defined function to it. The default objective options are below:
++ reg:linear linear regression (Default).
++ reg:logistic logistic regression.
++ binary:logistic logistic regression for binary classification. Output probability.
++ binary:logitraw logistic regression for binary classification, output score before logistic transformation.
++ num_class set the number of classes. To use only with multiclass objectives.
++ multi:softmax set xgboost to do multiclass classification using the softmax objective. Class is represented by a number and should be from 0 to num_class - 1.
++ multi:softprob same as softmax, but prediction outputs a vector of ndata * nclass elements, which can be further reshaped to ndata, nclass matrix. The result contains predicted probabilities of each data point belonging to each class.
++ rank:pairwise set xgboost to do ranking task by minimizing the pairwise loss.}
+
+\item{eta}{eta control the learning rate: scale the contribution of each tree by a factor of 0 < eta < 1 when it is added to the current approximation.
+Used to prevent overfitting by making the boosting process more conservative. Lower value for eta implies larger value for nrounds: low eta
+value means model more robust to overfitting but slower to compute. Default: 0.3}
+
+\item{gamma}{gamma minimum loss reduction required to make a further partition on a leaf node of the tree. the larger, the more conservative
+the algorithm will be.gamma minimum loss reduction required to make a further partition on a leaf node of the tree. the larger, the more
+conservative the algorithm will be.}
+
+\item{max_depth}{max_depth maximum depth of a tree. Default: 6}
+
+\item{min_child_weight}{min_child_weight minimum sum of instance weight (hessian) needed in a child. If the tree partition step results in a leaf node
+with the sum of instance weight less than min_child_weight, then the building process will give up further partitioning. In linear
+regression mode, this simply corresponds to minimum number of instances needed to be in each node. The larger, the more conservative
+the algorithm will be. Default: 1}
+
+\item{subsample}{subsample subsample ratio of the training instance. Setting it to 0.5 means that xgboost randomly collected half of the data instances to
+grow trees and this will prevent overfitting. It makes computation shorter (because less data to analyse). It is advised to use this parameter
+with eta and increase nrounds. Default: 1}
+
+\item{colsample_bytree}{colsample_bytree subsample ratio of columns when constructing each tree. Default: 1}
 
 \item{...}{other parameters to pass to params.}
 }

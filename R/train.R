@@ -308,23 +308,17 @@ train.knn <- function(formula, data, kmax = 11, ks = NULL, distance = 2, kernel 
 #' table(real, prediccion)
 #'
 train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts = NULL){
-  if(missing(weights) & missing(subset)){
-    model <- nnet(formula = formula, data = data, ... =  ..., na.action = na.action, contrasts = contrasts)
-  }else{
-    if((!missing(weights)) & (!missing(subset))){
-      assign("sub_set_aux", subset, envir = .GlobalEnv)
-      model <- nnet(formula = formula, data = data, weights = weights, ... =  ..., subset = sub_set_aux, na.action = na.action, contrasts = contrasts)
-      rm("sub_set_aux", envir = .GlobalEnv)
-    }else{
-      if(!missing(weights)){
-        model <- nnet(formula = formula, data = data, weights = weights, ... =  ..., na.action = na.action, contrasts = contrasts)
-      }else{
-        assign("sub_set_aux", subset, envir = .GlobalEnv)
-        model <- nnet(formula = formula, data = data, ... =  ..., subset =  sub_set_aux, na.action = na.action, contrasts = contrasts)
-        rm("sub_set_aux", envir = .GlobalEnv)
-      }
-    }
+  m <- match.call(expand.dots = FALSE)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
   }
+  m[[1L]] <- quote(nnet)
+  my.list <- as.list(m$...)
+  for(.name in names(my.list)) {
+    m[[.name]] <- my.list[[.name]]
+  }
+  m$... <- NULL
+  model <- eval.parent(m)
   create.model(model, formula, data, "nnet.prmdt")
 }
 
@@ -481,6 +475,7 @@ train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = T
   }else{
     model <- svm(formula = formula, data = data, probability = TRUE, ... = args, subset = subset, na.action = na.action, scale = scale)
   }
+
   create.model(model, formula, data, "svm.prmdt")
 }
 
@@ -488,7 +483,7 @@ train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = T
 #'
 #' @description Provides a wrapping function for the \code{\link[xgboost]{xgb.train}}.
 #'
-#' @param formula
+#' @param formula a symbolic description of the model to be fit.
 #' @param data training dataset. xgb.train accepts only an xgb.DMatrix as the input. xgboost, in addition, also accepts matrix, dgCMatrix, or name of a local data file.
 #' @param nrounds max number of boosting iterations.
 #' @param watchlist named list of xgb.DMatrix datasets to use for evaluating model performance.
@@ -514,17 +509,35 @@ train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = T
 #'                  of a file with a previously saved model.
 #' @param callbacks a list of callback functions to perform various task during boosting. See callbacks. Some of the callbacks are automatically created
 #'                  depending on the parameters' values. User can provide either existing or their own callback methods in order to customize the training process.
-#' @param early_stop_round
-#' @param eval_metric
-#' @param extra_params
-#' @param booster
-#' @param objective
-#' @param eta
-#' @param gamma
-#' @param max_depth
-#' @param min_child_weight
-#' @param subsample
-#' @param colsample_bytree
+#' @param eval_metric eval_metric evaluation metrics for validation data. Users can pass a self-defined function to it. Default: metric will be assigned
+#'                    according to objective(rmse for regression, and error for classification, mean average precision for ranking). List is
+#'                    provided in detail section.
+#' @param extra_params the list of parameters. The complete list of parameters is available at http://xgboost.readthedocs.io/en/latest/parameter.html.
+#' @param booster booster which booster to use, can be gbtree or gblinear. Default: gbtree.
+#' @param objective objective specify the learning task and the corresponding learning objective, users can pass a self-defined function to it. The default objective options are below:
+#' + reg:linear linear regression (Default).
+#' + reg:logistic logistic regression.
+#' + binary:logistic logistic regression for binary classification. Output probability.
+#' + binary:logitraw logistic regression for binary classification, output score before logistic transformation.
+#' + num_class set the number of classes. To use only with multiclass objectives.
+#' + multi:softmax set xgboost to do multiclass classification using the softmax objective. Class is represented by a number and should be from 0 to num_class - 1.
+#' + multi:softprob same as softmax, but prediction outputs a vector of ndata * nclass elements, which can be further reshaped to ndata, nclass matrix. The result contains predicted probabilities of each data point belonging to each class.
+#' + rank:pairwise set xgboost to do ranking task by minimizing the pairwise loss.
+#' @param eta eta control the learning rate: scale the contribution of each tree by a factor of 0 < eta < 1 when it is added to the current approximation.
+#'            Used to prevent overfitting by making the boosting process more conservative. Lower value for eta implies larger value for nrounds: low eta
+#'            value means model more robust to overfitting but slower to compute. Default: 0.3
+#' @param gamma gamma minimum loss reduction required to make a further partition on a leaf node of the tree. the larger, the more conservative
+#'              the algorithm will be.gamma minimum loss reduction required to make a further partition on a leaf node of the tree. the larger, the more
+#'              conservative the algorithm will be.
+#' @param max_depth max_depth maximum depth of a tree. Default: 6
+#' @param min_child_weight min_child_weight minimum sum of instance weight (hessian) needed in a child. If the tree partition step results in a leaf node
+#'                         with the sum of instance weight less than min_child_weight, then the building process will give up further partitioning. In linear
+#'                         regression mode, this simply corresponds to minimum number of instances needed to be in each node. The larger, the more conservative
+#'                         the algorithm will be. Default: 1
+#' @param subsample subsample subsample ratio of the training instance. Setting it to 0.5 means that xgboost randomly collected half of the data instances to
+#'                  grow trees and this will prevent overfitting. It makes computation shorter (because less data to analyse). It is advised to use this parameter
+#'                  with eta and increase nrounds. Default: 1
+#' @param colsample_bytree colsample_bytree subsample ratio of columns when constructing each tree. Default: 1
 #' @param ... other parameters to pass to params.
 #'
 #' @seealso \code{\link[xgboost]{xgb.train}}
@@ -554,7 +567,7 @@ train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = T
 train.xgboost <- function(formula, data, nrounds, watchlist = list(), obj = NULL, feval = NULL,
                           verbose = 1, print_every_n = 1L, early_stopping_rounds = NULL, maximize = NULL,
                           save_period = NULL, save_name = "xgboost.model", xgb_model = NULL, callbacks = list(),
-                          early_stop_round = 10, eval_metric = "mlogloss",extra_params = NULL, booster = "gbtree",
+                          eval_metric = "mlogloss",extra_params = NULL, booster = "gbtree",
                           objective = NULL, eta = 0.3, gamma=0, max_depth = 6, min_child_weight = 1, subsample = 1,
                           colsample_bytree = 1, ...){
 
@@ -602,7 +615,7 @@ train.xgboost <- function(formula, data, nrounds, watchlist = list(), obj = NULL
 
   if(num.class > 2){
     params$num_class <- num.class
-    model <- xgb.train(params = params, data = train_aux, early_stop_round = 10, eval_metric = "mlogloss", nrounds = nrounds, watchlist = watchlist,
+    model <- xgb.train(params = params, data = train_aux, eval_metric = "mlogloss", nrounds = nrounds, watchlist = watchlist,
                        obj = obj, feval = feval, verbose = verbose, print_every_n = print_every_n, early_stopping_rounds = early_stopping_rounds,
                        maximize = maximize, save_period = save_period, save_name = save_name, xgb_model = xgb_model, callbacks = callbacks, ... = ...)
   }else{

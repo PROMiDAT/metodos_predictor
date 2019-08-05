@@ -1,4 +1,4 @@
-Package: metodos.predictor
+Package: trainR
 Type: Package
 Title: Standardization of some prediction methods
 Version: 1.0.0

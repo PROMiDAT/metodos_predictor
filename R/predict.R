@@ -204,3 +204,25 @@ predict.xgb.Booster.prmdt <- function(object, newdata, type = "class", missing =
 
   type_correction(object, ans, type == "class")
 }
+
+
+#' predict.glm.prmdt
+#'
+#' @return
+#' @export
+#' @keywords internal
+#'
+predict.glm.prmdt <- function(object, newdata, type = "class", se.fit = FALSE, dispersion = NULL, terms = NULL, na.action = na.pass, ...){
+  ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), "response",  se.fit = se.fit, dispersion = dispersion, terms = terms, na.action = na.action, ... = ...)
+  levels.class <- object$prmdt$levels
+
+  if(type == "prob"){
+    ans <- matrix(as.numeric(ans), ncol = 1, byrow = TRUE)
+    ans <- cbind(1 - ans, ans)
+    colnames(ans) <- levels.class
+    return(ans)
+  }else{
+    ans <- ifelse(ans > 0.5, levels.class[2], levels.class[1])
+    return(type_correction(object, ans, type == "class"))
+  }
+}

@@ -104,7 +104,7 @@ data("iris")
 n <- seq_len(nrow(iris))
 .sample <- sample(n, length(n) * 0.75)
 data.train <- iris[.sample,]
-data.test <- iris[.sample,]
+data.test <- iris[-.sample,]
 
 real <- data.test$Species
 
@@ -118,5 +118,5 @@ table(real, prediccion)
 
 }
 \seealso{
-\code{\link[xgboost]{xgb.train}}
+The internal function is from package \code{\link[xgboost]{xgb.train}}
 }

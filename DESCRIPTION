@@ -1,6 +1,6 @@
 Package: trainR
 Type: Package
-Title: Standardization of some prediction methods
+Title: Predictive model homogenizer
 Version: 1.0.0
 Authors@R: c(
     person("Oldemar", "Rodriguez R.", email = "oldemar.rodriguez@ucr.ac.cr", role = c("aut","cre")),
@@ -19,7 +19,9 @@ Imports:
     ada (>= 2.0-5),
     nnet (>= 7.3-12),
     dummies (>= 1.5.6)
-Description: Standardization of some prediction methods.
+Description: This package seeks to unify the different ways of creating predictive models and their different predictive formats. It includes 
+       methods such as K-Nearest Neighbors, Decision Trees, ADA Boosting, Extreme Gradient Boosting, Random Forest, Neural Networks, Deep Learning,
+       Support Vector Machines and Bayesian Methods.
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true

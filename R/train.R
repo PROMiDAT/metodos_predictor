@@ -30,7 +30,7 @@ create.model <- function(model, formula, data,  name = NULL){
 #' @param subset an optional vector specifying a subset of observations to be used in the fitting process.
 #' @param na.action a function that indicates how to process ‘NA’ values. Default=na.rpart.
 #'
-#' @seealso \code{\link[ada]{ada}}
+#' @seealso The internal function is from package \code{\link[ada]{ada}}
 #'
 #' @return
 #' @export
@@ -42,7 +42,7 @@ create.model <- function(model, formula, data,  name = NULL){
 #' n <- seq_len(nrow(Puromycin))
 #' .sample <- sample(n, length(n) * 0.65)
 #' data.train <- Puromycin[.sample,]
-#' data.test <- Puromycin[.sample,]
+#' data.test <- Puromycin[-.sample,]
 #'
 #' real <- data.test$state
 #'
@@ -86,7 +86,7 @@ train.ada <- function(formula, data, ..., subset, na.action = na.rpart){
 #' @param cost a vector of non-negative costs, one for each variable in the model. Defaults to one for all variables. These are scalings to be applied when considering splits, so the improvement on splitting on a variable is divided by its cost in deciding which split to choose.
 #' @param ... arguments to \code{\link[rpart]{rpart.control}} may also be specified in the call to rpart. They are checked against the list of valid arguments.
 #'
-#' @seealso \code{\link[rpart]{rpart}}
+#' @seealso The internal function is from package \code{\link[rpart]{rpart}}
 #'
 #' @return
 #' @export
@@ -98,7 +98,7 @@ train.ada <- function(formula, data, ..., subset, na.action = na.rpart){
 #' n <- seq_len(nrow(iris))
 #' .sample <- sample(n, length(n) * 0.75)
 #' data.train <- iris[.sample,]
-#' data.test <- iris[.sample,]
+#' data.test <- iris[-.sample,]
 #'
 #' real <- data.test$Species
 #'
@@ -143,7 +143,7 @@ train.rpart <- function(formula, data, weights, subset, na.action = na.rpart, me
 #' @param subset For data given in a data frame, an index vector specifying the cases to be used in the training sample. (NOTE: If given, this argument must be named.)
 #' @param na.action A function to specify the action to be taken if NAs are found. The default action is not to count them for the computation of the probability factors. An alternative is na.omit, which leads to rejection of cases with missing values on any required variable. (NOTE: If given, this argument must be named.)
 #'
-#' @seealso \code{\link[e1071]{naiveBayes}}
+#' @seealso The internal function is from package \code{\link[e1071]{naiveBayes}}
 #'
 #' @return
 #' @export
@@ -155,7 +155,7 @@ train.rpart <- function(formula, data, weights, subset, na.action = na.rpart, me
 #' n <- seq_len(nrow(iris))
 #' .sample <- sample(n, length(n) * 0.75)
 #' data.train <- iris[.sample,]
-#' data.test <- iris[.sample,]
+#' data.test <- iris[-.sample,]
 #'
 #' real <- data.test$Species
 #'
@@ -187,7 +187,7 @@ train.bayes <- function(formula, data, laplace = 0, ..., subset, na.action = na.
 #' @param subset an index vector indicating which rows should be used. (NOTE: If given, this argument must be named.)
 #' @param na.action A function to specify the action to be taken if NAs are found. (NOTE: If given, this argument must be named.)
 #'
-#' @seealso \code{\link[randomForest]{randomForest}}
+#' @seealso The internal function is from package \code{\link[randomForest]{randomForest}}
 #'
 #' @return
 #' @export
@@ -199,7 +199,7 @@ train.bayes <- function(formula, data, laplace = 0, ..., subset, na.action = na.
 #' n <- seq_len(nrow(iris))
 #' .sample <- sample(n, length(n) * 0.75)
 #' data.train <- iris[.sample,]
-#' data.test <- iris[.sample,]
+#' data.test <- iris[-.sample,]
 #'
 #' real <- data.test$Species
 #'
@@ -236,7 +236,7 @@ train.randomForest <- function(formula, data, ..., subset, na.action = na.fail){
 #' @param contrasts A vector containing the 'unordered' and 'ordered' contrasts to use.
 #' @param ... Further arguments passed to or from other methods.
 #'
-#' @seealso \code{\link[kknn]{train.kknn}}
+#' @seealso The internal function is from package \code{\link[kknn]{train.kknn}}
 #'
 #' @return
 #' @export
@@ -248,7 +248,7 @@ train.randomForest <- function(formula, data, ..., subset, na.action = na.fail){
 #' n <- seq_len(nrow(iris))
 #' .sample <- sample(n, length(n) * 0.75)
 #' data.train <- iris[.sample,]
-#' data.test <- iris[.sample,]
+#' data.test <- iris[-.sample,]
 #'
 #' real <- data.test$Species
 #'
@@ -283,7 +283,7 @@ train.knn <- function(formula, data, kmax = 11, ks = NULL, distance = 2, kernel 
 #'                  values on any required variable. (NOTE: If given, this argument must be named.)
 #' @param contrasts a list of contrasts to be used for some or all of the factors appearing as variables in the model formula.
 #'
-#' @seealso \code{\link[nnet]{nnet}}
+#' @seealso The internal function is from package \code{\link[nnet]{nnet}}
 #'
 #' @return
 #' @export
@@ -295,7 +295,7 @@ train.knn <- function(formula, data, kmax = 11, ks = NULL, distance = 2, kernel 
 #' n <- seq_len(nrow(iris))
 #' .sample <- sample(n, length(n) * 0.75)
 #' data.train <- iris[.sample,]
-#' data.test <- iris[.sample,]
+#' data.test <- iris[-.sample,]
 #'
 #' real <- data.test$Species
 #'
@@ -355,7 +355,7 @@ train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts
 #' @param likelihood logical. If the error function is equal to the negative log-likelihood function, the
 #'                   information criteria AIC and BIC will be calculated. Furthermore the usage of confidence.interval is meaningfull.
 #'
-#' @seealso \code{\link[neuralnet]{neuralnet}}
+#' @seealso The internal function is from package \code{\link[neuralnet]{neuralnet}}
 #'
 #' @return
 #' @export
@@ -367,7 +367,7 @@ train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts
 #' n <- seq_len(nrow(iris))
 #' .sample <- sample(n, length(n) * 0.75)
 #' data.train <- iris[.sample,]
-#' data.test <- iris[.sample,]
+#' data.test <- iris[-.sample,]
 #'
 #' real <- data.test$Species
 #'
@@ -443,7 +443,7 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
 #'              recycled as many times as needed. Per default, data are scaled internally (both x and y variables) to zero mean and unit variance.
 #'              The center and scale values are returned and used for later predictions.
 #'
-#' @seealso \code{\link[e1071]{svm}}
+#' @seealso The internal function is from package \code{\link[e1071]{svm}}
 #'
 #' @return
 #' @export
@@ -455,7 +455,7 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
 #' n <- seq_len(nrow(iris))
 #' .sample <- sample(n, length(n) * 0.75)
 #' data.train <- iris[.sample,]
-#' data.test <- iris[.sample,]
+#' data.test <- iris[-.sample,]
 #'
 #' real <- data.test$Species
 #'
@@ -540,7 +540,7 @@ train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = T
 #' @param colsample_bytree colsample_bytree subsample ratio of columns when constructing each tree. Default: 1
 #' @param ... other parameters to pass to params.
 #'
-#' @seealso \code{\link[xgboost]{xgb.train}}
+#' @seealso The internal function is from package \code{\link[xgboost]{xgb.train}}
 #'
 #' @return
 #' @export
@@ -552,7 +552,7 @@ train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = T
 #' n <- seq_len(nrow(iris))
 #' .sample <- sample(n, length(n) * 0.75)
 #' data.train <- iris[.sample,]
-#' data.test <- iris[.sample,]
+#' data.test <- iris[-.sample,]
 #'
 #' real <- data.test$Species
 #'
@@ -581,24 +581,19 @@ train.xgboost <- function(formula, data, nrounds, watchlist = list(), obj = NULL
   }
 
   train_aux <- data %>% select(c(.colnames,var.predict)) %>% select_on_class(c("numeric","integer", "factor"))
-  # test_aux <- .data$test %>% select_on_class(c("numeric","integer", "factor"))
 
   train_aux[] <- lapply(train_aux, as.numeric)
-  # test_aux[] <- lapply(test_aux, as.numeric)
 
   if(min(train_aux[,var.predict]) != 0){
     train_aux[,var.predict] <- train_aux[,var.predict] - 1
-    # test_aux[,var.predict]  <- test_aux[,var.predict]  - 1
   }
 
   selector <- which(colnames(train_aux) == var.predict)
 
   train_aux <- xgb.DMatrix(data = data.matrix(train_aux[,-selector]), label = data.matrix(train_aux[,selector]))
-  # test_aux  <- xgb.DMatrix(data = data.matrix(test_aux[,-selector]), label = data.matrix(test_aux[,selector]))
 
   if(length(watchlist) == 0){
     watchlist <- list(train = train_aux)
-                      # , test = test_aux)
   }
 
   num.class <- length(levels(data[,var.predict]))
@@ -627,3 +622,72 @@ train.xgboost <- function(formula, data, nrounds, watchlist = list(), obj = NULL
   create.model(model, formula, data, "xgb.Booster.prmdt")
 
 }
+
+
+
+#' train.glm
+#'
+#' @description Provides a wrapping function for the \code{\link[stats]{glm}}
+#'
+#' @param formula an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. The details of model specification are given under ‘Details’.
+#' @param data an optional data frame, list or environment (or object coercible by as.data.frame to a data frame) containing the variables in the model. If not found in data, the variables are taken from environment(formula), typically the environment from which glm is called.
+#' @param family a description of the error distribution and link function to be used in the model. For glm this can be a character string naming a family function, a family function or the result of a call to a family function. For glm.fit only the third option is supported. (See family for details of family functions.)
+#' @param weights an optional vector of ‘prior weights’ to be used in the fitting process. Should be NULL or a numeric vector.
+#' @param subset an optional vector specifying a subset of observations to be used in the fitting process.
+#' @param na.action a function which indicates what should happen when the data contain NAs. The default is set by the na.action setting of options, and is na.fail if that is unset. The ‘factory-fresh’ default is na.omit. Another possible value is NULL, no action. Value na.exclude can be useful.
+#' @param start starting values for the parameters in the linear predictor.
+#' @param etastart starting values for the linear predictor.
+#' @param mustart starting values for the vector of means.
+#' @param offset this can be used to specify an a priori known component to be included in the linear predictor during fitting. This should be NULL or a numeric vector of length equal to the number of cases. One or more offset terms can be included in the formula instead or as well, and if more than one is specified their sum is used. See model.offset.
+#' @param control a list of parameters for controlling the fitting process. For glm.fit this is passed to glm.control.
+#' @param model a logical value indicating whether model frame should be included as a component of the returned value.
+#' @param method the method to be used in fitting the model. The default method "glm.fit" uses iteratively reweighted least squares (IWLS): the alternative "model.frame" returns the model frame and does no fitting.
+#'               User-supplied fitting functions can be supplied either as a function or a character string naming a function, with a function which takes the same arguments as glm.fit. If specified as a character string it is looked up from within the stats namespace.
+#' @param x,y For glm: logical values indicating whether the response vector and model matrix used in the fitting process should be returned as components of the returned value.
+#'            For glm.fit: x is a design matrix of dimension n * p, and y is a vector of observations of length n.
+#' @param singular.ok logical; if FALSE a singular fit is an error.
+#' @param contrasts an optional list. See the contrasts.arg of model.matrix.default.
+#' @param ... For glm: arguments to be used to form the default control argument if it is not supplied directly.
+#'            For weights: further arguments passed to or from other methods.
+#'
+#' @seealso The internal function is from package \code{\link[stats]{glm}}
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'
+#' data("Puromycin")
+#'
+#' n <- seq_len(nrow(Puromycin))
+#' .sample <- sample(n, length(n) * 0.65)
+#' data.train <- Puromycin[.sample,]
+#' data.test <- Puromycin[-.sample,]
+#'
+#' real <- data.test$state
+#'
+#' modelo.glm <- train.glm(state~., data.train)
+#' modelo.glm
+#' prob <- predict(modelo.glm, data.test , type = "prob")
+#' prob
+#' prediccion <- predict(modelo.glm, data.test , type = "class")
+#' prediccion
+#' table(real, prediccion)
+#'
+train.glm <- function(formula,  data, family = binomial, weights, subset, na.action, start = NULL, etastart, mustart, offset, control = list(...),
+                      model = TRUE, method = "glm.fit", x = FALSE, y = TRUE, singular.ok = TRUE, contrasts = NULL, ...){
+  m <- match.call(expand.dots = FALSE)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
+  }
+  m[[1L]] <- quote(glm)
+  my.list <- as.list(m$...)
+  for(.name in names(my.list)) {
+    m[[.name]] <- my.list[[.name]]
+  }
+  m$... <- NULL
+  m$family <-  substitute(family)
+  model <- eval.parent(m)
+  create.model(model, formula, data, "glm.prmdt")
+}
+

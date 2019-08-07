@@ -28,7 +28,7 @@ data("Puromycin")
 n <- seq_len(nrow(Puromycin))
 .sample <- sample(n, length(n) * 0.65)
 data.train <- Puromycin[.sample,]
-data.test <- Puromycin[.sample,]
+data.test <- Puromycin[-.sample,]
 
 real <- data.test$state
 
@@ -42,5 +42,5 @@ table(real, prediccion)
 
 }
 \seealso{
-\code{\link[ada]{ada}}
+The internal function is from package \code{\link[ada]{ada}}
 }

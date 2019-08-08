@@ -1,0 +1,408 @@
+---
+output:
+  html_document:
+    highlight: haddock
+    theme: cerulean
+---
+
+![](logo.jpg)
+
+Métodos de Predictivos (Clasificación o Aprendizaje-Supervisado)
+========================================================
+
+Dr. Oldemar Rodríguez
+--------------------------
+
+# Índices de Calidad del Modelo y funciones auxiliares
+
+```{r st1,comment=NA,warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(glue)
+library(scales)
+
+equilibrio.variable.predecir <- function(datos, variable.predecir, ylab = "Cantidad de individuos", 
+                                        xlab = "", main = paste("Distribución de la variable",variable.predecir), col = NA) {
+  gg_color <- function (n) {
+     hues <- seq(15, 375, length = n + 1)
+     hcl(h = hues, l = 65, c = 100)[1:n]
+  }
+  if(missing(variable.predecir) | !(variable.predecir %in% colnames(datos))){
+    stop("variable.predecir tiene que ser ingresada y ser un nombre de columna", call. = FALSE )
+  }
+  if(is.character(datos[,variable.predecir]) | is.factor(datos[,variable.predecir])){
+    if(length(col) == 0 || is.na(col)){
+      col <- gg_color(length(unique(datos[,variable.predecir])))
+    }else{
+      col <- rep(col,length(unique(datos[,variable.predecir])))
+    }
+    ggplot(data = datos, mapping = aes_string(x = variable.predecir, fill = variable.predecir)) +
+      geom_bar() +
+      scale_fill_manual(values = col, name = variable.predecir) +
+      labs(x = xlab, y = ylab, title = main) +
+      theme_minimal() +
+      theme(legend.position = "bottom")
+  }else{
+    stop("La variable a predecir tienen que ser de tipo factor o character", call. = FALSE )
+  }
+}
+
+poder.predictivo.numerica <- function(datos, variable.predecir, variable.comparar, ylab = "", 
+                                       xlab = "", main = paste("Densidad de la variable", variable.comparar, 'según', variable.predecir), col = NA){
+  gg_color <- function (n) {
+     hues <- seq(15, 375, length = n + 1)
+     hcl(h = hues, l = 65, c = 100)[1:n]
+  }
+  if(missing(variable.predecir) | !(variable.predecir %in% colnames(datos))){
+    stop("variable.predecir tiene que ser ingresada y ser un nombre de columna", call. = FALSE )
+  }
+  if(missing(variable.comparar) | !(variable.comparar %in% colnames(datos)) | !is.numeric(datos[,variable.comparar])){
+    stop("variable.comparar tiene que ser ingresada y ser un nombre de columna numérica", call. = FALSE )
+  }
+  
+  if(is.character(datos[,variable.predecir]) | is.factor(datos[,variable.predecir])){
+    if(length(col) == 0 || is.na(col)){
+      col <- gg_color(length(unique(datos[,variable.predecir])))
+    }else{
+      col <- rep(col,length(unique(datos[,variable.predecir])))
+    }
+    
+    ggplot(data = datos, aes_string(variable.comparar, fill = variable.predecir)) +
+      geom_density(alpha = .7, color = NA) +
+      scale_fill_manual(values = col) +
+      labs(title = main , y = ylab, x = xlab ,fill = variable.predecir) +
+      theme_minimal() +
+      theme(legend.position = 'bottom',
+            legend.title = element_blank(),
+            text = element_text(size = 15))
+    
+  }else{
+    stop("La variable a predecir tienen que ser de tipo factor o character", call. = FALSE )
+  }
+}
+
+poder.predictivo.categorica <- function(datos, variable.predecir, variable.comparar, ylab = "", 
+                                        xlab = "", main = paste("Densidad de la variable", variable.comparar, 'según', variable.predecir), col = NA) {
+  gg_color <- function (n) {
+     hues <- seq(15, 375, length = n + 1)
+     hcl(h = hues, l = 65, c = 100)[1:n]
+  }
+  if(missing(variable.predecir) | !(variable.predecir %in% colnames(datos))){
+    stop("variable.predecir tiene que ser ingresada y ser un nombre de columna", call. = FALSE )
+  }
+  if(missing(variable.comparar) | !(variable.comparar %in% colnames(datos)) | 
+     !(is.factor(datos[,variable.comparar]) | is.character(datos[,variable.comparar])) ){
+    stop("variable.comparar tiene que ser ingresada y ser un nombre de columna categórica", call. = FALSE )
+  }
+  
+  if(is.character(datos[,variable.predecir]) | is.factor(datos[,variable.predecir])){
+    if(length(col) == 0 || is.na(col)){
+      col <- gg_color(length(unique(datos[,variable.predecir])))
+    }else{
+      col <- rep(col,length(unique(datos[,variable.predecir])))
+    }
+    
+    datos2 <- datos %>%
+      dplyr::group_by_(variable.comparar, variable.predecir) %>%
+      dplyr::summarise(count = n())
+    
+    if(variable.comparar != variable.predecir){
+      datos2 <-   datos2 %>% dplyr::group_by_(variable.comparar)
+    }
+    datos2 <- datos2 %>% dplyr::mutate(prop = round(count/sum(count),4))
+  
+    ggplot(data = datos2, mapping = aes_string(x = variable.comparar, y = "prop", fill = variable.predecir)) +
+      geom_col(position = "fill") +
+      geom_text(aes(label = glue("{percent(prop)} ({count})")), position = position_stack(vjust = .5), color = "white") +
+      scale_y_continuous(label = percent) +
+      labs(y =  xlab, x  = ylab, title = main) +
+      scale_fill_manual(values = col, name = variable.predecir) +
+      theme(legend.position = "bottom")+
+      coord_flip()
+    
+  }else{
+    stop("La variable a predecir tienen que ser de tipo factor o character", call. = FALSE )
+  }
+}
+# Índices para matrices NxN
+indices.general <- function(MC) {
+  precision.global <- sum(diag(MC))/sum(MC)
+  error.global <- 1 - precision.global
+  precision.categoria <- diag(MC)/rowSums(MC)
+  res <- list(matriz.confusion = MC, precision.global = precision.global, error.global = error.global, 
+              precision.categoria = precision.categoria)
+  names(res) <- c("Matriz de Confusión", "Precisión Global", "Error Global", 
+                  "Precisión por categoría")
+  return(res)
+}
+```
+
+
+# El método Redes Neuronales
+
+## Ejemplo Iris
+
+### Distribución de las clases
+
+```{r comment=NA}
+setwd("~/Google Drive/MDCurso/Datos")
+datos<-read.csv("iris.csv",sep = ";",dec='.',header=T)
+equilibrio.variable.predecir(datos,"tipo")
+```
+
+### Predicción
+
+```{r comment=NA,warning=FALSE}
+library(nnet)
+setwd("~/Google Drive/MDCurso/Datos")
+datos<-read.csv("iris.csv",sep = ";",dec='.',header=T)
+## Vamos a generar al azar una tabla de testing de tamaño 50 y una tabla de aprendizaje de tamaño 100.
+muestra <- sample(1:150,50)
+ttesting <- datos[muestra,]
+taprendizaje <- datos[-muestra,]
+# size = número de de nodos en la capa oculta
+# rang = pesos iniciales
+# decay = grado de decrecimiento de los pesos
+# maxit = número máximo de iteraciones (default=100)
+# MaxNWts = Número máximo de pesos (default=1000)
+modelo<-nnet(tipo~.,data=taprendizaje,size = 4, rang = 0.1,decay = 5e-4, maxit = 200,MaxNWts=500,trace=FALSE)
+modelo
+# Type="class" hace que el modelo prediga clases y no valores de Regresión
+prediccion<-predict(modelo, ttesting[,-5],type = "class")
+prediccion
+## Matriz de Confusión
+MC<-table(ttesting$tipo,prediccion)
+# Índices de Calidad de la predicción
+indices.general(MC)
+```
+
+### Predicción con selección de variables
+
+```{r comment=NA,warning=FALSE}
+setwd("~/Google Drive/MDCurso/Datos")
+datos<-read.csv("iris.csv",sep = ";",dec='.',header=T)
+library(nnet)
+# size = número de de nodos en la capa oculta
+# rang = pesos iniciales
+# decay = grado de decrecimiento de los pesos
+# maxit = número máximo de iteraciones (default=100)
+# MaxNWts = Número máximo de pesos (default=1000)
+modelo<-nnet(tipo~p.largo+p.ancho,data=taprendizaje,size = 4, rang = 0.1,decay = 5e-4, maxit = 200,MaxNWts=500,trace=FALSE)
+modelo
+# Type="class" hace que el modelo prediga clases y no valores de Regresión
+prediccion<-predict(modelo, ttesting[,-5],type = "class")
+prediccion
+## Matriz de Confusión
+MC<-table(ttesting$tipo,prediccion)
+# Índices de Calidad de la predicción
+indices.general(MC)
+```
+
+## Ejemplo Scoring
+
+### Distribución de las clases
+
+```{r comment=NA}
+setwd("~/Google Drive/MDCurso/Datos")
+datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
+equilibrio.variable.predecir(datos,"BuenPagador")
+```
+
+### Predicción
+
+```{r comment=NA}
+library(ada)
+setwd("~/Google Drive/MDCurso/Datos")
+datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
+tam<-dim(datos)
+# Recodifica las variables como categóricas ordinales
+datos$IngresoNeto <- factor(datos$IngresoNeto,ordered = TRUE)
+datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo,ordered = TRUE)
+str(datos)
+## Vamos a generar al azar una tabla de testing de tamaño 50 y una tabla de aprendizaje de tamaño 100.
+n<-tam[1]
+muestra <- sample(1:n,floor(n*0.15))
+ttesting <- datos[muestra,]
+taprendizaje <- datos[-muestra,]
+# Genera el modelo con parámetros por defecto
+# Importante size=250, con size=4 la predicción sería muy mala
+modelo<-nnet(BuenPagador~.,data=taprendizaje,size = 200,MaxNWts=5000,rang = 0.1,decay = 5e-4, maxit = 200,trace=FALSE)
+modelo
+## Usamos una nueva tabla de testing para validar
+prediccion<-predict(modelo, ttesting[,-6],type = "class")
+## Matriz de Confusión
+MC<-table(ttesting$BuenPagador,prediccion)
+# Índices de Calidad de la predicción
+indices.general(MC)
+```
+
+
+### Selección de Variables
+
+```{r comment=NA,fig.width=20,fig.height=10}
+library(ggplot2)
+setwd("~/Google Drive/MDCurso/Datos")
+datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
+# Recodifica las variables como categóricas ordinales
+datos$IngresoNeto <- factor(datos$IngresoNeto,ordered = TRUE)
+datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo,ordered = TRUE)
+str(datos)
+
+poder.predictivo.numerica(datos, "BuenPagador","MontoCredito")
+poder.predictivo.categorica(datos,"BuenPagador", "CoefCreditoAvaluo")
+poder.predictivo.categorica(datos,"BuenPagador", "MontoCuota")
+poder.predictivo.categorica(datos,"BuenPagador", "GradoAcademico")
+poder.predictivo.categorica(datos,"BuenPagador", "IngresoNeto")
+```
+
+### Predicción con selección de variables
+
+```{r comment=NA}
+library(nnet)
+setwd("~/Google Drive/MDCurso/Datos")
+datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
+tam<-dim(datos)
+# Recodifica las variables como categóricas ordinales
+datos$IngresoNeto <- factor(datos$IngresoNeto,ordered = TRUE)
+datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo,ordered = TRUE)
+str(datos)
+## Vamos a generar al azar una tabla de testing de tamaño 50 y una tabla de aprendizaje de tamaño 100.
+n<-tam[1]
+muestra <- sample(1:n,floor(n*0.15))
+ttesting <- datos[muestra,]
+taprendizaje <- datos[-muestra,]
+# Genera el modelo con parámetros por defecto
+# Importante size=250, con size=4 la predicción sería muy mala
+modelo<-nnet(BuenPagador~CoefCreditoAvaluo+MontoCredito+IngresoNeto,data=taprendizaje,size = 200,MaxNWts=5000,rang = 0.1,decay = 5e-4, maxit = 200,trace=FALSE)
+modelo
+## Usamos una nueva tabla de testing para validar
+prediccion<-predict(modelo, ttesting[,-6],type = "class")
+## Matriz de Confusión
+MC<-table(ttesting$BuenPagador,prediccion)
+# Índices de Calidad de la predicción
+indices.general(MC)
+```
+
+# Guardar en disco el modelo
+
+```{r guarda1,comment=NA}
+library(nnet)
+# Leyendo Datos
+setwd("~/Google Drive/MDCurso/Datos")
+datos<-read.csv("iris.csv",sep = ";",dec='.',header=T)
+muestra <- sample(1:150,50)
+taprendizaje <- datos[-muestra,]
+modelo<-nnet(tipo~.,data=taprendizaje,size = 4, rang = 0.1,decay = 5e-4, maxit = 200,trace=FALSE)
+#Guarda el modelo
+save(modelo, file = "modelo_redes_iris.rda")
+```
+
+
+## Un mes después, por ejemplo, lee el modelo y hace predicciones
+
+
+```{r guarda2,comment=NA}
+setwd("~/Google Drive/MDCurso/Datos")
+datos<-read.csv("iris.csv",sep = ";",dec='.',header=T)
+muestra <- sample(1:150,50)
+ttesting <- datos[muestra,]
+# Automáticamente queda en la variable en la que fue guardada, o sea modelo
+load("modelo_redes_iris.rda")  
+# Type="class" hace que el modelo prediga clases y no valores de Regresión
+prediccion<-predict(modelo, ttesting[,-5],type = "class")
+## Matriz de Confusión
+MC<-table(ttesting$tipo,prediccion)
+# Índices de Calidad de la predicción
+indices.general(MC)
+```
+
+# Ejemplo con los datos de Scoring y Bosques Aleatorios
+
+
+## Guardar en disco el modelo
+
+
+```{r guarda3,comment=NA}
+# Leyendo Datos
+library(randomForest)
+setwd("~/Google Drive/MDCurso/Datos")
+taprendizaje<-read.csv("MuestraAprendizajeCredito2500.csv",sep = ";",header=T)
+modelo<-randomForest(BuenPagador~.,data=taprendizaje,importance=TRUE)
+#Guarda el modelo
+save(modelo, file = "modelo_bosques_scoring.rda")
+```
+
+
+# Un mes después, por ejemplo, lee el modelo y hacen predicciones
+
+```{r guarda4,comment=NA}
+setwd("~/Google Drive/MDCurso/Datos")
+ttesting<-read.csv("MuestraTestCredito2500.csv",sep = ";",header=T)
+# Lee el modelo del disco duro
+load("modelo_bosques_scoring.rda")  
+prediccion<-predict(modelo, ttesting[,-6])
+## Matriz de Confusión
+MC<-table(ttesting$BuenPagador,prediccion)
+# Índices de Calidad de la predicción
+indices.general(MC)
+```
+
+# Con el paqute "neuralnet"
+
+# Este paquete requiere preparación extra de los datos
+
+```{r, cache = TRUE}
+library(dummies)
+library(neuralnet)
+library(car) # Para recode
+
+setwd("~/Google Drive/MDCurso/Datos")
+datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
+tam<-dim(datos)
+# Recodifica las variables como categóricas (no usar ordinales)
+datos$IngresoNeto <- factor(datos$IngresoNeto)
+datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo)
+
+# Las variables categóricas se deben pasar a dummy, excepto la variable a predecir
+datos1 <- cbind(dummy.data.frame(datos[, -6]), datos[6]) 
+str(datos1)
+head(datos1)
+
+# Las variables se deben escalar, excepto la variable a predecir que ahora está en la columna 22
+datos1[, -22] <- scale(datos1[, -22])
+head(datos1)
+
+# Pasamos la variable a predecir a numérica
+datos1$BuenPagador<-recode(datos1$BuenPagado,"'Si'=1")
+datos1$BuenPagador<-recode(datos1$BuenPagado,"'No'=0")
+datos1$BuenPagador <- as.numeric(as.character(datos1$BuenPagador))
+str(datos1)
+head(datos1)
+
+# Obtenemos fórmula
+nombres <- colnames(datos1)
+formula <- as.formula(paste("BuenPagador ~", paste(nombres[!nombres %in% c("BuenPagador")], collapse = " + ")))
+formula
+
+# Genera training y testing
+n<-tam[1]
+muestra <- sample(1:n,floor(n*0.15))
+ttesting <- datos1[muestra,]
+taprendizaje <- datos1[-muestra,]
+
+# Generamos el modelo
+modelo <- neuralnet(formula, data = taprendizaje, hidden = c(6, 4, 3), linear.output = FALSE, threshold = 0.1, stepmax = 1e+06)
+
+# Se usa compute para predecir, la variable a predecir está en la columna 22 por eso se quita
+prediccion <- neuralnet::compute(modelo, ttesting[, -22])$net.result
+prediccion <- as.factor(round(prediccion, digits = 0))
+head(prediccion)
+
+MC <- table(ttesting$BuenPagador, prediccion)
+indices.general(MC)
+
+# Plot de la red. rep = "best" grafica la mejor repetición según el parámetro rep en neuralnet
+plot(modelo, rep = "best")
+```
+

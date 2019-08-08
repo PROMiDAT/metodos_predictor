@@ -1,0 +1,389 @@
+---
+output:
+  html_document:
+    highlight: haddock
+    theme: cerulean
+---
+
+![](logo.jpg)
+
+Métodos de Predictivos (Clasificación o Aprendizaje-Supervisado)
+========================================================
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, comment = NA)
+```
+
+# Índices de Calidad del Modelo y funciones auxiliares
+
+```{r st1, comment=NA}
+library(tidyverse)
+library(glue)
+library(scales)
+
+equilibrio.variable.predecir <- function(datos, variable.predecir, ylab = "Cantidad de individuos", 
+                                        xlab = "", main = paste("Distribución de la variable",variable.predecir), col = NA) {
+  gg_color <- function (n) {
+     hues <- seq(15, 375, length = n + 1)
+     hcl(h = hues, l = 65, c = 100)[1:n]
+  }
+  if(missing(variable.predecir) | !(variable.predecir %in% colnames(datos))){
+    stop("variable.predecir tiene que ser ingresada y ser un nombre de columna", call. = FALSE )
+  }
+  if(is.character(datos[,variable.predecir]) | is.factor(datos[,variable.predecir])){
+    if(length(col) == 0 || is.na(col)){
+      col <- gg_color(length(unique(datos[,variable.predecir])))
+    }else{
+      col <- rep(col,length(unique(datos[,variable.predecir])))
+    }
+    ggplot(data = datos, mapping = aes_string(x = variable.predecir, fill = variable.predecir)) +
+      geom_bar() +
+      scale_fill_manual(values = col, name = variable.predecir) +
+      labs(x = xlab, y = ylab, title = main) +
+      theme_minimal() +
+      theme(legend.position = "bottom")
+  }else{
+    stop("La variable a predecir tienen que ser de tipo factor o character", call. = FALSE )
+  }
+}
+
+poder.predictivo.numerica <- function(datos, variable.predecir, variable.comparar, ylab = "", 
+                                       xlab = "", main = paste("Densidad de la variable", variable.comparar, 'según', variable.predecir), col = NA){
+  gg_color <- function (n) {
+     hues <- seq(15, 375, length = n + 1)
+     hcl(h = hues, l = 65, c = 100)[1:n]
+  }
+  if(missing(variable.predecir) | !(variable.predecir %in% colnames(datos))){
+    stop("variable.predecir tiene que ser ingresada y ser un nombre de columna", call. = FALSE )
+  }
+  if(missing(variable.comparar) | !(variable.comparar %in% colnames(datos)) | !is.numeric(datos[,variable.comparar])){
+    stop("variable.comparar tiene que ser ingresada y ser un nombre de columna numérica", call. = FALSE )
+  }
+  
+  if(is.character(datos[,variable.predecir]) | is.factor(datos[,variable.predecir])){
+    if(length(col) == 0 || is.na(col)){
+      col <- gg_color(length(unique(datos[,variable.predecir])))
+    }else{
+      col <- rep(col,length(unique(datos[,variable.predecir])))
+    }
+    
+    ggplot(data = datos, aes_string(variable.comparar, fill = variable.predecir)) +
+      geom_density(alpha = .7, color = NA) +
+      scale_fill_manual(values = col) +
+      labs(title = main , y = ylab, x = xlab ,fill = variable.predecir) +
+      theme_minimal() +
+      theme(legend.position = 'bottom',
+            legend.title = element_blank(),
+            text = element_text(size = 15))
+    
+  }else{
+    stop("La variable a predecir tienen que ser de tipo factor o character", call. = FALSE )
+  }
+}
+
+poder.predictivo.categorica <- function(datos, variable.predecir, variable.comparar, ylab = "", 
+                                        xlab = "", main = paste("Densidad de la variable", variable.comparar, 'según', variable.predecir), col = NA) {
+  gg_color <- function (n) {
+     hues <- seq(15, 375, length = n + 1)
+     hcl(h = hues, l = 65, c = 100)[1:n]
+  }
+  if(missing(variable.predecir) | !(variable.predecir %in% colnames(datos))){
+    stop("variable.predecir tiene que ser ingresada y ser un nombre de columna", call. = FALSE )
+  }
+  if(missing(variable.comparar) | !(variable.comparar %in% colnames(datos)) | 
+     !(is.factor(datos[,variable.comparar]) | is.character(datos[,variable.comparar])) ){
+    stop("variable.comparar tiene que ser ingresada y ser un nombre de columna categórica", call. = FALSE )
+  }
+  
+  if(is.character(datos[,variable.predecir]) | is.factor(datos[,variable.predecir])){
+    if(length(col) == 0 || is.na(col)){
+      col <- gg_color(length(unique(datos[,variable.predecir])))
+    }else{
+      col <- rep(col,length(unique(datos[,variable.predecir])))
+    }
+    
+    datos2 <- datos %>%
+      dplyr::group_by_(variable.comparar, variable.predecir) %>%
+      dplyr::summarise(count = n())
+    
+    if(variable.comparar != variable.predecir){
+      datos2 <-   datos2 %>% dplyr::group_by_(variable.comparar)
+    }
+    datos2 <- datos2 %>% dplyr::mutate(prop = round(count/sum(count),4))
+  
+    ggplot(data = datos2, mapping = aes_string(x = variable.comparar, y = "prop", fill = variable.predecir)) +
+      geom_col(position = "fill") +
+      geom_text(aes(label = glue("{percent(prop)} ({count})")), position = position_stack(vjust = .5), color = "white") +
+      scale_y_continuous(label = percent) +
+      labs(y =  xlab, x  = ylab, title = main) +
+      scale_fill_manual(values = col, name = variable.predecir) +
+      theme(legend.position = "bottom")+
+      coord_flip()
+    
+  }else{
+    stop("La variable a predecir tienen que ser de tipo factor o character", call. = FALSE )
+  }
+}
+
+# Índices para matrices NxN
+indices.general <- function(MC) {
+  precision.global <- sum(diag(MC))/sum(MC)
+  error.global <- 1 - precision.global
+  precision.categoria <- diag(MC)/rowSums(MC)
+  res <- list(matriz.confusion = MC, precision.global = precision.global, error.global = error.global, 
+              precision.categoria = precision.categoria)
+  names(res) <- c("Matriz de Confusión", "Precisión Global", "Error Global", 
+                  "Precisión por categoría")
+  return(res)
+}
+
+```
+
+# El método de los K vecinos más cercanos
+
+## Ejemplo Iris
+
+### Distribución de las clases
+
+```{r comment=NA}
+setwd("~/Desktop/Datos/")
+datos<-read.csv("iris.csv",sep = ";",dec='.',header=T)
+equilibrio.variable.predecir(datos,"tipo")
+```
+
+### Predicción
+
+```{r}
+setwd("~/Desktop/Datos/")
+datos <- read.csv("iris.csv",sep = ";",dec='.',header=T)
+
+## Vamos a generar al azar una tabla de testing de tamaño 50 y una tabla de aprendizaje de tamaño 100.
+muestra <- sample(1:nrow(datos), 50)
+ttesting <- datos[muestra,]
+taprendizaje <- datos[-muestra,]
+```
+
+
+```{r comment=NA}
+library(kknn)
+
+# train.kknn escoje el k usando leave-one-out crossvalidation
+modelo <- train.kknn(tipo~.,data=taprendizaje,kmax=9)
+modelo
+prediccion <- predict(modelo,ttesting[,-5])
+prediccion
+
+## Matriz de Confusión
+MC <- table(ttesting[,5], prediccion)
+
+# Índices de Calidad de la predicción
+indices.general(MC)
+```
+
+```{r, warning=FALSE}
+library(trainR)
+
+modelo <- train.knn(tipo~., data = taprendizaje, kmax=9)
+modelo
+prediccion <- predict(modelo, ttesting)
+prediccion
+
+## Matriz de Confusión
+MC <- confusion.matrix(ttesting, prediccion)
+
+# Índices de Calidad de la predicción
+general.indexes(mc = MC)
+```
+
+
+
+
+### Selección de Variables
+
+```{r comment=NA}
+setwd("~/Desktop/Datos/")
+datos <- read.csv("iris.csv",sep = ";",dec='.',header=T)
+
+poder.predictivo.numerica(datos, "tipo","s.largo")
+poder.predictivo.numerica(datos, "tipo","s.ancho")
+poder.predictivo.numerica(datos, "tipo","p.largo")
+poder.predictivo.numerica(datos, "tipo","p.ancho")
+```
+
+### Predicción con selección de variables
+
+```{r, warning=FALSE}
+setwd("~/Desktop/Datos/")
+datos <- read.csv("iris.csv",sep = ";",dec='.',header=T)
+
+## Vamos a generar al azar una tabla de testing de tamaño 50 y una tabla de aprendizaje de tamaño 100.
+muestra <- sample(1:nrow(datos), 50)
+ttesting <- datos[muestra,]
+taprendizaje <- datos[-muestra,]
+```
+
+
+```{r comment=NA,warning=FALSE}
+library(kknn)
+
+# train.kknn escoje el k usando leave-one-out crossvalidation
+modelo <- train.kknn(tipo~p.largo+p.ancho, data = taprendizaje, kmax = 9)
+modelo
+prediccion <- predict(modelo, ttesting[,-5])
+prediccion
+
+## Matriz de Confusión
+MC <- table(ttesting[,5],prediccion)
+
+# Índices de Calidad de la predicción
+indices.general(MC)
+```
+
+```{r}
+library(trainR)
+
+modelo <- train.knn(tipo~p.largo+p.ancho, data = taprendizaje, kmax = 9)
+modelo
+prediccion <- predict(modelo, ttesting)
+prediccion
+
+## Matriz de Confusión
+MC <- confusion.matrix(ttesting, prediccion)
+
+# Índices de Calidad de la predicción
+general.indexes(mc = MC)
+```
+
+
+## Ejemplo Scoring
+
+### Distribución de las clases
+
+```{r comment=NA, warning=FALSE}
+setwd("~/Desktop/Datos/")
+datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
+equilibrio.variable.predecir(datos,"BuenPagador")
+```
+
+### Predicción
+
+```{r, warning=FALSE}
+setwd("~/Desktop/Datos/")
+datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
+
+# Recodifica las variables como categóricas ordinales
+datos$IngresoNeto <- factor(datos$IngresoNeto, ordered = TRUE)
+datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo, ordered = TRUE)
+str(datos)
+
+## Vamos a generar al azar una tabla de testing con 15% de los datos y una tabla de aprendizaje  con 85%
+muestra <- sample(1:nrow(datos), floor(nrow(datos)*0.15))
+ttesting <- datos[muestra,]
+taprendizaje <- datos[-muestra,]
+```
+
+
+```{r comment=NA}
+library(kknn)
+
+# train.kknn escoje el k usando leave-one-out crossvalidation
+modelo<-train.kknn(BuenPagador~.,data=taprendizaje,kmax=floor(sqrt(nrow(datos))))
+modelo
+
+prediccion <- predict(modelo,ttesting[,-6])
+prediccion
+
+## Matriz de Confusión
+MC <- table(ttesting[,6],prediccion)
+
+# Índices de Calidad de la predicción
+indices.general(MC)
+```
+
+```{r comment=NA}
+library(trainR)
+
+# train.kknn escoje el k usando leave-one-out crossvalidation
+modelo <- train.knn(BuenPagador~., data = taprendizaje, kmax = floor(sqrt(nrow(datos))))
+modelo
+
+prediccion<-predict(modelo, ttesting)
+prediccion
+
+## Matriz de Confusión
+MC <- confusion.matrix(ttesting, prediccion)
+
+# Índices de Calidad de la predicción
+general.indexes(mc = MC)
+```
+
+### Selección de Variables
+
+```{r comment=NA,fig.width=20,fig.height=10}
+library(ggplot2)
+setwd("~/Desktop/Datos/")
+datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
+
+# Recodifica las variables como categóricas ordinales
+datos$IngresoNeto <- factor(datos$IngresoNeto,ordered = TRUE)
+datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo,ordered = TRUE)
+str(datos)
+
+poder.predictivo.numerica(datos, "BuenPagador","MontoCredito")
+poder.predictivo.categorica(datos,"BuenPagador", "CoefCreditoAvaluo")
+poder.predictivo.categorica(datos,"BuenPagador", "MontoCuota")
+poder.predictivo.categorica(datos,"BuenPagador", "GradoAcademico")
+poder.predictivo.categorica(datos,"BuenPagador", "IngresoNeto")
+```
+
+### Predicción con selección de variables
+
+```{r}
+setwd("~/Desktop/Datos/")
+datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
+datos$IngresoNeto <- factor(datos$IngresoNeto,ordered = TRUE)
+datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo,ordered = TRUE)
+str(datos)
+
+muestra <- sample(1:nrow(datos),floor(nrow(datos)*0.15))
+ttesting <- datos[muestra,]
+taprendizaje <- datos[-muestra,]
+```
+
+
+```{r}
+library(kknn)
+
+# train.kknn escoje el k usando leave-one-out crossvalidation
+modelo<-train.kknn(BuenPagador~CoefCreditoAvaluo+MontoCuota+IngresoNeto+GradoAcademico, 
+                   data = taprendizaje, kmax = floor(sqrt(nrow(datos))))
+modelo
+
+prediccion<-predict(modelo,ttesting[,-6])
+prediccion
+
+## Matriz de Confusión
+MC<-table(ttesting[,6],prediccion)
+
+# Índices de Calidad de la predicción
+indices.general(MC)
+```
+
+
+```{r comment=NA}
+library(trainR)
+
+# train.kknn escoje el k usando leave-one-out crossvalidation
+modelo <- train.knn(BuenPagador~CoefCreditoAvaluo+MontoCuota+IngresoNeto+GradoAcademico, 
+                    data = taprendizaje, kmax = floor(sqrt(nrow(datos))))
+modelo
+
+prediccion<-predict(modelo, ttesting)
+prediccion
+
+## Matriz de Confusión
+MC <- confusion.matrix(ttesting, prediccion)
+
+# Índices de Calidad de la predicción
+general.indexes(mc = MC)
+```

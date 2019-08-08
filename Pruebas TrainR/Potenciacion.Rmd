@@ -1,0 +1,247 @@
+---
+output:
+  html_document:
+    highlight: haddock
+    theme: cerulean
+---
+
+![](logo.jpg)
+
+Métodos de Predictivos (Clasificación o Aprendizaje-Supervisado)
+========================================================
+
+Dr. Oldemar Rodríguez
+--------------------------
+
+# Índices de Calidad del Modelo 
+
+# Índices de Calidad del Modelo y funciones auxiliares
+
+```{r st1,comment=NA,warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(glue)
+library(scales)
+
+equilibrio.variable.predecir <- function(datos, variable.predecir, ylab = "Cantidad de individuos", 
+                                        xlab = "", main = paste("Distribución de la variable",variable.predecir), col = NA) {
+  gg_color <- function (n) {
+     hues <- seq(15, 375, length = n + 1)
+     hcl(h = hues, l = 65, c = 100)[1:n]
+  }
+  if(missing(variable.predecir) | !(variable.predecir %in% colnames(datos))){
+    stop("variable.predecir tiene que ser ingresada y ser un nombre de columna", call. = FALSE )
+  }
+  if(is.character(datos[,variable.predecir]) | is.factor(datos[,variable.predecir])){
+    if(length(col) == 0 || is.na(col)){
+      col <- gg_color(length(unique(datos[,variable.predecir])))
+    }else{
+      col <- rep(col,length(unique(datos[,variable.predecir])))
+    }
+    ggplot(data = datos, mapping = aes_string(x = variable.predecir, fill = variable.predecir)) +
+      geom_bar() +
+      scale_fill_manual(values = col, name = variable.predecir) +
+      labs(x = xlab, y = ylab, title = main) +
+      theme_minimal() +
+      theme(legend.position = "bottom")
+  }else{
+    stop("La variable a predecir tienen que ser de tipo factor o character", call. = FALSE )
+  }
+}
+
+poder.predictivo.numerica <- function(datos, variable.predecir, variable.comparar, ylab = "", 
+                                       xlab = "", main = paste("Densidad de la variable", variable.comparar, 'según', variable.predecir), col = NA){
+  gg_color <- function (n) {
+     hues <- seq(15, 375, length = n + 1)
+     hcl(h = hues, l = 65, c = 100)[1:n]
+  }
+  if(missing(variable.predecir) | !(variable.predecir %in% colnames(datos))){
+    stop("variable.predecir tiene que ser ingresada y ser un nombre de columna", call. = FALSE )
+  }
+  if(missing(variable.comparar) | !(variable.comparar %in% colnames(datos)) | !is.numeric(datos[,variable.comparar])){
+    stop("variable.comparar tiene que ser ingresada y ser un nombre de columna numérica", call. = FALSE )
+  }
+  
+  if(is.character(datos[,variable.predecir]) | is.factor(datos[,variable.predecir])){
+    if(length(col) == 0 || is.na(col)){
+      col <- gg_color(length(unique(datos[,variable.predecir])))
+    }else{
+      col <- rep(col,length(unique(datos[,variable.predecir])))
+    }
+    
+    ggplot(data = datos, aes_string(variable.comparar, fill = variable.predecir)) +
+      geom_density(alpha = .7, color = NA) +
+      scale_fill_manual(values = col) +
+      labs(title = main , y = ylab, x = xlab ,fill = variable.predecir) +
+      theme_minimal() +
+      theme(legend.position = 'bottom',
+            legend.title = element_blank(),
+            text = element_text(size = 15))
+    
+  }else{
+    stop("La variable a predecir tienen que ser de tipo factor o character", call. = FALSE )
+  }
+}
+
+poder.predictivo.categorica <- function(datos, variable.predecir, variable.comparar, ylab = "", 
+                                        xlab = "", main = paste("Densidad de la variable", variable.comparar, 'según', variable.predecir), col = NA) {
+  gg_color <- function (n) {
+     hues <- seq(15, 375, length = n + 1)
+     hcl(h = hues, l = 65, c = 100)[1:n]
+  }
+  if(missing(variable.predecir) | !(variable.predecir %in% colnames(datos))){
+    stop("variable.predecir tiene que ser ingresada y ser un nombre de columna", call. = FALSE )
+  }
+  if(missing(variable.comparar) | !(variable.comparar %in% colnames(datos)) | 
+     !(is.factor(datos[,variable.comparar]) | is.character(datos[,variable.comparar])) ){
+    stop("variable.comparar tiene que ser ingresada y ser un nombre de columna categórica", call. = FALSE )
+  }
+  
+  if(is.character(datos[,variable.predecir]) | is.factor(datos[,variable.predecir])){
+    if(length(col) == 0 || is.na(col)){
+      col <- gg_color(length(unique(datos[,variable.predecir])))
+    }else{
+      col <- rep(col,length(unique(datos[,variable.predecir])))
+    }
+    
+    datos2 <- datos %>%
+      dplyr::group_by_(variable.comparar, variable.predecir) %>%
+      dplyr::summarise(count = n())
+    
+    if(variable.comparar != variable.predecir){
+      datos2 <-   datos2 %>% dplyr::group_by_(variable.comparar)
+    }
+    datos2 <- datos2 %>% dplyr::mutate(prop = round(count/sum(count),4))
+  
+    ggplot(data = datos2, mapping = aes_string(x = variable.comparar, y = "prop", fill = variable.predecir)) +
+      geom_col(position = "fill") +
+      geom_text(aes(label = glue("{percent(prop)} ({count})")), position = position_stack(vjust = .5), color = "white") +
+      scale_y_continuous(label = percent) +
+      labs(y =  xlab, x  = ylab, title = main) +
+      scale_fill_manual(values = col, name = variable.predecir) +
+      theme(legend.position = "bottom")+
+      coord_flip()
+    
+  }else{
+    stop("La variable a predecir tienen que ser de tipo factor o character", call. = FALSE )
+  }
+}
+# Índices para matrices NxN
+indices.general <- function(MC) {
+  precision.global <- sum(diag(MC))/sum(MC)
+  error.global <- 1 - precision.global
+  precision.categoria <- diag(MC)/rowSums(MC)
+  res <- list(matriz.confusion = MC, precision.global = precision.global, error.global = error.global, 
+              precision.categoria = precision.categoria)
+  names(res) <- c("Matriz de Confusión", "Precisión Global", "Error Global", 
+                  "Precisión por categoría")
+  return(res)
+}
+```
+
+
+# El método de Potenciación - ADA Boosting 
+# Funciona cuando la variable a predecir tiene solo para 2 clases
+
+## Ejemplo Scoring
+
+### Distribución de las clases
+
+```{r comment=NA}
+setwd("~/Google Drive/MDCurso/Datos")
+datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
+equilibrio.variable.predecir(datos,"BuenPagador")
+```
+
+### Predicción
+
+```{r comment=NA}
+library(ada)
+setwd("~/Google Drive/MDCurso/Datos")
+datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
+tam<-dim(datos)
+# Recodifica las variables como categóricas ordinales
+datos$IngresoNeto <- factor(datos$IngresoNeto,ordered = TRUE)
+datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo,ordered = TRUE)
+str(datos)
+## Vamos a generar al azar una tabla de testing de tamaño 50 y una tabla de aprendizaje de tamaño 100.
+n<-tam[1]
+muestra <- sample(1:n,floor(n*0.15))
+ttesting <- datos[muestra,]
+taprendizaje <- datos[-muestra,]
+# Genera el modelo con parámetros por defecto
+modelo<-ada(BuenPagador~.,data=taprendizaje)
+modelo
+# Graficar el modelo
+plot(modelo,TRUE,TRUE)
+# Importancia de la variables
+varplot(modelo)
+## Matriz de Confusión
+prediccion<-predict(modelo, ttesting[,-6])
+MC<-table(ttesting$BuenPagador,prediccion)
+# Índices de Calidad de la predicción
+indices.general(MC)
+# Genera el modelo con parámetros por defecto con diferentes parámetros:
+# Con 200 árboles iter = 200, por defecto iter = 50
+# Con otro algoritmo interno type = 'real', por defecto type = 'discrete' ("discrete","real","gentle")
+# Con cantidad mínima por nodo = 2 y número de niveles = 30, por defecto rpart.control(minsplit = 20, maxdepth = 15)
+modelo <- ada(BuenPagador~., data = taprendizaje, iter = 200, type = 'real',control = rpart.control(minsplit = 2, maxdepth = 30))
+modelo
+# Graficar el modelo
+plot(modelo,TRUE,TRUE)
+# Importancia de la variables
+varplot(modelo)
+## Matriz de Confusión
+prediccion<-predict(modelo, ttesting[,-6])
+MC<-table(ttesting$BuenPagador,prediccion)
+# Índices de Calidad de la predicción
+indices.general(MC)
+```
+
+### Selección de Variables
+
+```{r comment=NA,fig.width=20,fig.height=10}
+library(ggplot2)
+setwd("~/Google Drive/MDCurso/Datos")
+datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
+# Recodifica las variables como categóricas ordinales
+datos$IngresoNeto <- factor(datos$IngresoNeto,ordered = TRUE)
+datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo,ordered = TRUE)
+str(datos)
+
+poder.predictivo.numerica(datos, "BuenPagador","MontoCredito")
+poder.predictivo.categorica(datos,"BuenPagador", "CoefCreditoAvaluo")
+poder.predictivo.categorica(datos,"BuenPagador", "MontoCuota")
+poder.predictivo.categorica(datos,"BuenPagador", "GradoAcademico")
+poder.predictivo.categorica(datos,"BuenPagador", "IngresoNeto")
+```
+
+### Predicción con selección de variables
+
+```{r comment=NA}
+setwd("~/Google Drive/MDCurso/Datos")
+datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
+tam<-dim(datos)
+# Recodifica las variables como categóricas ordinales
+datos$IngresoNeto <- factor(datos$IngresoNeto,ordered = TRUE)
+datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo,ordered = TRUE)
+str(datos)
+## Vamos a generar al azar una tabla de testing de tamaño 50 y una tabla de aprendizaje de tamaño 100.
+n<-tam[1]
+muestra <- sample(1:n,floor(n*0.15))
+ttesting <- datos[muestra,]
+taprendizaje <- datos[-muestra,]
+# Genera el modelo con selección de variables
+modelo <- ada(BuenPagador~CoefCreditoAvaluo+MontoCredito+IngresoNeto, data = taprendizaje, iter = 200, type = 'real',control = rpart.control(minsplit = 2, maxdepth = 30))
+modelo
+# Graficar el modelo
+plot(modelo,TRUE,TRUE)
+# Importancia de la variables
+varplot(modelo)
+## Matriz de Confusión
+prediccion<-predict(modelo, ttesting[,-6])
+MC<-table(ttesting$BuenPagador,prediccion)
+# Índices de Calidad de la predicción
+indices.general(MC)
+```

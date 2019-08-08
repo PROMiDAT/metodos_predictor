@@ -111,3 +111,33 @@ get_test_less_predict <- function(data, var.pred){
 print.prmdt <- function(x, ...){
   print(original_model(x), ...)
 }
+
+#' Printing prmdt prediction object
+#'
+#' @param x A prmdt prediction object
+#' @param ... optional arguments to print o format method
+#'
+#' @export
+print.prediction.prmdt <- function(x, ...){
+  class(x) <- class(x)[-1]
+  attr(x, "var.pred") <- NULL
+  print(x, ...)
+}
+
+
+#' Printing prmdt index object
+#'
+#' @param x A prmdt index object
+#' @param ... optional arguments to print o format method
+#'
+#' @export
+print.indexes.prmdt <- function(x, ...){
+  out <- c("\nConfusion Matrix:",capture.output(x$confusion.matrix))
+  out <- paste(out, collapse = "\n")
+  out <- paste0(out, sprintf("\n\nOverall Accuracy: %3.4f\nOverall Error: %9.4f\n", x$overall.accuracy, x$overall.error))
+  out.aux <- do.call(sprintf, c(paste0(rep("%13s", length(x$category.accuracy)), collapse = ""), as.list(names(x$category.accuracy))))
+  out.aux <- paste0("\nCategory Accuracy:\n\n",out.aux, "\n",
+                    do.call(sprintf, c(paste0(rep("%13f", length(x$category.accuracy)), collapse = ""), as.list(as.numeric(x$category.accuracy)))))
+  out <- paste0(out, out.aux)
+  cat(out)
+}

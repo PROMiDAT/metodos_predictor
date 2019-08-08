@@ -1,4 +1,5 @@
-export(train.ada, train.rpart, train.bayes, train.randomForest, train.knn, train.nnet, train.neuralnet, train.svm, train.xgboost, train.glm, contr.dummy, contr.ordinal)
+export(train.ada, train.rpart, train.bayes, train.randomForest, train.knn, train.nnet, train.neuralnet, train.svm, train.xgboost, train.glm, contr.dummy, contr.ordinal,
+       confusion.matrix, general.indexes)
 
 importFrom("stats", "na.fail", "na.omit", "na.pass", "update", "as.formula", "predict", "binomial", "glm")
 importFrom("utils", "head")
@@ -24,3 +25,5 @@ S3method(predict, svm.prmdt)
 S3method(predict, xgb.Booster.prmdt)
 S3method(predict, glm.prmdt)
 S3method(print, prmdt)
+S3method(print, prediction.prmdt)
+S3method(print, indexes.prmdt)

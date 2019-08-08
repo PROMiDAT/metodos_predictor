@@ -59,15 +59,13 @@ n <- seq_len(nrow(Puromycin))
 data.train <- Puromycin[.sample,]
 data.test <- Puromycin[-.sample,]
 
-real <- data.test$state
-
 modelo.glm <- train.glm(state~., data.train)
 modelo.glm
 prob <- predict(modelo.glm, data.test , type = "prob")
 prob
 prediccion <- predict(modelo.glm, data.test , type = "class")
 prediccion
-table(real, prediccion)
+confusion.matrix(data.test, prediccion)
 
 }
 \seealso{

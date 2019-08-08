@@ -1,4 +1,14 @@
 
+#' create.prediction
+#'
+#' @keywords internal
+#'
+create.prediction  <- function(model, prediction){
+  attr(prediction, "var.pred") <- model$prmdt$var.pred
+  class(prediction) <- c("prediction.prmdt", class(prediction))
+  return(prediction)
+}
+
 #' predict.ada.prmdt
 #'
 #'
@@ -11,10 +21,10 @@ predict.ada.prmdt <- function(object, newdata, type = "class", n.iter = NULL, ..
   ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), type, n.iter, ...)
   if(type == "prob"){
     colnames(ans) <- object$prmdt$levels
-    return(ans)
   }else{
-    return(type_correction(object, ans, type == "vector"))
+    ans <- type_correction(object, ans, type == "vector")
   }
+  return(create.prediction(object, ans))
 }
 
 #' predict.bayes.prmdt
@@ -27,7 +37,8 @@ predict.ada.prmdt <- function(object, newdata, type = "class", n.iter = NULL, ..
 predict.bayes.prmdt <- function(object, newdata, type = "class", threshold = 0.001, eps = 0, ...){
   type <- ifelse(type == "prob", "raw", type)
   ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), type, threshold, eps, ...)
-  type_correction(object, ans, type == "class")
+  ans <- type_correction(object, ans, type == "class")
+  return(create.prediction(object, ans))
 }
 
 #' predict.knn.prmdt
@@ -40,7 +51,8 @@ predict.bayes.prmdt <- function(object, newdata, type = "class", threshold = 0.0
 predict.knn.prmdt <- function(object, newdata, type = "class", ...){
   type <- ifelse(type == "class", "raw", type)
   ans <- predict(original_model(object), type = type, get_test_less_predict(newdata, object$prmdt$var.pred), ...)
-  type_correction(object, ans, type == "raw") # ojo
+  ans <- type_correction(object, ans, type == "raw")
+  return(create.prediction(object, ans))
 }
 
 #' predict.nnet.prmdt
@@ -63,7 +75,7 @@ predict.nnet.prmdt <- function(object, newdata, type = "class", ...){
     }
   }
   ans <- type_correction(object, ans, type == "class")
-  return(ans)
+  return(create.prediction(object, ans))
 }
 
 #' predict.neuralnet.prmdt
@@ -91,7 +103,7 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
   ans <- neuralnet::compute(original_model(object), newdata[, -selector])
 
   if(type == "all"){
-    return(ans)
+    return(create.prediction(object, ans))
   }
 
   ans <- ans$net.result
@@ -103,7 +115,7 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
     ans <- type_correction(object, ans, type == "class")
   }
 
-  return(ans)
+  return(create.prediction(object, ans))
 }
 
 #' predict.randomForest.prmdt
@@ -118,10 +130,11 @@ predict.randomForest.prmdt <- function(object, newdata, type = "class", norm.vot
   ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), type, norm.votes, predict.all, proximity, nodes, cutoff, ...)
   if(type == "prob"){
     class(ans) <- "matrix"
-    return(ans)
   }else{
-    return(type_correction(object, ans, type == "response"))
+    ans <- type_correction(object, ans, type == "response")
   }
+
+  return(create.prediction(object, ans))
 }
 
 #' predict.rpart.prmdt
@@ -132,7 +145,8 @@ predict.randomForest.prmdt <- function(object, newdata, type = "class", norm.vot
 #'
 predict.rpart.prmdt <- function(object, newdata, type = "class", na.action = na.pass, ...){
   ans <- predict(original_model(object), newdata, type, na.action, ...)
-  type_correction(object, ans, type == "class")
+  ans <- type_correction(object, ans, type == "class")
+  return(create.prediction(object, ans))
 }
 
 #' predict.svm.prmdt
@@ -146,10 +160,10 @@ predict.svm.prmdt <- function(object, newdata, type = "class", decision.values =
   if(type == "prob"){
     ans <- attributes(ans)$probabilities
     ans <- ans[,object$prmdt$levels]
-    return(ans)
   }else{
-    return(type_correction(object, ans,  type == "class"))
+    ans <- type_correction(object, ans,  type == "class")
   }
+  return(create.prediction(object, ans))
 }
 
 #' predict.xgb.Booster
@@ -202,7 +216,9 @@ predict.xgb.Booster.prmdt <- function(object, newdata, type = "class", missing =
     colnames(ans) <- object$prmdt$levels
   }
 
-  type_correction(object, ans, type == "class")
+  ans <- type_correction(object, ans, type == "class")
+
+  return(create.prediction(object, ans))
 }
 
 
@@ -220,9 +236,9 @@ predict.glm.prmdt <- function(object, newdata, type = "class", se.fit = FALSE, d
     ans <- matrix(as.numeric(ans), ncol = 1, byrow = TRUE)
     ans <- cbind(1 - ans, ans)
     colnames(ans) <- levels.class
-    return(ans)
   }else{
     ans <- ifelse(ans > 0.5, levels.class[2], levels.class[1])
-    return(type_correction(object, ans, type == "class"))
+    ans <- type_correction(object, ans, type == "class")
   }
+  return(create.prediction(object, ans))
 }

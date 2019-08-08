@@ -26,11 +26,9 @@ Provides a wrapping function for the \code{\link[ada]{ada}}.
 data("Puromycin")
 
 n <- seq_len(nrow(Puromycin))
-.sample <- sample(n, length(n) * 0.65)
+.sample <- sample(n, length(n) * 0.75)
 data.train <- Puromycin[.sample,]
 data.test <- Puromycin[-.sample,]
-
-real <- data.test$state
 
 modelo.ada <- train.ada(state~., data.train)
 modelo.ada
@@ -38,7 +36,7 @@ prob <- predict(modelo.ada, data.test , type = "prob")
 prob
 prediccion <- predict(modelo.ada, data.test , type = "class")
 prediccion
-table(real, prediccion)
+confusion.matrix(data.test, prediccion)
 
 }
 \seealso{

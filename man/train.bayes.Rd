@@ -32,15 +32,13 @@ n <- seq_len(nrow(iris))
 data.train <- iris[.sample,]
 data.test <- iris[-.sample,]
 
-real <- data.test$Species
-
 modelo.bayes <- train.bayes(Species ~., data.train)
 modelo.bayes
 prob <- predict(modelo.bayes, data.test, type = "prob")
 prob
 prediccion <- predict(modelo.bayes, data.test, type = "class")
 prediccion
-table(real, prediccion)
+confusion.matrix(data.test, prediccion)
 
 }
 \seealso{

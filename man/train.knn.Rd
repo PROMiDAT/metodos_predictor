@@ -43,15 +43,13 @@ n <- seq_len(nrow(iris))
 data.train <- iris[.sample,]
 data.test <- iris[-.sample,]
 
-real <- data.test$Species
-
 modelo.knn <- train.knn(Species~., data.train)
 modelo.knn
 prob <- predict(modelo.knn, data.test, type = "prob")
 prob
 prediccion <- predict(modelo.knn, data.test, type = "class")
 prediccion
-table(real, prediccion)
+confusion.matrix(data.test, prediccion)
 
 }
 \seealso{

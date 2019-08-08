@@ -40,11 +40,9 @@ create.model <- function(model, formula, data,  name = NULL){
 #' data("Puromycin")
 #'
 #' n <- seq_len(nrow(Puromycin))
-#' .sample <- sample(n, length(n) * 0.65)
+#' .sample <- sample(n, length(n) * 0.75)
 #' data.train <- Puromycin[.sample,]
 #' data.test <- Puromycin[-.sample,]
-#'
-#' real <- data.test$state
 #'
 #' modelo.ada <- train.ada(state~., data.train)
 #' modelo.ada
@@ -52,14 +50,25 @@ create.model <- function(model, formula, data,  name = NULL){
 #' prob
 #' prediccion <- predict(modelo.ada, data.test , type = "class")
 #' prediccion
-#' table(real, prediccion)
+#' confusion.matrix(data.test, prediccion)
 #'
 train.ada <- function(formula, data, ..., subset, na.action = na.rpart){
-  if(missing(subset)){
-    model <- ada(formula = formula, data = data, ... = ..., na.action = na.action)
-  }else{
-    model <- ada(formula = formula, data = data, ... = ..., subset = subset, na.action = na.action)
+  m <- match.call(expand.dots = FALSE)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
   }
+  m[[1L]] <- quote(ada::ada)
+  my.list <- as.list(m$...)
+  for(.name in names(my.list)) {
+    m[[.name]] <- my.list[[.name]]
+  }
+  m$... <- NULL
+  model <- eval.parent(m)
+  # if(missing(subset)){
+  #   model <- ada(formula = formula, data = data, ... = ..., na.action = na.action)
+  # }else{
+  #   model <- ada(formula = formula, data = data, ... = ..., subset = subset, na.action = na.action)
+  # }
   create.model(model, formula, data, "ada.prmdt")
 }
 
@@ -100,34 +109,43 @@ train.ada <- function(formula, data, ..., subset, na.action = na.rpart){
 #' data.train <- iris[.sample,]
 #' data.test <- iris[-.sample,]
 #'
-#' real <- data.test$Species
-#'
 #' modelo.rpart <- train.rpart(Species~., data.train)
 #' modelo.rpart
 #' prob <- predict(modelo.rpart, data.test, type = "prob")
 #' prob
 #' prediccion <- predict(modelo.rpart, data.test, type = "class")
 #' prediccion
-#' table(real, prediccion)
+#' confusion.matrix(data.test, prediccion)
 #'
 train.rpart <- function(formula, data, weights, subset, na.action = na.rpart, method, model = TRUE, x = FALSE, y = TRUE, parms, control, cost, ...){
-  if(missing(weights) & missing(subset)){
-    model <- rpart(formula = formula, data = data, na.action = na.action, method = method, model = model,
-                   x = x , y = y , parms = parms, control = control, cost = cost, ... = ...)
-  }else{
-    if((!missing(weights)) & (!missing(subset))){
-      model <- rpart(formula = formula, data = data, weights = weights, subset = subset, na.action = na.action, method = method, model = model,
-                     x = x , y = y , parms = parms, control = control, cost = cost, ... = ...)
-    }else{
-      if(!missing(weights)){
-        model <- rpart(formula = formula, data = data, weights = weights, na.action = na.action, method = method, model = model,
-                       x = x , y = y , parms = parms, control = control, cost = cost, ... = ...)
-      }else{
-        model <- rpart(formula = formula, data = data, subset = subset, na.action = na.action, method = method, model = model,
-                       x = x , y = y , parms = parms, control = control, cost = cost, ... = ...)
-      }
-    }
+  m <- match.call(expand.dots = FALSE)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
   }
+  m[[1L]] <- quote(rpart::rpart)
+  my.list <- as.list(m$...)
+  for(.name in names(my.list)) {
+    m[[.name]] <- my.list[[.name]]
+  }
+  m$... <- NULL
+  model <- eval.parent(m)
+  # if(missing(weights) & missing(subset)){
+  #   model <- rpart(formula = formula, data = data, na.action = na.action, method = method, model = model,
+  #                  x = x , y = y , parms = parms, control = control, cost = cost, ... = ...)
+  # }else{
+  #   if((!missing(weights)) & (!missing(subset))){
+  #     model <- rpart(formula = formula, data = data, weights = weights, subset = subset, na.action = na.action, method = method, model = model,
+  #                    x = x , y = y , parms = parms, control = control, cost = cost, ... = ...)
+  #   }else{
+  #     if(!missing(weights)){
+  #       model <- rpart(formula = formula, data = data, weights = weights, na.action = na.action, method = method, model = model,
+  #                      x = x , y = y , parms = parms, control = control, cost = cost, ... = ...)
+  #     }else{
+  #       model <- rpart(formula = formula, data = data, subset = subset, na.action = na.action, method = method, model = model,
+  #                      x = x , y = y , parms = parms, control = control, cost = cost, ... = ...)
+  #     }
+  #   }
+  # }
 
   create.model(model, formula, data, "rpart.prmdt")
 }
@@ -157,23 +175,31 @@ train.rpart <- function(formula, data, weights, subset, na.action = na.rpart, me
 #' data.train <- iris[.sample,]
 #' data.test <- iris[-.sample,]
 #'
-#' real <- data.test$Species
-#'
 #' modelo.bayes <- train.bayes(Species ~., data.train)
 #' modelo.bayes
 #' prob <- predict(modelo.bayes, data.test, type = "prob")
 #' prob
 #' prediccion <- predict(modelo.bayes, data.test, type = "class")
 #' prediccion
-#' table(real, prediccion)
+#' confusion.matrix(data.test, prediccion)
 #'
 train.bayes <- function(formula, data, laplace = 0, ..., subset, na.action = na.pass){
-  if(missing(subset)){
-    model <- naiveBayes(formula = formula, data = data, laplace = laplace, ... = ..., na.action = na.action)
-  }else{
-    model <- naiveBayes(formula = formula, data = data, laplace = laplace, ... = ..., subset = subset, na.action = na.action)
+  m <- match.call(expand.dots = FALSE)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
   }
-
+  m[[1L]] <- quote(e1071::naiveBayes)
+  my.list <- as.list(m$...)
+  for(.name in names(my.list)) {
+    m[[.name]] <- my.list[[.name]]
+  }
+  m$... <- NULL
+  model <- eval.parent(m)
+  # if(missing(subset)){
+  #   model <- naiveBayes(formula = formula, data = data, laplace = laplace, ... = ..., na.action = na.action)
+  # }else{
+  #   model <- naiveBayes(formula = formula, data = data, laplace = laplace, ... = ..., subset = subset, na.action = na.action)
+  # }
   create.model(model, formula, data, "bayes.prmdt")
 }
 
@@ -201,22 +227,31 @@ train.bayes <- function(formula, data, laplace = 0, ..., subset, na.action = na.
 #' data.train <- iris[.sample,]
 #' data.test <- iris[-.sample,]
 #'
-#' real <- data.test$Species
-#'
 #' modelo.rf <- train.randomForest(Species~., data.train)
 #' modelo.rf
 #' prob <- predict(modelo.rf, data.test, type = "prob")
 #' prob
 #' prediccion <- predict(modelo.rf, data.test, type = "class")
 #' prediccion
-#' table(real, prediccion)
+#' confusion.matrix(data.test, prediccion)
 #'
 train.randomForest <- function(formula, data, ..., subset, na.action = na.fail){
-  if(missing(subset)){
-    model <- randomForest(formula = formula, data = data, ... = ..., na.action = na.action)
-  }else{
-    model <- randomForest(formula = formula, data = data, ... = ..., subset = subset, na.action = na.action)
+  m <- match.call(expand.dots = FALSE)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
   }
+  m[[1L]] <- quote(randomForest::randomForest)
+  my.list <- as.list(m$...)
+  for(.name in names(my.list)) {
+    m[[.name]] <- my.list[[.name]]
+  }
+  m$... <- NULL
+  model <- eval.parent(m)
+  # if(missing(subset)){
+  #   model <- randomForest(formula = formula, data = data, ... = ..., na.action = na.action)
+  # }else{
+  #   model <- randomForest(formula = formula, data = data, ... = ..., subset = subset, na.action = na.action)
+  # }
   create.model(model, formula, data, "randomForest.prmdt")
 }
 
@@ -250,22 +285,30 @@ train.randomForest <- function(formula, data, ..., subset, na.action = na.fail){
 #' data.train <- iris[.sample,]
 #' data.test <- iris[-.sample,]
 #'
-#' real <- data.test$Species
-#'
 #' modelo.knn <- train.knn(Species~., data.train)
 #' modelo.knn
 #' prob <- predict(modelo.knn, data.test, type = "prob")
 #' prob
 #' prediccion <- predict(modelo.knn, data.test, type = "class")
 #' prediccion
-#' table(real, prediccion)
+#' confusion.matrix(data.test, prediccion)
 #'
 train.knn <- function(formula, data, kmax = 11, ks = NULL, distance = 2, kernel = "optimal", ykernel = NULL,
-                      scale = TRUE, contrasts = c('unordered' = "contr.dummy",ordered = "contr.ordinal"), ...){
+                      scale = TRUE, contrasts = c('unordered' = "contr.dummy", ordered = "contr.ordinal"), ...){
 
-  model <- train.kknn(formula = formula, data = data, kmax = kmax, ks = ks, distance = distance, kernel = kernel,  ykernel = ykernel,
-                      scale =  scale, contrasts = contrasts, ordered = ordered, ... = ...)
-
+  m <- match.call(expand.dots = FALSE)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
+  }
+  m[[1L]] <- quote(kknn::train.kknn)
+  my.list <- as.list(m$...)
+  for(.name in names(my.list)) {
+    m[[.name]] <- my.list[[.name]]
+  }
+  m$... <- NULL
+  model <- eval.parent(m)
+  # model <- train.kknn(formula = formula, data = data, kmax = kmax, ks = ks, distance = distance, kernel = kernel,  ykernel = ykernel,
+  #                     scale =  scale, contrasts = contrasts, ordered = ordered, ... = ...)
   create.model(model, formula, data, "knn.prmdt")
 }
 
@@ -297,15 +340,13 @@ train.knn <- function(formula, data, kmax = 11, ks = NULL, distance = 2, kernel 
 #' data.train <- iris[.sample,]
 #' data.test <- iris[-.sample,]
 #'
-#' real <- data.test$Species
-#'
 #' modelo.nn <- train.nnet(Species~., data.train, size = 20)
 #' modelo.nn
 #' prob <- predict(modelo.nn, data.test, type = "prob")
 #' prob
 #' prediccion <- predict(modelo.nn, data.test, type = "class")
 #' prediccion
-#' table(real, prediccion)
+#' confusion.matrix(data.test, prediccion)
 #'
 train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts = NULL){
   m <- match.call(expand.dots = FALSE)
@@ -369,8 +410,6 @@ train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts
 #' data.train <- iris[.sample,]
 #' data.test <- iris[-.sample,]
 #'
-#' real <- data.test$Species
-#'
 #' modelo.neuralnet <- train.neuralnet(Species~., data.train,hidden = c(10, 14, 13),
 #'                                     linear.output = FALSE, threshold = 0.01, stepmax = 1e+06)
 #' modelo.neuralnet
@@ -378,7 +417,7 @@ train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts
 #' prob
 #' prediccion <- predict(modelo.neuralnet, data.test, type = "class")
 #' prediccion
-#' table(real, prediccion)
+#' confusion.matrix(data.test, prediccion)
 #'
 train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax = 1e+05, rep = 1, startweights = NULL, learningrate.limit = NULL,
                             learningrate.factor = list(minus = 0.5, plus = 1.2), learningrate = NULL, lifesign = "none", lifesign.step = 1000,
@@ -457,25 +496,34 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
 #' data.train <- iris[.sample,]
 #' data.test <- iris[-.sample,]
 #'
-#' real <- data.test$Species
-#'
 #' modelo.svm <- train.svm(Species~., data.train)
 #' modelo.svm
 #' prob <- predict(modelo.svm, data.test , type = "prob")
 #' prob
 #' prediccion <- predict(modelo.svm, data.test , type = "class")
 #' prediccion
-#' table(real, prediccion)
+#' confusion.matrix(data.test, prediccion)
 #'
 train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = TRUE){
-  args <- list(...)
-  args$probability <- NULL
-  if(missing(subset)){
-    model <- svm(formula = formula, data = data, probability = TRUE, ... = args, na.action = na.action, scale = scale)
-  }else{
-    model <- svm(formula = formula, data = data, probability = TRUE, ... = args, subset = subset, na.action = na.action, scale = scale)
+  m <- match.call(expand.dots = FALSE)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
   }
-
+  m[[1L]] <- quote(e1071::svm)
+  my.list <- as.list(m$...)
+  for(.name in names(my.list)) {
+    m[[.name]] <- my.list[[.name]]
+  }
+  m$... <- NULL
+  m$probability <- TRUE
+  model <- eval.parent(m)
+  # args <- list(...)
+  # args$probability <- NULL
+  # if(missing(subset)){
+  #   model <- svm(formula = formula, data = data, probability = TRUE, ... = args, na.action = na.action, scale = scale)
+  # }else{
+  #   model <- svm(formula = formula, data = data, probability = TRUE, ... = args, subset = subset, na.action = na.action, scale = scale)
+  # }
   create.model(model, formula, data, "svm.prmdt")
 }
 
@@ -554,15 +602,13 @@ train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = T
 #' data.train <- iris[.sample,]
 #' data.test <- iris[-.sample,]
 #'
-#' real <- data.test$Species
-#'
 #' modelo.xg <- train.xgboost(Species~., data.train, nrounds = 79, maximize = FALSE)
 #' modelo.xg
 #' prob <- predict(modelo.xg, data.test, type = "prob")
 #' prob
 #' prediccion <- predict(modelo.xg, data.test, type = "class")
 #' prediccion
-#' table(real, prediccion)
+#' confusion.matrix(data.test, prediccion)
 #'
 train.xgboost <- function(formula, data, nrounds, watchlist = list(), obj = NULL, feval = NULL,
                           verbose = 1, print_every_n = 1L, early_stopping_rounds = NULL, maximize = NULL,
@@ -664,15 +710,13 @@ train.xgboost <- function(formula, data, nrounds, watchlist = list(), obj = NULL
 #' data.train <- Puromycin[.sample,]
 #' data.test <- Puromycin[-.sample,]
 #'
-#' real <- data.test$state
-#'
 #' modelo.glm <- train.glm(state~., data.train)
 #' modelo.glm
 #' prob <- predict(modelo.glm, data.test , type = "prob")
 #' prob
 #' prediccion <- predict(modelo.glm, data.test , type = "class")
 #' prediccion
-#' table(real, prediccion)
+#' confusion.matrix(data.test, prediccion)
 #'
 train.glm <- function(formula,  data, family = binomial, weights, subset, na.action, start = NULL, etastart, mustart, offset, control = list(...),
                       model = TRUE, method = "glm.fit", x = FALSE, y = TRUE, singular.ok = TRUE, contrasts = NULL, ...){
@@ -690,4 +734,5 @@ train.glm <- function(formula,  data, family = binomial, weights, subset, na.act
   model <- eval.parent(m)
   create.model(model, formula, data, "glm.prmdt")
 }
+
 

@@ -72,8 +72,6 @@ n <- seq_len(nrow(iris))
 data.train <- iris[.sample,]
 data.test <- iris[-.sample,]
 
-real <- data.test$Species
-
 modelo.neuralnet <- train.neuralnet(Species~., data.train,hidden = c(10, 14, 13),
                                     linear.output = FALSE, threshold = 0.01, stepmax = 1e+06)
 modelo.neuralnet
@@ -81,7 +79,7 @@ prob <- predict(modelo.neuralnet, data.test, type = "prob")
 prob
 prediccion <- predict(modelo.neuralnet, data.test, type = "class")
 prediccion
-table(real, prediccion)
+confusion.matrix(data.test, prediccion)
 
 }
 \seealso{

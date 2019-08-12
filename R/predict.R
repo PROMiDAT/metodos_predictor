@@ -86,7 +86,6 @@ predict.nnet.prmdt <- function(object, newdata, type = "class", ...){
 #' @keywords internal
 #'
 predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
-
   selector <- unlist(lapply(newdata, is.ordered))
 
   if(any(selector)){
@@ -99,6 +98,10 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
 
   selector <- which(colnames(newdata) == var.predict)
   newdata[, -selector] <- scale(newdata[, -selector])
+
+  # if(!is.numeric(newdata[, selector])){
+  #   newdata[, selector] <- as.numeric(newdata[, selector])
+  # }
 
   ans <- neuralnet::compute(original_model(object), newdata[, -selector])
 

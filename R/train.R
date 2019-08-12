@@ -426,9 +426,7 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
                             learningrate.factor = list(minus = 0.5, plus = 1.2), learningrate = NULL, lifesign = "none", lifesign.step = 1000,
                             algorithm = "rprop+", err.fct = "sse", act.fct = "logistic", linear.output = TRUE, exclude = NULL, constant.weights = NULL,
                             likelihood = FALSE){
-
   aux_data <- head(data)
-
   selector <- unlist(lapply(data, is.ordered))
 
   if(any(selector)){
@@ -437,12 +435,21 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
 
   var.predict <- as.character(formula[2])
   selector <- which(colnames(data) == var.predict)
+  class.names <- unique(data[,selector])
 
-  suppressWarnings(data <- cbind(dummy.data.frame(data[, -selector, drop = FALSE], drop = FALSE, dummy.classes = c("factor","character") ), data[,selector]))
+  suppressWarnings(data <- cbind(as.data.frame(scale(dummy.data.frame(data[, -selector, drop = FALSE], drop = FALSE, dummy.classes = c("factor","character")))), data[,selector]))
   colnames(data) <- c(colnames(data)[-ncol(data)], var.predict)
 
-  selector <- which(colnames(data) == var.predict)
-  data[, -selector] <- scale(data[, -selector])
+  # selector <- which(colnames(data) == var.predict)
+  # data[, -selector] <- scale(data[, -selector])
+
+  # if(!is.numeric(data[, selector])){
+  #   data[, selector] <- as.numeric(data[, selector]) - 1
+  # }
+
+  data <- data %>% dplyr::mutate(.valor.nuevo = TRUE, i = row_number()) %>%
+                   tidyr::spread(key = var.predict, value = '.valor.nuevo', fill = FALSE) %>%
+                   dplyr::select(-i)
 
   .vars <- all.vars(formula[-2])
   if(length(.vars) == 1 && .vars == "."){
@@ -460,13 +467,22 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
     }
   }
 
-  formula <- update(formula, as.formula(paste0("~",paste0(.colnames, collapse = "+"))))
 
-  model <- neuralnet(formula, data, hidden = hidden, threshold = threshold, stepmax, rep, startweights, learningrate.limit,
+  formula.aux <- update(formula, as.formula(paste0(paste0("`",rev(class.names),"`", collapse = "+"),"~",paste0(.colnames[!(.colnames %in% class.names)], collapse = "+"))))
+
+  m <- match.call(expand.dots = FALSE)
+  m$data <- quote(data)
+  m[[1L]] <- quote(neuralnet::neuralnet)
+  my.list <- as.list(m$...)
+  m$formula <- formula.aux
+  model <- eval(m, envir = environment())
+
+
+  model <- neuralnet(formula.aux, data, hidden = hidden, threshold = threshold, stepmax, rep, startweights, learningrate.limit,
                      learningrate.factor, learningrate, lifesign, lifesign.step, algorithm, err.fct, act.fct, linear.output,
                      exclude, constant.weights, likelihood)
 
-  create.model(model, formula, data, "neuralnet.prmdt")
+  create.model(model, formula, aux_data, "neuralnet.prmdt")
 
 }
 

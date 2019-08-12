@@ -4,7 +4,7 @@
 #' @keywords internal
 #'
 select_on_class <- function(.data, clases = "numeric") {
-  .data[, sapply(.data, function(vec, clss) class(vec) %in% clss, clss = clases), drop  = FALSE]
+  .data[, sapply(.data, function(vec, clss) any(class(vec) %in% clss), clss = clases), drop  = FALSE]
 }
 
 #' contr.dummy
@@ -88,7 +88,7 @@ type_correction <- function(model, prediction, fix){
 #' @keywords internal
 #'
 original_model <- function(x){
-  class(x) <- class(x)[-(1:2)]
+  class(x) <- class(x)[!str_detect(class(x), "prmdt")]
   x$prmdt <- NULL
   return(x)
 }
@@ -141,3 +141,29 @@ print.indexes.prmdt <- function(x, ...){
   out <- paste0(out, out.aux)
   cat(out)
 }
+
+
+#' Plotting prmdt models
+#'
+#' @param x A prmdt models
+#' @param ... optional arguments to print o format method
+#'
+#' @export
+#'
+plot.prmdt <- function(x, ...){
+  x <- original_model(x)
+  plot(x, ...)
+}
+
+#' Plotting prmdt ada models
+#'
+#' @param x A ada prmdt model
+#' @param ... optional arguments to print o format method
+#'
+#' @export
+#'
+varplot <- function(x, ...){
+  x <- original_model(x)
+  ada::varplot(x, ...)
+}
+

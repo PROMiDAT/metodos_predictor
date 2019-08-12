@@ -11,10 +11,10 @@ general.indexes(newdata, prediction, mc = NULL)
 
 \item{prediction}{a prmdt prediction object.}
 
-\item{mc}{}
+\item{mc}{(optional) a matrix for calculating the indices.}
 }
 \description{
-create a lis
+create a list with the confusion matrix, overall accuracy, overall error and the category accuracy
 }
 \examples{
 

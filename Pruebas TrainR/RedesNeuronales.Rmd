@@ -7,25 +7,25 @@ output:
 
 ![](logo.jpg)
 
-Métodos de Predictivos (Clasificación o Aprendizaje-Supervisado)
+MÃ©todos de Predictivos (ClasificaciÃ³n o Aprendizaje-Supervisado)
 ========================================================
 
-Dr. Oldemar Rodríguez
+Dr. Oldemar RodrÃ�guez
 --------------------------
 
-# Índices de Calidad del Modelo 
+# Ãndices de Calidad del Modelo 
 
 ```{r st1,comment=NA,warning=FALSE}
 library(tidyverse)
-# Índices para matrices NxN
+# Ãndices para matrices NxN
 indices.general <- function(MC) {
   precision.global <- sum(diag(MC))/sum(MC)
   error.global <- 1 - precision.global
   precision.categoria <- diag(MC)/rowSums(MC)
   res <- list(matriz.confusion = MC, precision.global = precision.global, error.global = error.global, 
               precision.categoria = precision.categoria)
-  names(res) <- c("Matriz de Confusión", "Precisión Global", "Error Global", 
-                  "Precisión por categoría")
+  names(res) <- c("Matriz de ConfusiÃ³n", "PrecisiÃ³n Global", "Error Global", 
+                  "PrecisiÃ³n por categorÃ�a")
   return(res)
 }
 
@@ -45,126 +45,126 @@ dist.x.predecir <- function(data, variable, variable.predecir) {
 }
 ```
 
-# El método Redes Neuronales
+# El mÃ©todo Redes Neuronales
 
 ## Ejemplo Iris
 
-### Distribución de las clases
+### DistribuciÃ³n de las clases
 
 ```{r comment=NA}
 setwd("~/Google Drive/MDCurso/Datos")
 datos<-read.csv("iris.csv",sep = ";",dec='.',header=T)
-barplot(prop.table(table(datos$tipo)),col=c("orange","blue","green"),main="Distribución de la variable a predecir")
+barplot(prop.table(table(datos$tipo)),col=c("orange","blue","green"),main="DistribuciÃ³n de la variable a predecir")
 ```
 
-### Predicción
+### PredicciÃ³n
 
 ```{r comment=NA,warning=FALSE}
 library(nnet)
 setwd("~/Google Drive/MDCurso/Datos")
 datos<-read.csv("iris.csv",sep = ";",dec='.',header=T)
-## Vamos a generar al azar una tabla de testing de tamaño 50 y una tabla de aprendizaje de tamaño 100.
+## Vamos a generar al azar una tabla de testing de tamaÃ±o 50 y una tabla de aprendizaje de tamaÃ±o 100.
 muestra <- sample(1:150,50)
 ttesting <- datos[muestra,]
 taprendizaje <- datos[-muestra,]
-# size = número de capas ocultas
+# size = nÃºmero de capas ocultas
 # rang = pesos iniciales
 # decay = grado de decrecimiento de los pesos
-# maxit = número máximo de iteraciones (default=100)
-# MaxNWts = Número máximo de pesos (default=1000)
+# maxit = nÃºmero mÃ¡ximo de iteraciones (default=100)
+# MaxNWts = NÃºmero mÃ¡ximo de pesos (default=1000)
 modelo<-nnet(tipo~.,data=taprendizaje,size = 4, rang = 0.1,decay = 5e-4, maxit = 200,MaxNWts=500,trace=FALSE)
 modelo
-# Type="class" hace que el modelo prediga clases y no valores de Regresión
+# Type="class" hace que el modelo prediga clases y no valores de RegresiÃ³n
 prediccion<-predict(modelo, ttesting[,-5],type = "class")
 prediccion
-## Matriz de Confusión
+## Matriz de ConfusiÃ³n
 MC<-table(ttesting$tipo,prediccion)
-# Índices de Calidad de la predicción
+# Ãndices de Calidad de la predicciÃ³n
 indices.general(MC)
 ```
 
-### Predicción con selección de variables
+### PredicciÃ³n con selecciÃ³n de variables
 
 ```{r comment=NA,warning=FALSE}
 setwd("~/Google Drive/MDCurso/Datos")
 datos<-read.csv("iris.csv",sep = ";",dec='.',header=T)
 library(nnet)
-# size = número de capas ocultas
+# size = nÃºmero de capas ocultas
 # rang = pesos iniciales
 # decay = grado de decrecimiento de los pesos
-# maxit = número máximo de iteraciones (default=100)
-# MaxNWts = Número máximo de pesos (default=1000)
+# maxit = nÃºmero mÃ¡ximo de iteraciones (default=100)
+# MaxNWts = NÃºmero mÃ¡ximo de pesos (default=1000)
 modelo<-nnet(tipo~p.largo+p.ancho,data=taprendizaje,size = 4, rang = 0.1,decay = 5e-4, maxit = 200,MaxNWts=500,trace=FALSE)
 modelo
-# Type="class" hace que el modelo prediga clases y no valores de Regresión
+# Type="class" hace que el modelo prediga clases y no valores de RegresiÃ³n
 prediccion<-predict(modelo, ttesting[,-5],type = "class")
 prediccion
-## Matriz de Confusión
+## Matriz de ConfusiÃ³n
 MC<-table(ttesting$tipo,prediccion)
-# Índices de Calidad de la predicción
+# Ãndices de Calidad de la predicciÃ³n
 indices.general(MC)
 ```
 
 ## Ejemplo Scoring
 
-### Distribución de las clases
+### DistribuciÃ³n de las clases
 
 ```{r comment=NA}
 setwd("~/Google Drive/MDCurso/Datos")
 datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
-barplot(prop.table(table(datos$BuenPagador)),col=c("orange","blue"),main="Distribución de la variable a predecir")
+barplot(prop.table(table(datos$BuenPagador)),col=c("orange","blue"),main="DistribuciÃ³n de la variable a predecir")
 ```
 
-### Predicción
+### PredicciÃ³n
 
 ```{r comment=NA}
 library(ada)
 setwd("~/Google Drive/MDCurso/Datos")
 datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
 tam<-dim(datos)
-# Recodifica las variables como categóricas ordinales
+# Recodifica las variables como categÃ³ricas ordinales
 datos$IngresoNeto <- factor(datos$IngresoNeto,ordered = TRUE)
 datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo,ordered = TRUE)
 str(datos)
-## Vamos a generar al azar una tabla de testing de tamaño 50 y una tabla de aprendizaje de tamaño 100.
+## Vamos a generar al azar una tabla de testing de tamaÃ±o 50 y una tabla de aprendizaje de tamaÃ±o 100.
 n<-tam[1]
 muestra <- sample(1:n,floor(n*0.15))
 ttesting <- datos[muestra,]
 taprendizaje <- datos[-muestra,]
-# Genera el modelo con parámetros por defecto
-# Importante size=250, con size=4 la predicción sería muy mala
+# Genera el modelo con parÃ¡metros por defecto
+# Importante size=250, con size=4 la predicciÃ³n serÃ�a muy mala
 modelo<-nnet(BuenPagador~.,data=taprendizaje,size = 200,MaxNWts=5000,rang = 0.1,decay = 5e-4, maxit = 200,trace=FALSE)
 modelo
 ## Usamos una nueva tabla de testing para validar
 prediccion<-predict(modelo, ttesting[,-6],type = "class")
-## Matriz de Confusión
+## Matriz de ConfusiÃ³n
 MC<-table(ttesting$BuenPagador,prediccion)
-# Índices de Calidad de la predicción
+# Ãndices de Calidad de la predicciÃ³n
 indices.general(MC)
 ```
 
 
-### Selección de Variables
+### SelecciÃ³n de Variables
 
 ```{r comment=NA,fig.width=20,fig.height=10}
 library(ggplot2)
 setwd("~/Google Drive/MDCurso/Datos")
 datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
-# Recodifica las variables como categóricas ordinales
+# Recodifica las variables como categÃ³ricas ordinales
 datos$IngresoNeto <- factor(datos$IngresoNeto,ordered = TRUE)
 datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo,ordered = TRUE)
 str(datos)
 
-# Variable numérica
+# Variable numÃ©rica
 ggplot(datos, aes_string('MontoCredito', fill = 'BuenPagador')) +
 geom_density( alpha = .85) +
 theme_minimal() +
 theme(text = element_text(size=15)) +
 scale_fill_manual(values = define.colores(length(levels(datos[,'BuenPagador'])))) +
-labs(title = 'Densidad de la variable MontoCredito según BuenPagador', y = '', x = '') +
+labs(title = 'Densidad de la variable MontoCredito segÃºn BuenPagador', y = '', x = '') +
 theme(legend.position = 'top', legend.title = element_blank(), text = element_text(size = 15))
 
-# Variables categóricas
+# Variables categÃ³ricas
 colores <- define.colores(length(unique(datos[,'BuenPagador'])))
 label.size <- 9.5 - length(unique(datos[,'IngresoNeto']))
 label.size <- ifelse(label.size < 3, 3, label.size)
@@ -178,7 +178,7 @@ theme(text = element_text(size=15)) +
 scale_fill_manual(values = colores) +
 scale_y_continuous(labels = scales::percent)+
 coord_flip() +
-labs(title = 'Distribución relativa de la variable IngresoNeto según la BuenPagador', x = '', y = '') +
+labs(title = 'DistribuciÃ³n relativa de la variable IngresoNeto segÃºn la BuenPagador', x = '', y = '') +
 guides(fill = guide_legend(reverse=T)) +
 theme(legend.position = 'top', legend.title = element_blank())
 
@@ -195,7 +195,7 @@ theme(text = element_text(size=15)) +
 scale_fill_manual(values = colores) +
 scale_y_continuous(labels = scales::percent)+
 coord_flip() +
-labs(title = 'Distribución relativa de la variable CoefCreditoAvaluo según la BuenPagador', x = '', y = '') +
+labs(title = 'DistribuciÃ³n relativa de la variable CoefCreditoAvaluo segÃºn la BuenPagador', x = '', y = '') +
 guides(fill = guide_legend(reverse=T)) +
 theme(legend.position = 'top', legend.title = element_blank())
 
@@ -212,7 +212,7 @@ theme(text = element_text(size=15)) +
 scale_fill_manual(values = colores) +
 scale_y_continuous(labels = scales::percent)+
 coord_flip() +
-labs(title = 'Distribución relativa de la variable MontoCuota según la BuenPagador', x = '', y = '') +
+labs(title = 'DistribuciÃ³n relativa de la variable MontoCuota segÃºn la BuenPagador', x = '', y = '') +
 guides(fill = guide_legend(reverse=T)) +
 theme(legend.position = 'top', legend.title = element_blank())
 
@@ -229,36 +229,36 @@ theme(text = element_text(size=15)) +
 scale_fill_manual(values = colores) +
 scale_y_continuous(labels = scales::percent)+
 coord_flip() +
-labs(title = 'Distribución relativa de la variable GradoAcademico según la BuenPagador', x = '', y = '') +
+labs(title = 'DistribuciÃ³n relativa de la variable GradoAcademico segÃºn la BuenPagador', x = '', y = '') +
 guides(fill = guide_legend(reverse=T)) +
 theme(legend.position = 'top', legend.title = element_blank())
 ```
 
-### Predicción con selección de variables
+### PredicciÃ³n con selecciÃ³n de variables
 
 ```{r comment=NA}
 library(ada)
 setwd("~/Google Drive/MDCurso/Datos")
 datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
 tam<-dim(datos)
-# Recodifica las variables como categóricas ordinales
+# Recodifica las variables como categÃ³ricas ordinales
 datos$IngresoNeto <- factor(datos$IngresoNeto,ordered = TRUE)
 datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo,ordered = TRUE)
 str(datos)
-## Vamos a generar al azar una tabla de testing de tamaño 50 y una tabla de aprendizaje de tamaño 100.
+## Vamos a generar al azar una tabla de testing de tamaÃ±o 50 y una tabla de aprendizaje de tamaÃ±o 100.
 n<-tam[1]
 muestra <- sample(1:n,floor(n*0.15))
 ttesting <- datos[muestra,]
 taprendizaje <- datos[-muestra,]
-# Genera el modelo con parámetros por defecto
-# Importante size=250, con size=4 la predicción sería muy mala
+# Genera el modelo con parÃ¡metros por defecto
+# Importante size=250, con size=4 la predicciÃ³n serÃ�a muy mala
 modelo<-nnet(BuenPagador~CoefCreditoAvaluo+MontoCredito+IngresoNeto,data=taprendizaje,size = 200,MaxNWts=5000,rang = 0.1,decay = 5e-4, maxit = 200,trace=FALSE)
 modelo
 ## Usamos una nueva tabla de testing para validar
 prediccion<-predict(modelo, ttesting[,-6],type = "class")
-## Matriz de Confusión
+## Matriz de ConfusiÃ³n
 MC<-table(ttesting$BuenPagador,prediccion)
-# Índices de Calidad de la predicción
+# Ãndices de Calidad de la predicciÃ³n
 indices.general(MC)
 ```
 
@@ -277,7 +277,7 @@ save(modelo, file = "modelo_redes_iris.rda")
 ```
 
 
-## Un mes después, por ejemplo, lee el modelo y hace predicciones
+## Un mes despuÃ©s, por ejemplo, lee el modelo y hace predicciones
 
 
 ```{r guarda2,comment=NA}
@@ -285,13 +285,13 @@ setwd("~/Google Drive/MDCurso/Datos")
 datos<-read.csv("iris.csv",sep = ";",dec='.',header=T)
 muestra <- sample(1:150,50)
 ttesting <- datos[muestra,]
-# Automáticamente queda en la variable en la que fue guardada, o sea modelo
+# AutomÃ¡ticamente queda en la variable en la que fue guardada, o sea modelo
 load("modelo_redes_iris.rda")  
-# Type="class" hace que el modelo prediga clases y no valores de Regresión
+# Type="class" hace que el modelo prediga clases y no valores de RegresiÃ³n
 prediccion<-predict(modelo, ttesting[,-5],type = "class")
-## Matriz de Confusión
+## Matriz de ConfusiÃ³n
 MC<-table(ttesting$tipo,prediccion)
-# Índices de Calidad de la predicción
+# Ãndices de Calidad de la predicciÃ³n
 indices.general(MC)
 ```
 
@@ -312,7 +312,7 @@ save(modelo, file = "modelo_bosques_scoring.rda")
 ```
 
 
-# Un mes después, por ejemplo, lee el modelo y hacen predicciones
+# Un mes despuÃ©s, por ejemplo, lee el modelo y hacen predicciones
 
 ```{r guarda4,comment=NA}
 setwd("~/Google Drive/MDCurso/Datos")
@@ -320,8 +320,8 @@ ttesting<-read.csv("MuestraTestCredito2500.csv",sep = ";",header=T)
 # Lee el modelo del disco duro
 load("modelo_bosques_scoring.rda")  
 prediccion<-predict(modelo, ttesting[,-6])
-## Matriz de Confusión
+## Matriz de ConfusiÃ³n
 MC<-table(ttesting$BuenPagador,prediccion)
-# Índices de Calidad de la predicción
+# Ãndices de Calidad de la predicciÃ³n
 indices.general(MC)
 ```

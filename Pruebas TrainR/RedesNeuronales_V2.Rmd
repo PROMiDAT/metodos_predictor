@@ -1,6 +1,7 @@
 ---
 output:
-  html_document:
+  html_document: 
+    df_print: paged
     highlight: haddock
     theme: cerulean
 ---
@@ -8,20 +9,25 @@ output:
 ![](logo.jpg)
 
 Métodos de Predictivos (Clasificación o Aprendizaje-Supervisado)
-========================================================
+---
 
-Dr. Oldemar Rodríguez
---------------------------
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, comment = NA, fig.width=15,fig.height=12)
+```
 
 # Índices de Calidad del Modelo y funciones auxiliares
 
-```{r st1,comment=NA,warning=FALSE}
+
+**Se necesita cargar las siguientes librerías**
+```{r}
 library(tidyverse)
-library(ggplot2)
-library(dplyr)
 library(glue)
 library(scales)
+```
 
+
+**Muestra la distribución de la variable a predecir**
+```{r}
 equilibrio.variable.predecir <- function(datos, variable.predecir, ylab = "Cantidad de individuos", 
                                         xlab = "", main = paste("Distribución de la variable",variable.predecir), col = NA) {
   gg_color <- function (n) {
@@ -47,7 +53,10 @@ equilibrio.variable.predecir <- function(datos, variable.predecir, ylab = "Canti
     stop("La variable a predecir tienen que ser de tipo factor o character", call. = FALSE )
   }
 }
+```
 
+**Muestra la distribución de una variable numérica según la variable a predecir**
+```{r}
 poder.predictivo.numerica <- function(datos, variable.predecir, variable.comparar, ylab = "", 
                                        xlab = "", main = paste("Densidad de la variable", variable.comparar, 'según', variable.predecir), col = NA){
   gg_color <- function (n) {
@@ -81,7 +90,10 @@ poder.predictivo.numerica <- function(datos, variable.predecir, variable.compara
     stop("La variable a predecir tienen que ser de tipo factor o character", call. = FALSE )
   }
 }
+```
 
+**Muestra la distribución de una variable categórica según la variable a predecir**
+```{r st1}
 poder.predictivo.categorica <- function(datos, variable.predecir, variable.comparar, ylab = "", 
                                         xlab = "", main = paste("Densidad de la variable", variable.comparar, 'según', variable.predecir), col = NA) {
   gg_color <- function (n) {
@@ -125,7 +137,10 @@ poder.predictivo.categorica <- function(datos, variable.predecir, variable.compa
     stop("La variable a predecir tienen que ser de tipo factor o character", call. = FALSE )
   }
 }
-# Índices para matrices NxN
+```
+
+**Índices para matrices NxN**
+```{r}
 indices.general <- function(MC) {
   precision.global <- sum(diag(MC))/sum(MC)
   error.global <- 1 - precision.global

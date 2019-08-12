@@ -246,6 +246,9 @@ train.randomForest <- function(formula, data, ..., subset, na.action = na.fail){
     m[[.name]] <- my.list[[.name]]
   }
   m$... <- NULL
+  if(is.null(m$importance)){
+    m$importance <- TRUE
+  }
   model <- eval.parent(m)
   # if(missing(subset)){
   #   model <- randomForest(formula = formula, data = data, ... = ..., na.action = na.action)

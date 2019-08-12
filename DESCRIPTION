@@ -18,7 +18,8 @@ Imports:
     dplyr (>= 0.8.0.1),
     ada (>= 2.0-5),
     nnet (>= 7.3-12),
-    dummies (>= 1.5.6)
+    dummies (>= 1.5.6),
+    stringr (>= 1.4.0)
 Description: This package seeks to unify the different ways of creating predictive models and their different predictive formats. It includes 
        methods such as K-Nearest Neighbors, Decision Trees, ADA Boosting, Extreme Gradient Boosting, Random Forest, Neural Networks, Deep Learning,
        Support Vector Machines and Bayesian Methods.

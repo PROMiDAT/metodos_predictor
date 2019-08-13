@@ -13,8 +13,7 @@ Métodos de Predictivos (Clasificación o Aprendizaje-Supervisado)
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, comment = NA, fig.width=15, fig.height=12)
-# options(encoding = "CP1252")
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, comment = NA, fig.width = 15, fig.height = 12)
 ```
 
 # Índices de Calidad del Modelo y Funciones Auxiliares
@@ -157,6 +156,8 @@ indices.general <- function(MC) {
 }
 ```
 
+---
+
 # El método de XGBoosting
 
 ## Métodos de Potenciación - eXtreme Gradient Boosting 
@@ -166,7 +167,7 @@ Este método se puede aplicar para 2 categorías o más, pero la forma de implem
 ### 2 Categorías - Ejemplo Scoring
 
 ```{r}
-setwd("~/Datos(CSV)/")
+setwd("~/Desktop/Datos/")
 datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
 
 # Recodifica las variables como categóricas ordinales
@@ -256,7 +257,6 @@ prediccion <- ifelse (prediccion > 0.5, clases[2], clases[1])
 prediccion
 ```
 
-
 **Se genera la matriz de confusión**
 ```{r}
 MC <- table(ttesting[,6], as.factor(prediccion))
@@ -315,7 +315,7 @@ indices
 ### Para más de 2 Categorías - Ejemplo Iris
 
 ```{r}
-setwd("~/Datos(CSV)/")
+setwd("~/Desktop/Datos/")
 datos<-read.csv("iris.csv",sep = ";",dec='.',header=T)
 datos
 ```
@@ -323,7 +323,6 @@ datos
 ```{r}
 str(datos)
 ```
-
 
 ### Distribución de las categorías
 

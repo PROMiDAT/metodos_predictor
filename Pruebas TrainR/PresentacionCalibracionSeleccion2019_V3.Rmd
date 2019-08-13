@@ -1,0 +1,450 @@
+---
+output:
+  html_document: 
+    df_print: paged
+    highlight: haddock
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, comment = NA, fig.width=13, fig.height = 10)
+```
+
+![](logo.jpg)
+
+# Calibración y Selección de Modelos en Paralelo
+
+## Calibrando el método "Máquinas Vectoriales de Soporte" para los datos de Scoring de Crédito
+
+## Versión NO Paralela
+
+#### Para esto usaremos archivo "MuestraCredito5000V2.csv""
+
+**En el caso del Scoring de Crédito lo que más interesa en detectar a los NO pagadores, por esa razón ejecutaremos 5 veces la validación cruzada usando 10 grupos. En cada paso de la valización cruzada vamos sumando los no pagadores detectados, luego para cada ejecución de la valizadación cruzada almacenamos la detección de los no pagadores en una entrada del vector respectivo al método para luego hacer un gráfico comparativo.**
+
+```{r}
+setwd("~/Desktop/Datos/")
+datos <- read.csv("MuestraCredito5000V2.csv", sep = ";", header=T)
+
+# Recodifica las variables como categóricas ordinales
+datos$IngresoNeto <- factor(datos$IngresoNeto,ordered = TRUE)
+datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo,ordered = TRUE)
+```
+
+## {.tabset}
+
+### Paquete e1071
+
+**Se cargan las librerías**
+```{r}
+library(caret)
+library(e1071)
+```
+
+```{r}
+numero.filas <- nrow(datos)
+cantidad.validacion.cruzada <- 5
+cantidad.grupos <- 10
+
+deteccion.no.radial <- rep(0, 5)
+deteccion.no.linear <- rep(0, 5)
+deteccion.no.polynomial <- rep(0, 5)
+deteccion.no.sigmoid <- rep(0, 5)
+
+tiempo.usual <- Sys.time() 
+
+for(i in seq_len(cantidad.validacion.cruzada)){
+  grupos  <- createFolds(1:numero.filas, cantidad.grupos)  # Crea los 10 grupos
+  no.radial <- 0
+  no.linear <- 0
+  no.polynomial <- 0
+  no.sigmoid <- 0
+  
+  # Este ciclo es el que hace 'cross-validation' (validación cruzada) con 10
+  # grupos (Folds)
+  for(k in 1:cantidad.grupos) {
+    muestra <- grupos[[k]]  # Por ser una lista requiere de doble paréntesis
+    ttesting <- datos[muestra, ]
+    taprendizaje <- datos[-muestra, ]
+    
+    muestra <- grupos[[k]]  # Por ser una lista requiere de doble paréntesis
+    ttesting <- datos[muestra, ]
+    taprendizaje <- datos[-muestra, ]
+    modelo <- svm(BuenPagador ~ ., data = taprendizaje, kernel = "radial")
+    prediccion <- predict(modelo, ttesting)
+    Actual <- ttesting[, 6]
+    MC <- table(Actual, prediccion)
+    # Detección de los NO Pagadores
+    no.radial <- no.radial + MC["No", "No"]
+    
+    modelo <- svm(BuenPagador ~ ., data = taprendizaje, kernel = "linear")
+    prediccion <- predict(modelo, ttesting)
+    Actual <- ttesting[, 6]
+    MC <- table(Actual, prediccion)
+    # Detección de los NO Pagadores
+    no.linear <- no.linear + MC["No", "No"]
+    
+    modelo <- svm(BuenPagador ~ ., data = taprendizaje, kernel = "polynomial")
+    prediccion <- predict(modelo, ttesting)
+    Actual <- ttesting[, 6]
+    MC <- table(Actual, prediccion)
+    # Detección de los NO Pagadores
+    no.polynomial <- no.polynomial + MC["No", "No"]
+    
+    modelo <- svm(BuenPagador ~ ., data = taprendizaje, kernel = "sigmoid")
+    prediccion <- predict(modelo, ttesting)
+    Actual <- ttesting[, 6]
+    MC <- table(Actual, prediccion)
+    # Detección de los NO Pagadores
+    no.sigmoid <- no.sigmoid + MC["No", "No"]
+  }
+  
+  deteccion.no.radial[i] <- no.radial
+  deteccion.no.linear[i] <- no.linear
+  deteccion.no.polynomial[i] <- no.polynomial
+  deteccion.no.sigmoid[i] <- no.sigmoid
+}
+
+tiempo.usual <- Sys.time() -  tiempo.usual
+```
+
+```{r}
+tiempo.usual
+```
+
+**Como se puede verificar en el gráfico el mejor resultado se obtiene usando un Kernel Radial**
+
+```{r}
+plot(deteccion.no.radial, col = "magenta", type = "b", 
+     ylim = c(min(deteccion.no.radial,
+                  deteccion.no.linear, deteccion.no.polynomial, 
+                  deteccion.no.sigmoid), max(deteccion.no.radial,
+                                             deteccion.no.linear, deteccion.no.polynomial, 
+                                             deteccion.no.sigmoid) + 150), # Cuidado con el + 150, es para ampliar el eje "y"
+     main = "Detección del NO pagador en SVM", 
+     xlab = "Número de iteración",
+     ylab = "Cantidad de NO pagadores detectados")
+points(deteccion.no.linear, col = "blue", type = "b")
+points(deteccion.no.polynomial, col = "red", type = "b")
+points(deteccion.no.sigmoid, col = "green", type = "b")
+legend("topright", legend = c("Radial", "Linear", "Polynomial", "Sigmoid"),
+       col = c("magenta", "blue", "red", "green"), lty = 1, lwd = 1)
+```
+
+### Paquete trainR
+
+**Se cargan las librerías**
+```{r}
+library(caret)
+library(trainR)
+```
+
+```{r}
+numero.filas <- nrow(datos)
+cantidad.validacion.cruzada <- 5
+cantidad.grupos <- 10
+
+deteccion.no.radial <- rep(0, 5)
+deteccion.no.linear <- rep(0, 5)
+deteccion.no.polynomial <- rep(0, 5)
+deteccion.no.sigmoid <- rep(0, 5)
+
+tiempo.usual <- Sys.time()
+
+for(i in seq_len(cantidad.validacion.cruzada)){
+  grupos  <- createFolds(1:numero.filas, cantidad.grupos)  # Crea los 10 grupos
+  no.radial <- 0
+  no.linear <- 0
+  no.polynomial <- 0
+  no.sigmoid <- 0
+  
+  # Este ciclo es el que hace 'cross-validation' (validación cruzada) con 10
+  # grupos (Folds)
+  for(k in 1:cantidad.grupos) {
+    muestra <- grupos[[k]]  # Por ser una lista requiere de doble paréntesis
+    ttesting <- datos[muestra, ]
+    taprendizaje <- datos[-muestra, ]
+    
+    muestra <- grupos[[k]]  # Por ser una lista requiere de doble paréntesis
+    ttesting <- datos[muestra, ]
+    taprendizaje <- datos[-muestra, ]
+    modelo <- train.svm(BuenPagador ~ ., data = taprendizaje, kernel = "radial")
+    prediccion <- predict(modelo, ttesting)
+    MC <- confusion.matrix(ttesting, prediccion)
+    # Detección de los NO Pagadores
+    no.radial <- no.radial + MC["No", "No"]
+    
+    modelo <- train.svm(BuenPagador ~ ., data = taprendizaje, kernel = "linear")
+    prediccion <- predict(modelo, ttesting)
+    MC <- confusion.matrix(ttesting, prediccion)
+    # Detección de los NO Pagadores
+    no.linear <- no.linear + MC["No", "No"]
+    
+    modelo <- train.svm(BuenPagador ~ ., data = taprendizaje, kernel = "polynomial")
+    prediccion <- predict(modelo, ttesting)
+    MC <- confusion.matrix(ttesting, prediccion)
+    # Detección de los NO Pagadores
+    no.polynomial <- no.polynomial + MC["No", "No"]
+    
+    modelo <- train.svm(BuenPagador ~ ., data = taprendizaje, kernel = "sigmoid")
+    prediccion <- predict(modelo, ttesting)
+    MC <- confusion.matrix(ttesting, prediccion)
+    # Detección de los NO Pagadores
+    no.sigmoid <- no.sigmoid + MC["No", "No"]
+  }
+  
+  deteccion.no.radial[i] <- no.radial
+  deteccion.no.linear[i] <- no.linear
+  deteccion.no.polynomial[i] <- no.polynomial
+  deteccion.no.sigmoid[i] <- no.sigmoid
+}
+
+tiempo.usual <- Sys.time() - tiempo.usual
+```
+
+```{r}
+tiempo.usual
+```
+
+**Como se puede verificar en el gráfico el mejor resultado se obtiene usando un Kernel Radial**
+
+```{r}
+plot(deteccion.no.radial, col = "magenta", type = "b", 
+     ylim = c(min(deteccion.no.radial,
+                  deteccion.no.linear, deteccion.no.polynomial, 
+                  deteccion.no.sigmoid), max(deteccion.no.radial,
+                                             deteccion.no.linear, deteccion.no.polynomial, 
+                                             deteccion.no.sigmoid) + 150), # Cuidado con el + 150, es para ampliar el eje "y"
+     main = "Detección del NO pagador en SVM", 
+     xlab = "Número de iteración",
+     ylab = "Cantidad de NO pagadores detectados")
+points(deteccion.no.linear, col = "blue", type = "b")
+points(deteccion.no.polynomial, col = "red", type = "b")
+points(deteccion.no.sigmoid, col = "green", type = "b")
+legend("topright", legend = c("Radial", "Linear", "Polynomial", "Sigmoid"),
+       col = c("magenta", "blue", "red", "green"), lty = 1, lwd = 1)
+```
+
+**Otra forma de hacerlo es:**
+
+**Se cargan las librerías**
+```{r}
+library(caret)
+library(trainR)
+```
+
+```{r}
+numero.filas <- nrow(datos)
+cantidad.validacion.cruzada <- 5
+cantidad.grupos <- 10
+kernels <- c("radial", "linear", "polynomial", "sigmoid")
+
+resultados <- matrix(0, nrow = cantidad.validacion.cruzada, ncol = 4) # ncol la cantidad de modelos a usar
+colnames(resultados) <- kernels # opcional
+
+tiempo.usual <- Sys.time()
+
+for(i in seq_len(cantidad.validacion.cruzada)){
+  grupos  <- createFolds(1:numero.filas, cantidad.grupos)  # Crea los 10 grupos
+  
+  for(k in 1:cantidad.grupos) {
+    muestra <- grupos[[k]]  # Por ser una lista requiere de doble paréntesis
+    ttesting <- datos[muestra, ]
+    taprendizaje <- datos[-muestra, ]
+    
+    for(kernel in kernels) {
+      modelo <- train.svm(BuenPagador ~ ., data = taprendizaje, kernel = kernel, probability = TRUE)
+      prediccion <- predict(modelo, ttesting)
+      MC <- confusion.matrix(ttesting, prediccion)
+      resultados[i, kernel] <- resultados[i, kernel] + MC["No","No"] # Detección de los NO Pagadores
+    }
+  }
+}
+
+tiempo.usual <- Sys.time() - tiempo.usual
+
+```
+
+```{r}
+tiempo.usual
+```
+
+**El resultado se encuentra en cada columna de `resultados`**
+```{r}
+resultados
+```
+
+**Como se puede verificar en el gráfico el mejor resultado se obtiene usando un Kernel Radial**
+```{r}
+matplot(resultados, type="b",lty = 1, lwd = 1,
+        main = "Detección del NO pagador en SVM", 
+        xlab = "Número de iteración",
+        ylab = "Cantidad de NO pagadores detectados")
+legend('bottomright', inset=.05, legend = colnames(resultados), 
+       pch=1, horiz = TRUE, col = 1:4)
+```
+
+##
+
+## Versión Paralela
+
+## {.tabset}
+
+### Paquete e1071
+
+```{r}
+library(e1071)
+library(caret)
+library(snow)
+```
+
+```{r}
+setwd("~/Desktop/Datos/")
+datos <- read.csv("MuestraCredito5000V2.csv", sep = ";", header=T)
+
+# Recodifica las variables como categóricas ordinales
+datos$IngresoNeto <- factor(datos$IngresoNeto,ordered = TRUE)
+datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo,ordered = TRUE)
+```
+
+**Proceso Paralelo**
+```{r}
+clp <- makeCluster(5, type = "SOCK")
+```
+
+**Constructor del cluster**
+```{r}
+clusterExport(clp, "datos")
+
+for (indice in 1:5) {
+  clusterExport(clp[indice], "indice")
+}
+
+tiempo.paralelo <- Sys.time()
+  
+resultados <- clusterEvalQ(clp,{
+  library(e1071)
+  library(caret)
+  numero.filas <- nrow(datos)
+  cantidad.validacion.cruzada <- 5
+  cantidad.grupos <- 10
+  kernels <- c("radial", "linear", "polynomial", "sigmoid")
+  
+  resultados <- matrix(0, nrow = cantidad.validacion.cruzada, ncol = 4) # ncol la cantidad de modelos a usar
+  colnames(resultados) <- kernels # opcional
+
+  grupos  <- createFolds(1:numero.filas, cantidad.grupos)  # Crea los 10 grupos
+  
+  for(k in 1:cantidad.grupos) {
+    muestra <- grupos[[k]]  # Por ser una lista requiere de doble paréntesis
+    ttesting <- datos[muestra, ]
+    taprendizaje <- datos[-muestra, ]
+    
+    for(kernel in kernels) {
+      modelo <- svm(BuenPagador ~ ., data = taprendizaje, kernel = kernel, probability = TRUE)
+      prediccion <- predict(modelo, ttesting)
+      MC <- table(ttesting[,6], prediccion)
+      resultados[indice, kernel] <- resultados[indice, kernel] + MC["No","No"] # Detección de los NO Pagadores
+    }
+  }
+  return(resultados)
+})
+
+tiempo.paralelo <- Sys.time() - tiempo.paralelo
+
+resultados <- Reduce("+", resultados)
+
+stopCluster(clp)
+```
+
+```{r}
+tiempo.paralelo
+```
+
+```{r eje4,comment=NA}
+# Proceso Paralelo
+suppressWarnings(suppressMessages(library(snow)))
+clp <- makeCluster(5, type = "SOCK")
+# Constructor del cluster
+ignore <- clusterEvalQ(clp, {
+      suppressWarnings(suppressMessages(library(e1071)))
+      suppressWarnings(suppressMessages(library(formula.tools)))
+
+      ejecutar.prediccion <- function(datos, formula, muestra,metodo, ...) {
+        ttesting <- datos[muestra, ]
+        taprendizaje <- datos[-muestra, ]
+        modelo <- metodo(formula, data = taprendizaje, ...)
+        prediccion <- predict(modelo, ttesting, type = "class")
+        # Obtiene la variable dependiente de la fórmula. Se ocupa
+        # usar el paquete formula.tools
+        variable.discriminante <- lhs.vars(formula)
+        MC <- table(ttesting[, variable.discriminante], prediccion)
+        return(MC)
+      }
+})
+
+suppressMessages(library(caret))
+setwd("~/Desktop/Datos/")
+datos <- read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
+# Recodifica las variables como categóricas ordinales
+datos$IngresoNeto <- factor(datos$IngresoNeto,ordered = TRUE)
+datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo,ordered = TRUE)
+n <- dim(datos)[1]
+algoritmos <- c("radial", "linear", "polynomial", "sigmoid")
+deteccion.no.radial <- rep(0, 5)
+deteccion.no.linear <- rep(0, 5)
+deteccion.no.polynomial <- rep(0, 5)
+deteccion.no.sigmoid <- rep(0, 5)
+tiempo.paralelo <- Sys.time()
+  for (i in 1:5) {
+      grupos <- createFolds(1:n, 10)
+      no.radial <- 0
+      no.linear <- 0
+      no.polynomial <- 0
+      no.sigmoid <- 0
+      for (k in 1:10) {
+            muestra <- grupos[[k]]
+            ### Inserta estas 2 variables en cada peón
+            clusterExport(clp, "datos")
+            clusterExport(clp, "muestra")
+            resultado <- clusterApply(clp, algoritmos, function(pkernels) {
+                  MC <- ejecutar.prediccion(datos, BuenPagador ~ .,muestra, svm, kernel = pkernels)
+                  no.val <- MC[1, 1]
+                  valores <- list(Tipo <- pkernels, Resultado <- no.val,MC <- MC)
+                  valores
+            })
+            for (j in 1:length(algoritmos)) {
+              if (resultado[[j]][[1]] == "radial") 
+                 no.radial <- no.radial + resultado[[j]][[2]] 
+              else if (resultado[[j]][[1]] == "linear")
+                 no.linear <- no.linear + resultado[[j]][[2]] 
+              else if (resultado[[j]][[1]] == "polynomial")
+                 no.polynomial <- no.polynomial + resultado[[j]][[2]] 
+              else if (resultado[[j]][[1]] == "sigmoid")
+                 no.sigmoid <- no.sigmoid + resultado[[j]][[2]]
+            }
+      }
+      deteccion.no.radial[i] <- no.radial
+      deteccion.no.linear[i] <- no.linear
+      deteccion.no.polynomial[i] <- no.polynomial
+      deteccion.no.sigmoid[i] <- no.sigmoid
+  }
+tiempo.paralelo <- Sys.time() - tiempo.paralelo
+stopCluster(clp)
+plot(deteccion.no.radial, col = "magenta", type = "b", ylim = 
+       c(min(deteccion.no.radial,deteccion.no.linear, deteccion.no.polynomial, deteccion.no.sigmoid),
+max(deteccion.no.radial, deteccion.no.linear, deteccion.no.polynomial,
+deteccion.no.sigmoid) + 200), main = "Detección del NO pagador en SVM",
+xlab = "Número de iteración", ylab = "Cantidad de NO pagadores detectados")
+points(deteccion.no.linear, col = "blue", type = "b")
+points(deteccion.no.polynomial, col = "red", type = "b")
+points(deteccion.no.sigmoid, col = "green", type = "b")
+legend("topright", legend = c("Radial", "Linear", "Polynomial",
+"Sigmoid"), col = c("magenta", "blue", "red", "green"), lty = 1,lwd = 1)
+
+tiempo.paralelo
+```
+
+### Paquete trainR
+
+##

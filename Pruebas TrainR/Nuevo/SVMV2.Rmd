@@ -13,8 +13,7 @@ Métodos de Predictivos (Clasificación o Aprendizaje-Supervisado)
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, comment = NA, fig.width=15, fig.height=12)
-# options(encoding = "CP1252")
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, comment = NA, fig.width = 15, fig.height = 12)
 ```
 
 # Índices de Calidad del Modelo y Funciones Auxiliares
@@ -158,12 +157,14 @@ indices.general <- function(MC) {
 }
 ```
 
+---
+
 # El método Máquinas de Soporte Vectorial
 
 ## Ejemplo Iris
 
 ```{r}
-setwd("~/Datos(CSV)/")
+setwd("~/Desktop/Datos/")
 datos<-read.csv("iris.csv",sep = ";",dec='.',header=T)
 datos
 ```
@@ -171,7 +172,6 @@ datos
 ```{r}
 str(datos)
 ```
-
 
 ### Distribución de las categorías
 
@@ -458,6 +458,8 @@ indices
 
 ##
 
+---
+
 ### Selección de Variables
 
 Utilizando los datos que previamente cargamos
@@ -576,7 +578,7 @@ indices
 ## Ejemplo Scoring
 
 ```{r}
-setwd("~/Datos(CSV)/")
+setwd("~/Desktop/Datos/")
 datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
 
 # Recodifica las variables como categóricas ordinales
@@ -588,7 +590,6 @@ datos$CoefCreditoAvaluo <- factor(datos$CoefCreditoAvaluo, ordered = TRUE)
 datos
 str(datos)
 ```
-
 
 ### Distribución de las categorías
 
@@ -681,6 +682,7 @@ indices
 
 ##
 
+---
 
 ### Selección de Variables
 
@@ -774,7 +776,6 @@ indices
 ```
 
 ####
-
 
 ### Paquete trainR
 

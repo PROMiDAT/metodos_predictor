@@ -158,6 +158,8 @@ indices.general <- function(MC) {
 }
 ```
 
+---
+
 # El método Redes Neuronales
 
 ## Ejemplo Iris
@@ -171,7 +173,6 @@ datos
 ```{r}
 str(datos)
 ```
-
 
 ### Distribución de las categorías
 
@@ -274,6 +275,7 @@ indices
 
 ##
 
+---
 
 ### Selección de Variables
 
@@ -394,7 +396,6 @@ datos
 str(datos)
 ```
 
-
 ### Distribución de las categorías
 
 ```{r}
@@ -423,7 +424,7 @@ library(nnet)
 **Se genera el modelo**
 ```{r}
 # Importante size=250, con size=4 la predicción sería muy mala
-modelo <- nnet(BuenPagador~., data = taprendizaje, size = 200, MaxNWts = 5000, rang = 0.1, 
+modelo <- nnet(BuenPagador~., data = taprendizaje, size = 250, MaxNWts = 5000, rang = 0.1, 
                decay = 5e-4, maxit = 200, trace = FALSE)
 modelo
 ```
@@ -456,7 +457,7 @@ library(trainR)
 
 **Se genera el modelo**
 ```{r}
-modelo <- train.nnet(BuenPagador~., data = taprendizaje, size = 200, MaxNWts = 5000, rang = 0.1, 
+modelo <- train.nnet(BuenPagador~., data = taprendizaje, size = 250, MaxNWts = 5000, rang = 0.1, 
                      decay = 5e-4, maxit = 200, trace = FALSE)
 modelo
 ```
@@ -488,6 +489,7 @@ indices
 
 ##
 
+---
 
 ### Selección de Variables
 
@@ -527,7 +529,7 @@ library(nnet)
 **Se genera el modelo**
 ```{r}
 # Importante size=250, con size=4 la predicción sería muy mala
-modelo<-nnet(BuenPagador~CoefCreditoAvaluo+MontoCredito+IngresoNeto, data = taprendizaje, size = 200,
+modelo<-nnet(BuenPagador~CoefCreditoAvaluo+MontoCredito+IngresoNeto, data = taprendizaje, size = 250,
              MaxNWts = 5000, rang = 0.1, decay = 5e-4, maxit = 200, trac = FALSE)
 modelo
 ```
@@ -610,7 +612,7 @@ taprendizaje <- datos[-muestra,]
 
 ```{r}
 # Generando el modelo
-modelo <- nnet(tipo~.,data=taprendizaje,size = 4, rang = 0.1,decay = 5e-4, maxit = 200,trace=FALSE)
+modelo <- nnet(tipo~.,data=taprendizaje,size = 4, rang = 0.1,decay = 5e-4, maxit = 200, trace=FALSE)
 ```
 
 ```{r}

@@ -5,7 +5,7 @@ output:
     theme: cerulean
 ---
 
-![](logo2.jpg)
+![](logo.jpg)
 
 # Calibración y Selección de Modelos en Paralelo
 

@@ -435,7 +435,7 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
 
   var.predict <- as.character(formula[2])
   selector <- which(colnames(data) == var.predict)
-  class.names <- unique(data[,selector])
+  class.names <- levels(data[,selector])
 
   suppressWarnings(data <- cbind(as.data.frame(scale(dummy.data.frame(data[, -selector, drop = FALSE], drop = FALSE, dummy.classes = c("factor","character")))), data[,selector]))
   colnames(data) <- c(colnames(data)[-ncol(data)], var.predict)
@@ -468,7 +468,7 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
   }
 
 
-  formula.aux <- update(formula, as.formula(paste0(paste0("`",rev(class.names),"`", collapse = "+"),"~",paste0(.colnames[!(.colnames %in% class.names)], collapse = "+"))))
+  formula.aux <- update(formula, as.formula(paste0(paste0("`",class.names,"`", collapse = "+"),"~",paste0(.colnames[!(.colnames %in% class.names)], collapse = "+"))))
 
   m <- match.call(expand.dots = FALSE)
   m$data <- quote(data)

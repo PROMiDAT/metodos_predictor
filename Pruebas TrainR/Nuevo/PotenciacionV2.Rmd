@@ -157,6 +157,8 @@ indices.general <- function(MC) {
 }
 ```
 
+---
+
 # El método de Potenciación - ADA Boosting
 
 Es importante saber que este método funciona sólo cuando la variable a predecir tiene solo para 2 categorías.
@@ -164,7 +166,7 @@ Es importante saber que este método funciona sólo cuando la variable a predeci
 ## Ejemplo Scoring
 
 ```{r}
-setwd("~/Datos(CSV)/")
+setwd("~/Desktop/Datos/")
 datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
 
 # Recodifica las variables como categóricas ordinales
@@ -288,6 +290,8 @@ indices
 
 ##
 
+---
+
 Genera el modelo modificando:
 
 + `iter`: el número de árboles. Por defecto iter = 50
@@ -389,6 +393,8 @@ indices
 ```
 
 ##
+
+---
 
 ### Selección de Variables
 

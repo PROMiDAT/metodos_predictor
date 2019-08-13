@@ -14,7 +14,6 @@ Métodos de Predictivos (Clasificación o Aprendizaje-Supervisado)
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, comment = NA, fig.width=15, fig.height=12)
-# options(encoding = "CP1252")
 ```
 
 # Índices de Calidad del Modelo y Funciones Auxiliares
@@ -157,12 +156,14 @@ indices.general <- function(MC) {
 }
 ```
 
+---
+
 # El método Árboles de Decisión
 
 ## Ejemplo Iris
 
 ```{r}
-setwd("~/Datos(CSV)/")
+setwd("~/Desktop/Datos/")
 datos<-read.csv("iris.csv",sep = ";",dec='.',header=T)
 datos
 ```
@@ -270,6 +271,7 @@ indices
 
 ##
 
+---
 
 Genera el modelo modificando el número de árboles y el número de variables
 
@@ -360,6 +362,8 @@ indices
 ```
 
 ##
+
+---
 
 ### Selección de Variables
 
@@ -476,7 +480,7 @@ indices
 ## Ejemplo Scoring
 
 ```{r}
-setwd("~/Datos(CSV)/")
+setwd("~/Desktop/Datos/")
 datos<-read.csv("MuestraCredito5000V2.csv",sep = ";",header=T)
 
 # Recodifica las variables como categóricas ordinales
@@ -589,6 +593,8 @@ indices
 
 ##
 
+---
+
 Genera el modelo modificando el número de árboles y el número de variables
 
 Es decir, modificando los parámetros `ntree` y `mtry`
@@ -678,6 +684,8 @@ indices
 ```
 
 ##
+
+---
 
 ### Selección de Variables
 

@@ -99,6 +99,10 @@ legend("topright", legend = c("Radial", "Linear", "Polynomial", "Sigmoid"),
 tiempo.usual
 ```
 
+
+
+
+
 ## Versión Paralela
 
 ```{r eje4,comment=NA}

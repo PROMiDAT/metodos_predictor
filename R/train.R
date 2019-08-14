@@ -15,7 +15,6 @@ create.model <- function(model, formula, data,  name = NULL){
   }else{
     class(model) <- c("prmdt", name, class(model))
   }
-
   return(model)
 }
 
@@ -309,7 +308,7 @@ train.knn <- function(formula, data, kmax = 11, ks = NULL, distance = 2, kernel 
     m[[.name]] <- my.list[[.name]]
   }
   m$... <- NULL
-  model <- eval.parent(m)
+  model <- eval(m, envir = parent.frame())
   # model <- train.kknn(formula = formula, data = data, kmax = kmax, ks = ks, distance = distance, kernel = kernel,  ykernel = ykernel,
   #                     scale =  scale, contrasts = contrasts, ordered = ordered, ... = ...)
   create.model(model, formula, data, "knn.prmdt")
@@ -525,24 +524,14 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
 #'
 train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = TRUE){
   m <- match.call(expand.dots = FALSE)
-  if (is.matrix(eval.parent(m$data))){
-    m$data <- as.data.frame(data)
-  }
   m[[1L]] <- quote(e1071::svm)
   my.list <- as.list(m$...)
   for(.name in names(my.list)) {
     m[[.name]] <- my.list[[.name]]
   }
   m$... <- NULL
-  m$probability <- TRUE
-  model <- eval.parent(m)
-  # args <- list(...)
-  # args$probability <- NULL
-  # if(missing(subset)){
-  #   model <- svm(formula = formula, data = data, probability = TRUE, ... = args, na.action = na.action, scale = scale)
-  # }else{
-  #   model <- svm(formula = formula, data = data, probability = TRUE, ... = args, subset = subset, na.action = na.action, scale = scale)
-  # }
+  m$probability <- is.null(m$probability) || m$probability
+  model <- eval(m, envir = parent.frame())
   create.model(model, formula, data, "svm.prmdt")
 }
 

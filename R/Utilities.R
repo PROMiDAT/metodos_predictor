@@ -77,9 +77,10 @@ type_correction <- function(model, prediction, fix){
   var_type <- model$prmdt$type
   .levels  <- model$prmdt$levels
   if(var_type != "numeric" && var_type != "integer" && fix){
-    factor(as.character(prediction), levels = .levels)
+    names(prediction) <- NULL
+    return(factor(prediction, levels = .levels))
   }else{
-    prediction
+    return(prediction)
   }
 }
 
@@ -119,11 +120,8 @@ print.prmdt <- function(x, ...){
 #'
 #' @export
 print.prediction.prmdt <- function(x, ...){
-  class(x) <- class(x)[-1]
-  attr(x, "var.pred") <- NULL
-  print(x, ...)
+  print(x$prediction, ...)
 }
-
 
 #' Printing prmdt index object
 #'

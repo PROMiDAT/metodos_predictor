@@ -27,6 +27,6 @@
 #' confusion.matrix(data.test, prediccion)
 #'
 confusion.matrix <- function(newdata, prediction){
-  real <- newdata[, attr(prediction, "var.pred")]
-  return(table(real, prediction))
+  real <- newdata[, prediction$var.pred]
+  return(table(real, prediction$prediction))
 }

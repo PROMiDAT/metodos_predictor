@@ -4,8 +4,8 @@
 #' @keywords internal
 #'
 create.prediction  <- function(model, prediction){
-  attr(prediction, "var.pred") <- model$prmdt$var.pred
-  class(prediction) <- c("prediction.prmdt", class(prediction))
+  prediction <- list(prediction = prediction, "var.pred" =  model$prmdt$var.pred)
+  class(prediction) <- c("prediction.prmdt", "list")
   return(prediction)
 }
 
@@ -94,7 +94,7 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
 
   var.predict <- object$prmdt$var.pred
   selector <- which(colnames(newdata) == var.predict)
-  suppressWarnings(newdata <- cbind(dummy.data.frame(newdata[, -selector], dummy.classes = c("factor","character")), newdata[selector]))
+  suppressWarnings(newdata <- cbind(dummy.data.frame(newdata[, -selector, drop = FALSE], drop = FALSE, dummy.classes = c("factor","character")), newdata[selector]))
 
   selector <- which(colnames(newdata) == var.predict)
   newdata[, -selector] <- scale(newdata[, -selector])
@@ -159,9 +159,9 @@ predict.rpart.prmdt <- function(object, newdata, type = "class", na.action = na.
 #' @keywords internal
 #'
 predict.svm.prmdt <- function(object, newdata, type = "class", decision.values = FALSE, ..., na.action = na.omit){
-  ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), decision.values, probability = type == "prob", ..., na.action = na.action)
+  ans <- predict(original_model(object), newdata, decision.values, probability = type == "prob", ..., na.action = na.action)
   if(type == "prob"){
-    ans <- attributes(ans)$probabilities
+    ans <- attr(ans, "probabilities")
     ans <- ans[,object$prmdt$levels]
   }else{
     ans <- type_correction(object, ans,  type == "class")

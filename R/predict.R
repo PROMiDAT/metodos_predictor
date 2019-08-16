@@ -89,7 +89,7 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
   selector <- unlist(lapply(newdata, is.ordered))
 
   if(any(selector)){
-    newdata[,selector] <- lapply(newdata[,selector, drop = FALSE], factor, ordered  = FALSE)
+    newdata[,selector] <- lapply(newdata[,selector, drop = FALSE], function(x) factor(x, ordered = FALSE, levels = levels(x)) )
   }
 
   var.predict <- object$prmdt$var.pred

@@ -100,9 +100,6 @@ tiempo.usual
 ```
 
 
-
-
-
 ## Versión Paralela
 
 ```{r eje4,comment=NA}

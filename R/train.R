@@ -429,7 +429,7 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
   selector <- unlist(lapply(data, is.ordered))
 
   if(any(selector)){
-    data[,selector] <- lapply(data[,selector, drop = FALSE], factor, ordered  = FALSE)
+    data[,selector] <- lapply(data[,selector, drop = FALSE], function(x) factor(x, ordered = FALSE, levels = levels(x)) )
   }
 
   var.predict <- as.character(formula[2])

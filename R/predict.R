@@ -94,10 +94,11 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
 
   var.predict <- object$prmdt$var.pred
   selector <- which(colnames(newdata) == var.predict)
-  suppressWarnings(newdata <- cbind(dummy.data.frame(newdata[, -selector, drop = FALSE], drop = FALSE, dummy.classes = c("factor","character")), newdata[selector]))
+  suppressWarnings(newdata <- cbind(dummy.data.frame(newdata[, -selector, drop = FALSE], drop = FALSE,
+                                                     dummy.classes = c("factor","character")), newdata[selector]))
 
   selector <- which(colnames(newdata) == var.predict)
-  newdata[, -selector] <- scale(newdata[, -selector])
+  # newdata[, -selector] <- scale(newdata[, -selector])
 
   # if(!is.numeric(newdata[, selector])){
   #   newdata[, selector] <- as.numeric(newdata[, selector])

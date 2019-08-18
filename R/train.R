@@ -436,7 +436,8 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
   selector <- which(colnames(data) == var.predict)
   class.names <- levels(data[,selector])
 
-  suppressWarnings(data <- cbind(as.data.frame(scale(dummy.data.frame(data[, -selector, drop = FALSE], drop = FALSE, dummy.classes = c("factor","character")))), data[,selector]))
+  suppressWarnings(data <- cbind(as.data.frame(dummy.data.frame(data[, -selector, drop = FALSE], drop = FALSE,
+                                                                      dummy.classes = c("factor","character"))), data[,selector]))
   colnames(data) <- c(colnames(data)[-ncol(data)], var.predict)
 
   # selector <- which(colnames(data) == var.predict)
@@ -446,9 +447,9 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
   #   data[, selector] <- as.numeric(data[, selector]) - 1
   # }
 
-  data <- data %>% dplyr::mutate(.valor.nuevo = TRUE, i = row_number()) %>%
-                   tidyr::spread(key = var.predict, value = '.valor.nuevo', fill = FALSE) %>%
-                   dplyr::select(-i)
+  # data <- data %>% dplyr::mutate(.valor.nuevo = TRUE, i = row_number()) %>%
+  #                  tidyr::spread(key = var.predict, value = '.valor.nuevo', fill = FALSE) %>%
+  #                  dplyr::select(-i)
 
   .vars <- all.vars(formula[-2])
   if(length(.vars) == 1 && .vars == "."){
@@ -466,8 +467,7 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
     }
   }
 
-
-  formula.aux <- update(formula, as.formula(paste0(paste0("`",class.names,"`", collapse = "+"),"~",paste0(.colnames[!(.colnames %in% class.names)], collapse = "+"))))
+  formula.aux <- update(formula, as.formula(paste0(var.predict,"~",paste0(.colnames[!(.colnames %in% var.predict)], collapse = "+"))))
 
   m <- match.call(expand.dots = FALSE)
   m$data <- quote(data)
@@ -475,11 +475,6 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
   my.list <- as.list(m$...)
   m$formula <- formula.aux
   model <- eval(m, envir = environment())
-
-
-  model <- neuralnet(formula.aux, data, hidden = hidden, threshold = threshold, stepmax, rep, startweights, learningrate.limit,
-                     learningrate.factor, learningrate, lifesign, lifesign.step, algorithm, err.fct, act.fct, linear.output,
-                     exclude, constant.weights, likelihood)
 
   create.model(model, formula, aux_data, "neuralnet.prmdt")
 

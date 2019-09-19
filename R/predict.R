@@ -12,7 +12,6 @@ create.prediction  <- function(model, prediction){
 #' predict.ada.prmdt
 #'
 #'
-#' @return
 #' @export
 #' @keywords internal
 #'
@@ -30,7 +29,6 @@ predict.ada.prmdt <- function(object, newdata, type = "class", n.iter = NULL, ..
 #' predict.bayes.prmdt
 #'
 #'
-#' @return
 #' @export
 #' @keywords internal
 #'
@@ -44,7 +42,6 @@ predict.bayes.prmdt <- function(object, newdata, type = "class", threshold = 0.0
 #' predict.knn.prmdt
 #'
 #'
-#' @return
 #' @export
 #' @keywords internal
 #'
@@ -58,7 +55,6 @@ predict.knn.prmdt <- function(object, newdata, type = "class", ...){
 #' predict.nnet.prmdt
 #'
 #'
-#' @return
 #' @export
 #' @keywords internal
 #'
@@ -81,7 +77,6 @@ predict.nnet.prmdt <- function(object, newdata, type = "class", ...){
 #' predict.neuralnet.prmdt
 #'
 #'
-#' @return
 #' @export
 #' @keywords internal
 #'
@@ -125,7 +120,6 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
 #' predict.randomForest.prmdt
 #'
 #'
-#' @return
 #' @export
 #' @keywords internal
 #'
@@ -143,7 +137,6 @@ predict.randomForest.prmdt <- function(object, newdata, type = "class", norm.vot
 
 #' predict.rpart.prmdt
 #'
-#' @return
 #' @export
 #' @keywords internal
 #'
@@ -155,7 +148,6 @@ predict.rpart.prmdt <- function(object, newdata, type = "class", na.action = na.
 
 #' predict.svm.prmdt
 #'
-#' @return
 #' @export
 #' @keywords internal
 #'
@@ -172,7 +164,6 @@ predict.svm.prmdt <- function(object, newdata, type = "class", decision.values =
 
 #' predict.xgb.Booster
 #'
-#' @return
 #' @export
 #' @keywords internal
 #'
@@ -228,7 +219,6 @@ predict.xgb.Booster.prmdt <- function(object, newdata, type = "class", missing =
 
 #' predict.glm.prmdt
 #'
-#' @return
 #' @export
 #' @keywords internal
 #'

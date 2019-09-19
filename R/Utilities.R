@@ -10,7 +10,6 @@ select_on_class <- function(.data, clases = "numeric") {
 #' contr.dummy
 #'
 #' @keywords internal
-#' @return
 #' @export
 #'
 contr.dummy <- function (n, contrasts = TRUE) {
@@ -29,7 +28,6 @@ contr.dummy <- function (n, contrasts = TRUE) {
 #' contr.ordinal
 #'
 #' @keywords internal
-#' @return
 #' @export
 #'
 contr.ordinal <- function (n, contrasts = TRUE) {

@@ -31,7 +31,6 @@ create.model <- function(model, formula, data,  name = NULL){
 #'
 #' @seealso The internal function is from package \code{\link[ada]{ada}}
 #'
-#' @return
 #' @export
 #'
 #' @examples
@@ -96,7 +95,6 @@ train.ada <- function(formula, data, ..., subset, na.action = na.rpart){
 #'
 #' @seealso The internal function is from package \code{\link[rpart]{rpart}}
 #'
-#' @return
 #' @export
 #'
 #' @examples
@@ -162,7 +160,6 @@ train.rpart <- function(formula, data, weights, subset, na.action = na.rpart, me
 #'
 #' @seealso The internal function is from package \code{\link[e1071]{naiveBayes}}
 #'
-#' @return
 #' @export
 #'
 #' @examples
@@ -214,7 +211,6 @@ train.bayes <- function(formula, data, laplace = 0, ..., subset, na.action = na.
 #'
 #' @seealso The internal function is from package \code{\link[randomForest]{randomForest}}
 #'
-#' @return
 #' @export
 #'
 #' @examples
@@ -275,7 +271,6 @@ train.randomForest <- function(formula, data, ..., subset, na.action = na.fail){
 #'
 #' @seealso The internal function is from package \code{\link[kknn]{train.kknn}}
 #'
-#' @return
 #' @export
 #'
 #' @examples
@@ -330,7 +325,6 @@ train.knn <- function(formula, data, kmax = 11, ks = NULL, distance = 2, kernel 
 #'
 #' @seealso The internal function is from package \code{\link[nnet]{nnet}}
 #'
-#' @return
 #' @export
 #'
 #' @examples
@@ -400,7 +394,6 @@ train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts
 #'
 #' @seealso The internal function is from package \code{\link[neuralnet]{neuralnet}}
 #'
-#' @return
 #' @export
 #'
 #' @examples
@@ -497,7 +490,6 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
 #'
 #' @seealso The internal function is from package \code{\link[e1071]{svm}}
 #'
-#' @return
 #' @export
 #'
 #' @examples
@@ -593,7 +585,6 @@ train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = T
 #'
 #' @seealso The internal function is from package \code{\link[xgboost]{xgb.train}}
 #'
-#' @return
 #' @export
 #'
 #' @examples
@@ -701,7 +692,6 @@ train.xgboost <- function(formula, data, nrounds, watchlist = list(), obj = NULL
 #'
 #' @seealso The internal function is from package \code{\link[stats]{glm}}
 #'
-#' @return
 #' @export
 #'
 #' @examples

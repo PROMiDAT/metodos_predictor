@@ -11,6 +11,9 @@ varplot(x, ...)
 
 \item{...}{optional arguments to print o format method}
 }
+\value{
+a plot of the importance of variables.
+}
 \description{
 Plotting prmdt ada models
 }

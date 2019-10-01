@@ -94,8 +94,14 @@ with eta and increase nrounds. Default: 1}
 
 \item{...}{other parameters to pass to params.}
 }
+\value{
+A object xgb.Booster.prmdt with additional information to the model that allows to homogenize the results.
+}
 \description{
 Provides a wrapping function for the \code{\link[xgboost]{xgb.train}}.
+}
+\note{
+the parameter information was taken from the original function \code{\link[xgboost]{xgb.train}}.
 }
 \examples{
 
@@ -116,5 +122,5 @@ confusion.matrix(data.test, prediccion)
 
 }
 \seealso{
-The internal function is from package \code{\link[xgboost]{xgb.train}}
+The internal function is from package \code{\link[xgboost]{xgb.train}}.
 }

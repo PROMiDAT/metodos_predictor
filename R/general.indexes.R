@@ -1,12 +1,13 @@
 
-
 #' general.indexes
 #'
-#' @description create a list with the confusion matrix, overall accuracy, overall error and the category accuracy
+#' @description Calculates the confusion matrix, overall accuracy, overall error and the category accuracy
 #'
 #' @param newdata matrix or data frame of test data.
 #' @param prediction a prmdt prediction object.
-#' @param mc (optional) a matrix for calculating the indices.
+#' @param mc (optional) a matrix for calculating the indices. If mc is entered as parameter newdata and prediction are not necessary.
+#'
+#' @return A list with the confusion matrix, overall accuracy, overall error and the category accuracy. The class of this list is indexes.prmdt
 #'
 #' @export
 #'

@@ -31,8 +31,14 @@ train.knn(formula, data, kmax = 11, ks = NULL, distance = 2,
 
 \item{...}{Further arguments passed to or from other methods.}
 }
+\value{
+A object knn.prmdt with additional information to the model that allows to homogenize the results.
+}
 \description{
 Provides a wrapping function for the \code{\link[kknn]{train.kknn}}.
+}
+\note{
+the parameter information was taken from the original function \code{\link[kknn]{train.kknn}}.
 }
 \examples{
 
@@ -53,5 +59,5 @@ confusion.matrix(data.test, prediccion)
 
 }
 \seealso{
-The internal function is from package \code{\link[kknn]{train.kknn}}
+The internal function is from package \code{\link[kknn]{train.kknn}}.
 }

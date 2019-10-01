@@ -11,8 +11,6 @@ create.prediction  <- function(model, prediction){
 
 #' predict.ada.prmdt
 #'
-#'
-#' @export
 #' @keywords internal
 #'
 predict.ada.prmdt <- function(object, newdata, type = "class", n.iter = NULL, ...){
@@ -28,8 +26,6 @@ predict.ada.prmdt <- function(object, newdata, type = "class", n.iter = NULL, ..
 
 #' predict.bayes.prmdt
 #'
-#'
-#' @export
 #' @keywords internal
 #'
 predict.bayes.prmdt <- function(object, newdata, type = "class", threshold = 0.001, eps = 0, ...){
@@ -41,8 +37,6 @@ predict.bayes.prmdt <- function(object, newdata, type = "class", threshold = 0.0
 
 #' predict.knn.prmdt
 #'
-#'
-#' @export
 #' @keywords internal
 #'
 predict.knn.prmdt <- function(object, newdata, type = "class", ...){
@@ -54,8 +48,6 @@ predict.knn.prmdt <- function(object, newdata, type = "class", ...){
 
 #' predict.nnet.prmdt
 #'
-#'
-#' @export
 #' @keywords internal
 #'
 predict.nnet.prmdt <- function(object, newdata, type = "class", ...){
@@ -76,8 +68,6 @@ predict.nnet.prmdt <- function(object, newdata, type = "class", ...){
 
 #' predict.neuralnet.prmdt
 #'
-#'
-#' @export
 #' @keywords internal
 #'
 predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
@@ -93,11 +83,6 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
                                                      dummy.classes = c("factor","character")), newdata[selector]))
 
   selector <- which(colnames(newdata) == var.predict)
-  # newdata[, -selector] <- scale(newdata[, -selector])
-
-  # if(!is.numeric(newdata[, selector])){
-  #   newdata[, selector] <- as.numeric(newdata[, selector])
-  # }
 
   ans <- neuralnet::compute(original_model(object), newdata[, -selector])
 
@@ -119,8 +104,6 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
 
 #' predict.randomForest.prmdt
 #'
-#'
-#' @export
 #' @keywords internal
 #'
 predict.randomForest.prmdt <- function(object, newdata, type = "class", norm.votes = TRUE, predict.all = FALSE, proximity = FALSE, nodes = FALSE, cutoff, ...){
@@ -137,7 +120,6 @@ predict.randomForest.prmdt <- function(object, newdata, type = "class", norm.vot
 
 #' predict.rpart.prmdt
 #'
-#' @export
 #' @keywords internal
 #'
 predict.rpart.prmdt <- function(object, newdata, type = "class", na.action = na.pass, ...){
@@ -148,7 +130,6 @@ predict.rpart.prmdt <- function(object, newdata, type = "class", na.action = na.
 
 #' predict.svm.prmdt
 #'
-#' @export
 #' @keywords internal
 #'
 predict.svm.prmdt <- function(object, newdata, type = "class", decision.values = FALSE, ..., na.action = na.omit){
@@ -164,7 +145,6 @@ predict.svm.prmdt <- function(object, newdata, type = "class", decision.values =
 
 #' predict.xgb.Booster
 #'
-#' @export
 #' @keywords internal
 #'
 predict.xgb.Booster.prmdt <- function(object, newdata, type = "class", missing = NA, outputmargin = FALSE, ntreelimit = NULL, predleaf = FALSE, predcontrib = FALSE,
@@ -219,7 +199,6 @@ predict.xgb.Booster.prmdt <- function(object, newdata, type = "class", missing =
 
 #' predict.glm.prmdt
 #'
-#' @export
 #' @keywords internal
 #'
 predict.glm.prmdt <- function(object, newdata, type = "class", se.fit = FALSE, dispersion = NULL, terms = NULL, na.action = na.pass, ...){

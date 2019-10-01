@@ -18,8 +18,14 @@ trees, and cp controls the complexity of trees. The priors should also be fixed 
 
 \item{na.action}{a function that indicates how to process ‘NA’ values. Default=na.rpart.}
 }
+\value{
+A object ada.prmdt with additional information to the model that allows to homogenize the results.
+}
 \description{
 Provides a wrapping function for the \code{\link[ada]{ada}}.
+}
+\note{
+the parameter information was taken from the original function \code{\link[ada]{ada}}.
 }
 \examples{
 
@@ -40,5 +46,5 @@ confusion.matrix(data.test, prediccion)
 
 }
 \seealso{
-The internal function is from package \code{\link[ada]{ada}}
+The internal function is from package \code{\link[ada]{ada}}.
 }

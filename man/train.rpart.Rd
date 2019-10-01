@@ -39,8 +39,14 @@ For classification splitting, the list can contain any of: the vector of prior p
 
 \item{...}{arguments to \code{\link[rpart]{rpart.control}} may also be specified in the call to rpart. They are checked against the list of valid arguments.}
 }
+\value{
+A object rpart.prmdt with additional information to the model that allows to homogenize the results.
+}
 \description{
 Provides a wrapping function for the \code{\link[rpart]{rpart}}.
+}
+\note{
+the parameter information was taken from the original function \code{\link[rpart]{rpart}}.
 }
 \examples{
 
@@ -61,5 +67,5 @@ confusion.matrix(data.test, prediccion)
 
 }
 \seealso{
-The internal function is from package \code{\link[rpart]{rpart}}
+The internal function is from package \code{\link[rpart]{rpart}}.
 }

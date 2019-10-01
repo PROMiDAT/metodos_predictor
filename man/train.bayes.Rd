@@ -20,8 +20,14 @@ train.bayes(formula, data, laplace = 0, ..., subset,
 
 \item{na.action}{A function to specify the action to be taken if NAs are found. The default action is not to count them for the computation of the probability factors. An alternative is na.omit, which leads to rejection of cases with missing values on any required variable. (NOTE: If given, this argument must be named.)}
 }
+\value{
+A object bayes.prmdt with additional information to the model that allows to homogenize the results.
+}
 \description{
 Provides a wrapping function for the \code{\link[e1071]{naiveBayes}}.
+}
+\note{
+the parameter information was taken from the original function  \code{\link[e1071]{naiveBayes}}.
 }
 \examples{
 
@@ -42,5 +48,5 @@ confusion.matrix(data.test, prediccion)
 
 }
 \seealso{
-The internal function is from package \code{\link[e1071]{naiveBayes}}
+The internal function is from package \code{\link[e1071]{naiveBayes}}.
 }

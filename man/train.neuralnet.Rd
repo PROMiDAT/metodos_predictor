@@ -60,8 +60,14 @@ If given as a vector, the exact positions of the weights must be known. A matrix
 \item{likelihood}{logical. If the error function is equal to the negative log-likelihood function, the
 information criteria AIC and BIC will be calculated. Furthermore the usage of confidence.interval is meaningfull.}
 }
+\value{
+A object neuralnet.prmdt with additional information to the model that allows to homogenize the results.
+}
 \description{
 Provides a wrapping function for the \code{\link[neuralnet]{neuralnet}}.
+}
+\note{
+the parameter information was taken from the original function \code{\link[neuralnet]{neuralnet}}.
 }
 \examples{
 
@@ -83,5 +89,5 @@ confusion.matrix(data.test, prediccion)
 
 }
 \seealso{
-The internal function is from package \code{\link[neuralnet]{neuralnet}}
+The internal function is from package \code{\link[neuralnet]{neuralnet}}.
 }

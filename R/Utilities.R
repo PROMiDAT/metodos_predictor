@@ -10,7 +10,6 @@ select_on_class <- function(.data, clases = "numeric") {
 #' contr.dummy
 #'
 #' @keywords internal
-#' @export
 #'
 contr.dummy <- function (n, contrasts = TRUE) {
   if (length(n) <= 1) {
@@ -28,7 +27,6 @@ contr.dummy <- function (n, contrasts = TRUE) {
 #' contr.ordinal
 #'
 #' @keywords internal
-#' @export
 #'
 contr.ordinal <- function (n, contrasts = TRUE) {
   if (length(n) <= 1) {
@@ -106,7 +104,8 @@ get_test_less_predict <- function(data, var.pred){
 #' @param x A prmdt models
 #' @param ... optional arguments to print o format method
 #'
-#' @export
+#' @keywords internal
+#'
 print.prmdt <- function(x, ...){
   print(original_model(x), ...)
 }
@@ -116,7 +115,8 @@ print.prmdt <- function(x, ...){
 #' @param x A prmdt prediction object
 #' @param ... optional arguments to print o format method
 #'
-#' @export
+#' @keywords internal
+#'
 print.prediction.prmdt <- function(x, ...){
   print(x$prediction, ...)
 }
@@ -126,7 +126,8 @@ print.prediction.prmdt <- function(x, ...){
 #' @param x A prmdt index object
 #' @param ... optional arguments to print o format method
 #'
-#' @export
+#' @keywords internal
+#'
 print.indexes.prmdt <- function(x, ...){
   out <- c("\nConfusion Matrix:",capture.output(x$confusion.matrix))
   out <- paste(out, collapse = "\n")
@@ -144,7 +145,7 @@ print.indexes.prmdt <- function(x, ...){
 #' @param x A prmdt models
 #' @param ... optional arguments to print o format method
 #'
-#' @export
+#' @keywords internal
 #'
 plot.prmdt <- function(x, ...){
   x <- original_model(x)
@@ -155,6 +156,8 @@ plot.prmdt <- function(x, ...){
 #'
 #' @param x A ada prmdt model
 #' @param ... optional arguments to print o format method
+#'
+#' @return a plot of the importance of variables.
 #'
 #' @export
 #'

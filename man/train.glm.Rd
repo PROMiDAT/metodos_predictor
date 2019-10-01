@@ -47,6 +47,9 @@ For glm.fit: x is a design matrix of dimension n * p, and y is a vector of obser
 \item{...}{For glm: arguments to be used to form the default control argument if it is not supplied directly.
 For weights: further arguments passed to or from other methods.}
 }
+\value{
+A object glm.prmdt with additional information to the model that allows to homogenize the results.
+}
 \description{
 Provides a wrapping function for the \code{\link[stats]{glm}}
 }
@@ -69,5 +72,7 @@ confusion.matrix(data.test, prediccion)
 
 }
 \seealso{
-The internal function is from package \code{\link[stats]{glm}}
+The internal function is from package \code{\link[stats]{glm}}.
+
+The internal function is from package \code{\link[stats]{glm}}.
 }

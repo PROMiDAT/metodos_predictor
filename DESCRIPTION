@@ -18,6 +18,7 @@ Imports:
     nnet (>= 7.3-12),
     dummies (>= 1.5.6),
     stringr (>= 1.4.0)
+Suggests: knitr, rmarkdown, rpart.plot
 Description: Methods to unify the different ways of creating predictive models and their different predictive formats. It includes 
        methods such as K-Nearest Neighbors, Decision Trees, ADA Boosting, Extreme Gradient Boosting, Random Forest, Neural Networks, Deep Learning,
        Support Vector Machines and Bayesian Methods.
@@ -26,3 +27,4 @@ Encoding: UTF-8
 LazyData: true
 URL: http://www.promidat.com
 RoxygenNote: 6.1.1
+VignetteBuilder: knitr

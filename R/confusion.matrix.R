@@ -1,11 +1,12 @@
 
-
 #' confusion.matrix
 #'
 #' @description create the confusion matrix.
 #'
 #' @param newdata matrix or data frame of test data.
 #' @param prediction a prmdt prediction object.
+#'
+#' @return A matrix with predicted and actual values.
 #'
 #' @export
 #'
@@ -28,5 +29,6 @@
 #'
 confusion.matrix <- function(newdata, prediction){
   real <- newdata[, prediction$var.pred]
-  return(table(real, prediction$prediction))
+  prediction <- prediction$prediction
+  return(table(real, prediction))
 }

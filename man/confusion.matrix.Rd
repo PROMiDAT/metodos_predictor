@@ -11,6 +11,9 @@ confusion.matrix(newdata, prediction)
 
 \item{prediction}{a prmdt prediction object.}
 }
+\value{
+A matrix with predicted and actual values.
+}
 \description{
 create the confusion matrix.
 }

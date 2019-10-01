@@ -29,7 +29,11 @@ create.model <- function(model, formula, data,  name = NULL){
 #' @param subset an optional vector specifying a subset of observations to be used in the fitting process.
 #' @param na.action a function that indicates how to process ‘NA’ values. Default=na.rpart.
 #'
-#' @seealso The internal function is from package \code{\link[ada]{ada}}
+#' @seealso The internal function is from package \code{\link[ada]{ada}}.
+#'
+#' @return A object ada.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note the parameter information was taken from the original function \code{\link[ada]{ada}}.
 #'
 #' @export
 #'
@@ -62,11 +66,6 @@ train.ada <- function(formula, data, ..., subset, na.action = na.rpart){
   }
   m$... <- NULL
   model <- eval.parent(m)
-  # if(missing(subset)){
-  #   model <- ada(formula = formula, data = data, ... = ..., na.action = na.action)
-  # }else{
-  #   model <- ada(formula = formula, data = data, ... = ..., subset = subset, na.action = na.action)
-  # }
   create.model(model, formula, data, "ada.prmdt")
 }
 
@@ -93,7 +92,11 @@ train.ada <- function(formula, data, ..., subset, na.action = na.rpart){
 #' @param cost a vector of non-negative costs, one for each variable in the model. Defaults to one for all variables. These are scalings to be applied when considering splits, so the improvement on splitting on a variable is divided by its cost in deciding which split to choose.
 #' @param ... arguments to \code{\link[rpart]{rpart.control}} may also be specified in the call to rpart. They are checked against the list of valid arguments.
 #'
-#' @seealso The internal function is from package \code{\link[rpart]{rpart}}
+#' @seealso The internal function is from package \code{\link[rpart]{rpart}}.
+#'
+#' @return A object rpart.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note the parameter information was taken from the original function \code{\link[rpart]{rpart}}.
 #'
 #' @export
 #'
@@ -126,23 +129,6 @@ train.rpart <- function(formula, data, weights, subset, na.action = na.rpart, me
   }
   m$... <- NULL
   model <- eval.parent(m)
-  # if(missing(weights) & missing(subset)){
-  #   model <- rpart(formula = formula, data = data, na.action = na.action, method = method, model = model,
-  #                  x = x , y = y , parms = parms, control = control, cost = cost, ... = ...)
-  # }else{
-  #   if((!missing(weights)) & (!missing(subset))){
-  #     model <- rpart(formula = formula, data = data, weights = weights, subset = subset, na.action = na.action, method = method, model = model,
-  #                    x = x , y = y , parms = parms, control = control, cost = cost, ... = ...)
-  #   }else{
-  #     if(!missing(weights)){
-  #       model <- rpart(formula = formula, data = data, weights = weights, na.action = na.action, method = method, model = model,
-  #                      x = x , y = y , parms = parms, control = control, cost = cost, ... = ...)
-  #     }else{
-  #       model <- rpart(formula = formula, data = data, subset = subset, na.action = na.action, method = method, model = model,
-  #                      x = x , y = y , parms = parms, control = control, cost = cost, ... = ...)
-  #     }
-  #   }
-  # }
 
   create.model(model, formula, data, "rpart.prmdt")
 }
@@ -158,7 +144,11 @@ train.rpart <- function(formula, data, weights, subset, na.action = na.rpart, me
 #' @param subset For data given in a data frame, an index vector specifying the cases to be used in the training sample. (NOTE: If given, this argument must be named.)
 #' @param na.action A function to specify the action to be taken if NAs are found. The default action is not to count them for the computation of the probability factors. An alternative is na.omit, which leads to rejection of cases with missing values on any required variable. (NOTE: If given, this argument must be named.)
 #'
-#' @seealso The internal function is from package \code{\link[e1071]{naiveBayes}}
+#' @seealso The internal function is from package \code{\link[e1071]{naiveBayes}}.
+#'
+#' @return A object bayes.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note the parameter information was taken from the original function  \code{\link[e1071]{naiveBayes}}.
 #'
 #' @export
 #'
@@ -191,11 +181,6 @@ train.bayes <- function(formula, data, laplace = 0, ..., subset, na.action = na.
   }
   m$... <- NULL
   model <- eval.parent(m)
-  # if(missing(subset)){
-  #   model <- naiveBayes(formula = formula, data = data, laplace = laplace, ... = ..., na.action = na.action)
-  # }else{
-  #   model <- naiveBayes(formula = formula, data = data, laplace = laplace, ... = ..., subset = subset, na.action = na.action)
-  # }
   create.model(model, formula, data, "bayes.prmdt")
 }
 
@@ -209,7 +194,11 @@ train.bayes <- function(formula, data, laplace = 0, ..., subset, na.action = na.
 #' @param subset an index vector indicating which rows should be used. (NOTE: If given, this argument must be named.)
 #' @param na.action A function to specify the action to be taken if NAs are found. (NOTE: If given, this argument must be named.)
 #'
-#' @seealso The internal function is from package \code{\link[randomForest]{randomForest}}
+#' @seealso The internal function is from package \code{\link[randomForest]{randomForest}}.
+#'
+#' @return A object randomForest.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note the parameter information was taken from the original function  \code{\link[randomForest]{randomForest}}.
 #'
 #' @export
 #'
@@ -245,11 +234,6 @@ train.randomForest <- function(formula, data, ..., subset, na.action = na.fail){
     m$importance <- TRUE
   }
   model <- eval.parent(m)
-  # if(missing(subset)){
-  #   model <- randomForest(formula = formula, data = data, ... = ..., na.action = na.action)
-  # }else{
-  #   model <- randomForest(formula = formula, data = data, ... = ..., subset = subset, na.action = na.action)
-  # }
   create.model(model, formula, data, "randomForest.prmdt")
 }
 
@@ -269,7 +253,11 @@ train.randomForest <- function(formula, data, ..., subset, na.action = na.fail){
 #' @param contrasts A vector containing the 'unordered' and 'ordered' contrasts to use.
 #' @param ... Further arguments passed to or from other methods.
 #'
-#' @seealso The internal function is from package \code{\link[kknn]{train.kknn}}
+#' @seealso The internal function is from package \code{\link[kknn]{train.kknn}}.
+#'
+#' @return A object knn.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note the parameter information was taken from the original function \code{\link[kknn]{train.kknn}}.
 #'
 #' @export
 #'
@@ -304,8 +292,6 @@ train.knn <- function(formula, data, kmax = 11, ks = NULL, distance = 2, kernel 
   }
   m$... <- NULL
   model <- eval(m, envir = parent.frame())
-  # model <- train.kknn(formula = formula, data = data, kmax = kmax, ks = ks, distance = distance, kernel = kernel,  ykernel = ykernel,
-  #                     scale =  scale, contrasts = contrasts, ordered = ordered, ... = ...)
   create.model(model, formula, data, "knn.prmdt")
 }
 
@@ -323,7 +309,11 @@ train.knn <- function(formula, data, kmax = 11, ks = NULL, distance = 2, kernel 
 #'                  values on any required variable. (NOTE: If given, this argument must be named.)
 #' @param contrasts a list of contrasts to be used for some or all of the factors appearing as variables in the model formula.
 #'
-#' @seealso The internal function is from package \code{\link[nnet]{nnet}}
+#' @seealso The internal function is from package \code{\link[nnet]{nnet}}.
+#'
+#' @return A object nnet.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note the parameter information was taken from the original function \code{\link[nnet]{nnet}}.
 #'
 #' @export
 #'
@@ -392,7 +382,11 @@ train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts
 #' @param likelihood logical. If the error function is equal to the negative log-likelihood function, the
 #'                   information criteria AIC and BIC will be calculated. Furthermore the usage of confidence.interval is meaningfull.
 #'
-#' @seealso The internal function is from package \code{\link[neuralnet]{neuralnet}}
+#' @seealso The internal function is from package \code{\link[neuralnet]{neuralnet}}.
+#'
+#' @return A object neuralnet.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note the parameter information was taken from the original function \code{\link[neuralnet]{neuralnet}}.
 #'
 #' @export
 #'
@@ -432,17 +426,6 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
   suppressWarnings(data <- cbind(as.data.frame(dummy.data.frame(data[, -selector, drop = FALSE], drop = FALSE,
                                                                       dummy.classes = c("factor","character"))), data[,selector]))
   colnames(data) <- c(colnames(data)[-ncol(data)], var.predict)
-
-  # selector <- which(colnames(data) == var.predict)
-  # data[, -selector] <- scale(data[, -selector])
-
-  # if(!is.numeric(data[, selector])){
-  #   data[, selector] <- as.numeric(data[, selector]) - 1
-  # }
-
-  # data <- data %>% dplyr::mutate(.valor.nuevo = TRUE, i = row_number()) %>%
-  #                  tidyr::spread(key = var.predict, value = '.valor.nuevo', fill = FALSE) %>%
-  #                  dplyr::select(-i)
 
   .vars <- all.vars(formula[-2])
   if(length(.vars) == 1 && .vars == "."){
@@ -488,7 +471,11 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
 #'              recycled as many times as needed. Per default, data are scaled internally (both x and y variables) to zero mean and unit variance.
 #'              The center and scale values are returned and used for later predictions.
 #'
-#' @seealso The internal function is from package \code{\link[e1071]{svm}}
+#' @seealso The internal function is from package \code{\link[e1071]{svm}}.
+#'
+#' @return A object svm.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note the parameter information was taken from the original function \code{\link[e1071]{svm}}.
 #'
 #' @export
 #'
@@ -583,7 +570,11 @@ train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = T
 #' @param colsample_bytree colsample_bytree subsample ratio of columns when constructing each tree. Default: 1
 #' @param ... other parameters to pass to params.
 #'
-#' @seealso The internal function is from package \code{\link[xgboost]{xgb.train}}
+#' @seealso The internal function is from package \code{\link[xgboost]{xgb.train}}.
+#'
+#' @return A object xgb.Booster.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note the parameter information was taken from the original function \code{\link[xgboost]{xgb.train}}.
 #'
 #' @export
 #'
@@ -690,7 +681,11 @@ train.xgboost <- function(formula, data, nrounds, watchlist = list(), obj = NULL
 #' @param ... For glm: arguments to be used to form the default control argument if it is not supplied directly.
 #'            For weights: further arguments passed to or from other methods.
 #'
-#' @seealso The internal function is from package \code{\link[stats]{glm}}
+#' @seealso The internal function is from package \code{\link[stats]{glm}}.
+#'
+#' @seealso The internal function is from package \code{\link[stats]{glm}}.
+#'
+#' @return A object glm.prmdt with additional information to the model that allows to homogenize the results.
 #'
 #' @export
 #'

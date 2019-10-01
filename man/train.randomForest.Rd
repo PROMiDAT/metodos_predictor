@@ -17,8 +17,14 @@ train.randomForest(formula, data, ..., subset, na.action = na.fail)
 
 \item{na.action}{A function to specify the action to be taken if NAs are found. (NOTE: If given, this argument must be named.)}
 }
+\value{
+A object randomForest.prmdt with additional information to the model that allows to homogenize the results.
+}
 \description{
 Provides a wrapping function for the \code{\link[randomForest]{randomForest}}.
+}
+\note{
+the parameter information was taken from the original function  \code{\link[randomForest]{randomForest}}.
 }
 \examples{
 
@@ -39,5 +45,5 @@ confusion.matrix(data.test, prediccion)
 
 }
 \seealso{
-The internal function is from package \code{\link[randomForest]{randomForest}}
+The internal function is from package \code{\link[randomForest]{randomForest}}.
 }

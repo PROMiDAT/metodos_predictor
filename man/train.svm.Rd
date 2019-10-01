@@ -24,8 +24,14 @@ An alternative is na.fail, which causes an error if NA cases are found. (NOTE: I
 recycled as many times as needed. Per default, data are scaled internally (both x and y variables) to zero mean and unit variance.
 The center and scale values are returned and used for later predictions.}
 }
+\value{
+A object svm.prmdt with additional information to the model that allows to homogenize the results.
+}
 \description{
 Provides a wrapping function for the \code{\link[e1071]{svm}}.
+}
+\note{
+the parameter information was taken from the original function \code{\link[e1071]{svm}}.
 }
 \examples{
 
@@ -46,5 +52,5 @@ confusion.matrix(data.test, prediccion)
 
 }
 \seealso{
-The internal function is from package \code{\link[e1071]{svm}}
+The internal function is from package \code{\link[e1071]{svm}}.
 }

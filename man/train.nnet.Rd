@@ -24,8 +24,14 @@ values on any required variable. (NOTE: If given, this argument must be named.)}
 
 \item{contrasts}{a list of contrasts to be used for some or all of the factors appearing as variables in the model formula.}
 }
+\value{
+A object nnet.prmdt with additional information to the model that allows to homogenize the results.
+}
 \description{
 Provides a wrapping function for the \code{\link[nnet]{nnet}}.
+}
+\note{
+the parameter information was taken from the original function \code{\link[nnet]{nnet}}.
 }
 \examples{
 
@@ -46,5 +52,5 @@ confusion.matrix(data.test, prediccion)
 
 }
 \seealso{
-The internal function is from package \code{\link[nnet]{nnet}}
+The internal function is from package \code{\link[nnet]{nnet}}.
 }

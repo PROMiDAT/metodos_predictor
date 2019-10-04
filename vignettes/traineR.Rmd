@@ -34,7 +34,7 @@ knitr::kable(head(Puromycin, 10))
 
 ```{r}
 n <- seq_len(nrow(Puromycin))
-.sample <- sample(n, length(n) * 0.70)
+.sample <- sample(n, length(n) * 0.7)
 data.train <- Puromycin[.sample,]
 data.test  <- Puromycin[-.sample,]
 ```
@@ -80,7 +80,7 @@ general.indexes(mc = mc)
 
 **Modeling:**
 ```{r}
-model <- train.ada(state~., data.train, iter = 100)
+model <- train.ada(state~., data.train, iter = 200)
 model
 ```
 

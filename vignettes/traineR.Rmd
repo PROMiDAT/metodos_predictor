@@ -1,5 +1,5 @@
 ---
-title: "traineR"
+title: "traineR Package"
 author: "PROMiDAT"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -22,7 +22,7 @@ library(traineR)
 
 The `traineR` package seeks to unify the different ways of creating predictive models and their different predictive formats. It includes methods such as K-Nearest Neighbors, Decision Trees, ADA Boosting, Extreme Gradient Boosting, Random Forest, Neural Networks, Deep Learning, Support Vector Machines, Bayesian and Logical Regression.
 
-The main idea of the package is that all predictions have a common form, also that all predictive methods can be used in the same way by default, i.e. that all packages are oriented to classification in their default form, that all methods use a formula to determine the predictor variables and the variable to predict and that each method manipulates the data to bring them to the format required by each different package.
+The main idea of the package is that all predictions can be execute using a standard syntax, also that all predictive methods can be used in the same way by default, for example, that all packages are use classification in their default invocation and all methods use a formula to determine the predictor variables (independent variables) and the response variable.
 
 ## Examples:
 
@@ -39,7 +39,7 @@ data.train <- Puromycin[.sample,]
 data.test  <- Puromycin[-.sample,]
 ```
 
-### Logical Regression
+### Logistic Regression
 
 **Modeling:**
 ```{r}

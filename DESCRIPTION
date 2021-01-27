@@ -25,6 +25,6 @@ Description: Methods to unify the different ways of creating predictive models a
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true
-URL: http://www.promidat.com
+URL: https://www.promidat.com
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr

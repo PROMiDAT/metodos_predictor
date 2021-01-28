@@ -18,6 +18,22 @@ create.model <- function(model, formula, data,  name = NULL){
   return(model)
 }
 
+
+train.lda <- function(formula, data, ..., subset, na.action = na.rpart){
+  m <- match.call(expand.dots = FALSE)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
+  }
+  m[[1L]] <- quote(MASS::lda)
+  my.list <- as.list(m$...)
+  for(.name in names(my.list)) {
+    m[[.name]] <- my.list[[.name]]
+  }
+  m$... <- NULL
+  model <- eval.parent(m)
+  create.model(model, formula, data, "lda.prmdt")
+}
+
 #' train.ada
 #'
 #' @description Provides a wrapping function for the \code{\link[ada]{ada}}.

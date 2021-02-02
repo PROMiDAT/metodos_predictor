@@ -9,6 +9,27 @@ create.prediction  <- function(model, prediction){
   return(prediction)
 }
 
+
+#' predict.qda.prmdt
+#'
+#' @keywords internal
+#'
+predict.qda.prmdt <- function(object, newdata, type = "class", ...){
+  if(type == "class"){
+    ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), ...)$class
+  }
+  else if(type == "prob"){
+    ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), ...)$posterior
+  }
+  else{
+    stop("invalid type for prediction")
+  }
+
+  ans <- type_correction(object, ans, type == "class")
+  return(create.prediction(object, ans))
+}
+
+
 #' predict.lda.prmdt
 #'
 #' @keywords internal
@@ -21,10 +42,10 @@ predict.lda.prmdt <- function(object, newdata, type = "class", ...){
     ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), ...)$posterior
   }
   else{
-    ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), ...)
+    stop("invalid type for prediction")
   }
 
-  ans <- type_correction(object, ans, type == "raw")
+  ans <- type_correction(object, ans, type == "class")
   return(create.prediction(object, ans))
 }
 

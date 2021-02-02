@@ -4,9 +4,16 @@
 \alias{predict.glm.prmdt}
 \title{predict.glm.prmdt}
 \usage{
-\method{predict}{glm.prmdt}(object, newdata, type = "class",
-  se.fit = FALSE, dispersion = NULL, terms = NULL,
-  na.action = na.pass, ...)
+\method{predict}{glm.prmdt}(
+  object,
+  newdata,
+  type = "class",
+  se.fit = FALSE,
+  dispersion = NULL,
+  terms = NULL,
+  na.action = na.pass,
+  ...
+)
 }
 \description{
 predict.glm.prmdt

@@ -19,17 +19,85 @@ create.model <- function(model, formula, data,  name = NULL){
 }
 
 
-train.lda <- function(formula, data, ..., subset, na.action = na.rpart){
-  m <- match.call(expand.dots = FALSE)
+#' train.qda
+#'
+#' @description Provides a wrapping function for the \code{\link[MASS]{qda}}.
+#'
+#' @param formula  A formula of the form groups ~ x1 + x2 + ... That is, the response is the grouping factor and the right hand side specifies the (non-factor) discriminators.
+#' @param data An optional data frame, list or environment from which variables specified in formula are preferentially to be taken.
+#' @param ... Arguments passed to or from other methods.
+#' @param subset An index vector specifying the cases to be used in the training sample. (NOTE: If given, this argument must be named.)
+#' @param na.action  Function to specify the action to be taken if NAs are found. The default action is for the procedure to fail.
+#'                   An alternative is na.omit, which leads to rejection of cases with missing values on any required variable.
+#'                   (NOTE: If given, this argument must be named.)
+#'
+#' @seealso The internal function is from package \code{\link[MASS]{qda}}.
+#'
+#' @return A object qda.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note The parameter information was taken from the original function \code{\link[MASS]{qda}}.
+#'
+#' @export
+#'
+#' @examples
+#'
+#' len <- nrow(iris)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- iris[sampl,]
+#' ttraining <- iris[-sampl,]
+#' model.qda <- train.qda(Species~.,ttraining)
+#' prediction <- predict(model.qda,ttesting)
+#' prediction
+#' general.indexes(ttesting,prediction)
+#'
+train.qda <- function(formula, data, ..., subset, na.action){
+  m <- match.call(expand.dots = T)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
+  }
+  m[[1L]] <- quote(MASS::qda)
+  model <- eval.parent(m)
+  create.model(model, formula, data, "qda.prmdt")
+}
+
+
+#' train.lda
+#'
+#' @description Provides a wrapping function for the \code{\link[MASS]{lda}}.
+#'
+#' @param formula  A formula of the form groups ~ x1 + x2 + ... That is, the response is the grouping factor and the right hand side specifies the (non-factor) discriminators.
+#' @param data An optional data frame, list or environment from which variables specified in formula are preferentially to be taken.
+#' @param ... Arguments passed to or from other methods.
+#' @param subset An index vector specifying the cases to be used in the training sample. (NOTE: If given, this argument must be named.)
+#' @param na.action  Function to specify the action to be taken if NAs are found. The default action is for the procedure to fail.
+#'                   An alternative is na.omit, which leads to rejection of cases with missing values on any required variable.
+#'                   (NOTE: If given, this argument must be named.)
+#'
+#' @seealso The internal function is from package \code{\link[MASS]{lda}}.
+#'
+#' @return A object lda.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note The parameter information was taken from the original function \code{\link[MASS]{lda}}.
+#'
+#' @export
+#'
+#' @examples
+#'
+#' len <- nrow(iris)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- iris[sampl,]
+#' ttraining <- iris[-sampl,]
+#' model.lda <- train.lda(Species~.,ttraining)
+#' prediction <- predict(model.lda,ttesting)
+#' prediction
+#' general.indexes(ttesting,prediction)
+#'
+train.lda <- function(formula, data, ..., subset, na.action){
+  m <- match.call(expand.dots = T)
   if (is.matrix(eval.parent(m$data))){
     m$data <- as.data.frame(data)
   }
   m[[1L]] <- quote(MASS::lda)
-  my.list <- as.list(m$...)
-  for(.name in names(my.list)) {
-    m[[.name]] <- my.list[[.name]]
-  }
-  m$... <- NULL
   model <- eval.parent(m)
   create.model(model, formula, data, "lda.prmdt")
 }

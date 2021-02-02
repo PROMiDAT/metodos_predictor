@@ -4,10 +4,20 @@
 \alias{predict.xgb.Booster.prmdt}
 \title{predict.xgb.Booster}
 \usage{
-\method{predict}{xgb.Booster.prmdt}(object, newdata, type = "class",
-  missing = NA, outputmargin = FALSE, ntreelimit = NULL,
-  predleaf = FALSE, predcontrib = FALSE, approxcontrib = FALSE,
-  predinteraction = FALSE, reshape = FALSE, ...)
+\method{predict}{xgb.Booster.prmdt}(
+  object,
+  newdata,
+  type = "class",
+  missing = NA,
+  outputmargin = FALSE,
+  ntreelimit = NULL,
+  predleaf = FALSE,
+  predcontrib = FALSE,
+  approxcontrib = FALSE,
+  predinteraction = FALSE,
+  reshape = FALSE,
+  ...
+)
 }
 \description{
 predict.xgb.Booster

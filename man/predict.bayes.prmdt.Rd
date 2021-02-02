@@ -4,8 +4,7 @@
 \alias{predict.bayes.prmdt}
 \title{predict.bayes.prmdt}
 \usage{
-\method{predict}{bayes.prmdt}(object, newdata, type = "class",
-  threshold = 0.001, eps = 0, ...)
+\method{predict}{bayes.prmdt}(object, newdata, type = "class", threshold = 0.001, eps = 0, ...)
 }
 \description{
 predict.bayes.prmdt

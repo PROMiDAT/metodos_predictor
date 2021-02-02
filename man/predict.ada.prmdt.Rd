@@ -4,8 +4,7 @@
 \alias{predict.ada.prmdt}
 \title{predict.ada.prmdt}
 \usage{
-\method{predict}{ada.prmdt}(object, newdata, type = "class",
-  n.iter = NULL, ...)
+\method{predict}{ada.prmdt}(object, newdata, type = "class", n.iter = NULL, ...)
 }
 \description{
 predict.ada.prmdt

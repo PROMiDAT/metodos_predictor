@@ -1,4 +1,4 @@
-export(train.ada, train.rpart, train.bayes, train.randomForest, train.knn, train.nnet, train.neuralnet, train.svm, train.xgboost, train.glm, contr.dummy, contr.ordinal,
+export(train.qda,train.lda,train.ada, train.rpart, train.bayes, train.randomForest, train.knn, train.nnet, train.neuralnet, train.svm, train.xgboost, train.glm, contr.dummy, contr.ordinal,
        confusion.matrix, general.indexes, varplot)
 
 importFrom("stats", "na.fail", "na.omit", "na.pass", "update", "as.formula", "predict", "binomial", "glm")
@@ -17,6 +17,8 @@ importFrom("dummies","dummy.data.frame")
 importFrom("graphics", "plot")
 importFrom("stringr","str_detect")
 
+S3method(predict, qda.prmdt)
+S3method(predict, lda.prmdt)
 S3method(predict, ada.prmdt)
 S3method(predict, bayes.prmdt)
 S3method(predict, knn.prmdt)

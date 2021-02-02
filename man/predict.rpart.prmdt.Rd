@@ -4,8 +4,7 @@
 \alias{predict.rpart.prmdt}
 \title{predict.rpart.prmdt}
 \usage{
-\method{predict}{rpart.prmdt}(object, newdata, type = "class",
-  na.action = na.pass, ...)
+\method{predict}{rpart.prmdt}(object, newdata, type = "class", na.action = na.pass, ...)
 }
 \description{
 predict.rpart.prmdt

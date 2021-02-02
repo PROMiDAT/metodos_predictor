@@ -4,8 +4,21 @@
 \alias{train.rpart}
 \title{train.rpart}
 \usage{
-train.rpart(formula, data, weights, subset, na.action = na.rpart, method,
-  model = TRUE, x = FALSE, y = TRUE, parms, control, cost, ...)
+train.rpart(
+  formula,
+  data,
+  weights,
+  subset,
+  na.action = na.rpart,
+  method,
+  model = TRUE,
+  x = FALSE,
+  y = TRUE,
+  parms,
+  control,
+  cost,
+  ...
+)
 }
 \arguments{
 \item{formula}{a formula, with a response but no interaction terms. If this a a data frame, that is taken as the model frame.}

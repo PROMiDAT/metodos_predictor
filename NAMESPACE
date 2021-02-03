@@ -1,5 +1,5 @@
 export(train.qda,train.lda,train.ada, train.rpart, train.bayes, train.randomForest, train.knn, train.nnet, train.neuralnet, train.svm, train.xgboost, train.glm, contr.dummy, contr.ordinal,
-       confusion.matrix, general.indexes, varplot)
+       confusion.matrix, general.indexes, prediction.variable.balance,numerical.predictive.power,categorical.predictive.power,varplot)
 
 importFrom("stats", "na.fail", "na.omit", "na.pass", "update", "as.formula", "predict", "binomial", "glm")
 importFrom("utils", "head", "capture.output")
@@ -12,10 +12,15 @@ importFrom("kknn","train.kknn","contr.dummy", "contr.ordinal")
 importFrom("nnet", "nnet")
 importFrom("neuralnet","neuralnet")
 importFrom("xgboost","xgboost","xgb.DMatrix", "xgb.train")
-importFrom("dplyr","%>%","select")
 importFrom("dummies","dummy.data.frame")
 importFrom("graphics", "plot")
 importFrom("stringr","str_detect")
+importFrom("glue","glue")
+importFrom("scales","percent")
+importFrom("grDevices", "hcl")
+import("dplyr")
+import("ggplot2")
+
 
 S3method(predict, qda.prmdt)
 S3method(predict, lda.prmdt)

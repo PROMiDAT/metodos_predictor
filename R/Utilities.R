@@ -56,7 +56,10 @@ max_col <- function(m){
 #'
 numeric_to_predict <- function(real, predic.var = NULL) {
   if(is.numeric(predic.var)) {
-    predic.var <- factor(predic.var, labels = levels(real))
+    numCategories <-  length(levels(real))
+    #We must specify the possible values that the factor type object can take
+    #Then we specify the labels that must have the same size as the levels
+    predic.var <- factor(predic.var, levels = 1:numCategories,labels = levels(real))
   }
   predic.var
 }

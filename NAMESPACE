@@ -1,5 +1,6 @@
 export(train.qda,train.lda,train.ada, train.rpart, train.bayes, train.randomForest, train.knn, train.nnet, train.neuralnet, train.svm, train.xgboost, train.glm, contr.dummy, contr.ordinal,
-       confusion.matrix, general.indexes, prediction.variable.balance,numerical.predictive.power,categorical.predictive.power,varplot)
+       confusion.matrix, general.indexes, prediction.variable.balance,numerical.predictive.power,categorical.predictive.power,varplot,
+       ROC.plot,ROC.area)
 
 importFrom("stats", "na.fail", "na.omit", "na.pass", "update", "as.formula", "predict", "binomial", "glm")
 importFrom("utils", "head", "capture.output")
@@ -13,11 +14,12 @@ importFrom("nnet", "nnet")
 importFrom("neuralnet","neuralnet")
 importFrom("xgboost","xgboost","xgb.DMatrix", "xgb.train")
 importFrom("dummies","dummy.data.frame")
-importFrom("graphics", "plot")
+importFrom("graphics", "plot","grid", "segments")
 importFrom("stringr","str_detect")
 importFrom("glue","glue")
 importFrom("scales","percent")
 importFrom("grDevices", "hcl")
+importFrom("ROCR", "prediction","performance")
 import("dplyr")
 import("ggplot2")
 

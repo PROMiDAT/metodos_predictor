@@ -177,3 +177,47 @@ categorical.predictive.power <- function(data, predict.variable, variable.to.com
     stop("The variable to predict must be of type factor or character", call. = FALSE )
   }
 }
+
+
+#' boosting.importance.plot
+#'
+#' @description Function that graphs the importance of the variables for a boosting model.
+#'
+#' @param model fitted model object of class adabag.prmdt or boosting.
+#' @param col the color of the chart bars.
+#'
+#' @seealso \code{\link[ggplot2]{ggplot}}, \code{\link[traineR]{train.adabag}}, \code{\link[adabag]{boosting}}
+#'
+#' @return A ggplot object.
+#'
+#' @note With this function we can identify how important the variables are for the generation of a predictive model.
+#'
+#' @export
+#'
+#' @examples
+#'
+#'data <- iris
+#'n <- nrow(data)
+
+#'sam <- sample(1:n,n*0.75)
+#'training <- data[sam,]
+#'testing <- data[-sam,]
+
+#'model <- train.adabag(formula = Species~.,data = training,minsplit = 2,
+#'  maxdepth = 30, mfinal = 10)
+#'boosting.importance.plot(model)
+#'
+boosting.importance.plot <- function(model, col = "steelblue"){
+  df <- as.data.frame(model$importance)
+  colnames(df) <- c("importance")
+  df$importance <- round(df$importance,digits = 2)
+  ggplot(data=df, aes(x=reorder(row.names(df), .data$importance),y=.data$importance)) +
+    geom_bar(stat="identity", fill=col,width = 0.6)+
+    theme_minimal() +
+    labs(title= "Variable Importance",
+         y="Percentage of Importance", x = "Variable Names") +
+    scale_y_continuous(breaks=seq(0,100,10)) +
+    coord_flip()
+}
+
+

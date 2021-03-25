@@ -1,14 +1,15 @@
-export(train.qda,train.lda,train.ada, train.rpart, train.bayes, train.randomForest, train.knn, train.nnet, train.neuralnet, train.svm, train.xgboost, train.glm, contr.dummy, contr.ordinal,
-       confusion.matrix, general.indexes, prediction.variable.balance,numerical.predictive.power,categorical.predictive.power,varplot,
+export(train.qda,train.lda,train.ada, train.adabag,train.rpart, train.bayes, train.randomForest, train.knn, train.nnet, train.neuralnet, train.svm, train.xgboost, train.glm, contr.dummy, contr.ordinal,
+       confusion.matrix, general.indexes, prediction.variable.balance,numerical.predictive.power,categorical.predictive.power,boosting.importance.plot,varplot,
        ROC.plot,ROC.area)
 
-importFrom("stats", "na.fail", "na.omit", "na.pass", "update", "as.formula", "predict", "binomial", "glm")
+importFrom("stats", "na.fail", "na.omit", "na.pass", "update", "as.formula", "predict", "binomial", "glm","reorder")
 importFrom("utils", "head", "capture.output")
-importFrom("rpart", "rpart", "na.rpart")
+importFrom("rpart", "rpart", "na.rpart","rpart.control")
 importFrom("randomForest", "randomForest")
 importFrom("e1071","naiveBayes","svm")
 importFrom("MASS","lda","qda")
 importFrom("ada","ada")
+importFrom("adabag","boosting")
 importFrom("kknn","train.kknn","contr.dummy", "contr.ordinal")
 importFrom("nnet", "nnet")
 importFrom("neuralnet","neuralnet")
@@ -27,6 +28,7 @@ import("ggplot2")
 S3method(predict, qda.prmdt)
 S3method(predict, lda.prmdt)
 S3method(predict, ada.prmdt)
+S3method(predict, adabag.prmdt)
 S3method(predict, bayes.prmdt)
 S3method(predict, knn.prmdt)
 S3method(predict, nnet.prmdt)

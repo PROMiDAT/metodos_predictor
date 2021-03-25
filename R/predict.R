@@ -65,6 +65,26 @@ predict.ada.prmdt <- function(object, newdata, type = "class", n.iter = NULL, ..
   return(create.prediction(object, ans))
 }
 
+#' predict.adabag.prmdt
+#'
+#' @keywords internal
+#'
+predict.adabag.prmdt <- function(object, newdata, type = "class",...){
+  if(type == "class"){
+    ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), ...)$class
+    ans <- type_correction(object, ans, TRUE)
+  }
+  else if(type == "prob"){
+    ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), ...)$prob
+    colnames(ans) <- object$prmdt$levels
+  }
+  else{
+    stop("invalid type for prediction")
+  }
+  return(create.prediction(object, ans))
+}
+
+
 #' predict.bayes.prmdt
 #'
 #' @keywords internal

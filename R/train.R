@@ -153,6 +153,61 @@ train.ada <- function(formula, data, ..., subset, na.action = na.rpart){
   create.model(model, formula, data, "ada.prmdt")
 }
 
+
+#' train.adabag
+#'
+#' @description Provides a wrapping function for the \code{\link[adabag]{boosting}}.
+#'
+#' @param formula  a symbolic description of the model to be fit.
+#' @param data an optional data frame containing the variables in the model.
+#' @param boos if TRUE (by default), a bootstrap sample of the training set is drawn using the weights for each observation on that iteration.
+#'             If FALSE, every observation is used with its weights.
+#' @param mfinal an integer, the number of iterations for which boosting is run or the number of trees to use. Defaults to mfinal=100 iterations.
+#' @param coeflearn if 'Breiman'(by default), alpha=1/2ln((1-err)/err) is used. If 'Freund' alpha=ln((1-err)/err) is used.
+#'             In both cases the AdaBoost.M1 algorithm is used and alpha is the weight updating coefficient.
+#'             On the other hand, if coeflearn is 'Zhu' the SAMME algorithm is implemented with alpha=ln((1-err)/err)+ ln(nclasses-1).
+#' @param minsplit the minimum number of observations that must exist in a node in order for a split to be attempted.
+#' @param maxdepth Set the maximum depth of any node of the final tree, with the root node counted as depth 0. Values greater than 30 rpart will give nonsense results on 32-bit machines.
+#' @param ... arguments passed to rpart.control or adabag::boosting. For stumps, use rpart.control(maxdepth=1,cp=-1,minsplit=0,xval=0). maxdepth controls the depth of
+#'            trees, and cp controls the complexity of trees.
+#'
+#' @seealso The internal function is from package \code{\link[adabag]{boosting}}.
+#'
+#' @return A object adabag.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note The parameter information was taken from the original function \code{\link[adabag]{boosting}} and \code{\link[rpart]{rpart.control}}.
+#'
+#' @export
+#'
+#' @examples
+#'
+#'data <- iris
+#'n <- nrow(data)
+
+#'sam <- sample(1:n,n*0.75)
+#'training <- data[sam,]
+#'testing <- data[-sam,]
+
+#'model <- train.adabag(formula = Species~.,data = training,minsplit = 2,
+#' maxdepth = 30, mfinal = 10)
+#'predict <- predict(object = model,testing,type = "class")
+#'MC <- confusion.matrix(testing,predict)
+#'general.indexes(mc = MC)
+#'
+train.adabag <- function(formula, data, boos = TRUE, mfinal = 100, coeflearn = 'Breiman', minsplit = 20, maxdepth = 30,...){
+  m <- match.call(expand.dots = T)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
+  }
+  m$control <- rpart::rpart.control(minsplit = minsplit, maxdepth = maxdepth,...)
+  m[[1L]] <- quote(adabag::boosting)
+  m$... <- NULL
+  m$minsplit <- NULL
+  m$maxdepth <- NULL
+  model <- eval.parent(m)
+  create.model(model, formula, data, "adabag.prmdt")
+}
+
 #' train.rpart
 #'
 #' @description Provides a wrapping function for the \code{\link[rpart]{rpart}}.

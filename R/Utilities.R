@@ -1,3 +1,15 @@
+#' get.default.parameters
+#'
+#' @keywords internal
+#'
+get.default.parameters <- function(mcall, myFormals) {
+  ## formals with default arguments
+  for ( v in names(myFormals)){
+    if (!(v %in% names(mcall)))
+      mcall[v] <- myFormals[v]  ## if arg is missing I add it
+  }
+  return(mcall)
+}
 
 #' get_test_less_predict
 #'

@@ -276,3 +276,26 @@ predict.glm.prmdt <- function(object, newdata, type = "class", se.fit = FALSE, d
   }
   return(create.prediction(object, ans))
 }
+
+
+#' predict.glmnet.prmdt
+#'
+#' @keywords internal
+#'
+predict.glmnet.prmdt <- function(object, newdata, type = "class", s = NULL,...){
+  testing <- model.matrix(formula(paste(object$prmdt$var.pred,"~",object$prmdt$vars[[2]])), newdata)[, -1]
+  if(is.null(s) && !is.null(object$prmdt$lambda.min)){
+    s <- object$prmdt$lambda.min
+  }
+  if(type == "prob"){
+    ans <- predict(original_model(object), testing, s = s, type = "response", ...)
+  }
+  else{
+    ans <- predict(original_model(object), testing, s = s, type = type, ...)
+  }
+
+  if(!(is.null(object$prmdt$lambda.min) && is.null(s))){
+    ans <- type_correction(object, ans, type == "class")
+  }
+  return(create.prediction(object, ans))
+}

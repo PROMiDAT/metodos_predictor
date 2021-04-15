@@ -863,3 +863,62 @@ train.glm <- function(formula,  data, family = binomial, weights, subset, na.act
 }
 
 
+#' train.glmnet
+#'
+#' @description Provides a wrapping function for the \code{\link[glmnet]{glmnet}}.
+#'
+#' @param formula  A formula of the form groups ~ x1 + x2 + ... That is, the response is the grouping factor and the right hand side specifies the (non-factor) discriminators.
+#' @param data An optional data frame, list or environment from which variables specified in formula are preferentially to be taken.
+#' @param standardize Logical flag for x variable standardization, prior to fitting the model sequence.
+#'                    The coefficients are always returned on the original scale. Default is standardize=TRUE.
+#'                    If variables are in the same units already, you might not wish to standardize.
+#'                    See details below for y standardization with family="gaussian".
+#' @param alpha The elasticnet mixing parameter, with 0≤α≤ 1. The penalty is defined as (1-α)/2||β||_2^2+α||β||_1 .alpha=1 is the lasso penalty, and alpha=0 the ridge penalty.
+#' @param family Either a character string representing one of the built-in families, or else a glm() family object.
+#'               For more information, see Details section below or the documentation for response type (above).
+#' @param cv True or False. Perform cross-validation to find the best value of the penalty parameter lambda and save this value in the model.
+#'           This value could be used in predict() function.
+#' @param ... Arguments passed to or from other methods.
+#'
+#' @seealso The internal function is from package \code{\link[glmnet]{glmnet}}.
+#'
+#' @return A object glmnet.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note The parameter information was taken from the original function \code{\link[glmnet]{glmnet}}.
+#'
+#' @export
+#'
+#' @examples
+#'
+#' len <- nrow(iris)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- iris[sampl,]
+#' ttraining <- iris[-sampl,]
+#' model.glmnet <- train.glmnet(Species~.,ttraining)
+#' prediction <- predict(model.glmnet,ttesting)
+#' prediction
+#' general.indexes(ttesting,prediction)
+#'
+train.glmnet <- function(formula, data, standardize = TRUE, alpha = 1,family = 'multinomial', cv = TRUE,...){
+  m <- match.call(expand.dots = T)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
+  }
+  m[[1L]] <- quote(glmnet::glmnet)
+  x <- model.matrix(formula,data)[,-1]
+  y <- data[,as.character(formula[[2]])]
+  m$x <- x
+  m$y <- y
+  m <- get.default.parameters(m,formals(train.glmnet))
+  m$formula <- m$data <- m$cv <- m$... <- NULL
+  model <- eval.parent(m)
+  model <- create.model(model, formula, data, "glmnet.prmdt")
+  #To find the best value of the penalty parameter lambda
+  if(cv == T){
+    model$prmdt$lambda.min <- cv.glmnet(x, y, standardize = standardize, alpha = alpha,family = family)$lambda.min
+  }
+  else{
+    model$prmdt$lambda.min <- NULL
+  }
+  return(model)
+}

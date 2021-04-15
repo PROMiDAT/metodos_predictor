@@ -1,7 +1,7 @@
 Package: traineR
 Type: Package
 Title: Predictive Models Homologator
-Version: 1.5.0
+Version: 1.6.0
 Authors@R: c(
     person("Oldemar", "Rodriguez R.", email = "oldemar.rodriguez@ucr.ac.cr", role = c("aut","cre")),
     person("Andres", "Navarro D.", role = c("ctb","prg")),
@@ -21,6 +21,7 @@ Imports:
     dummies (>= 1.5.6),
     stringr (>= 1.4.0),
     adabag,
+    glmnet,
     ROCR,
     ggplot2,
     scales,
@@ -29,10 +30,9 @@ Imports:
 Suggests: knitr, rmarkdown, rpart.plot
 Description: Methods to unify the different ways of creating predictive models and their different predictive formats. It includes 
        methods such as K-Nearest Neighbors, Decision Trees, ADA Boosting, Extreme Gradient Boosting, Random Forest, Neural Networks, Deep Learning,
-       Support Vector Machines, Bayesian Methods, Linear Discriminant Analysis and Quadratic Discriminant Analysis.
+       Support Vector Machines, Bayesian Methods, Linear Discriminant Analysis and Quadratic Discriminant Analysis, Logistic Regression, Penalized Logistic Regression.
 License: GPL (>=2)
 Encoding: UTF-8
-LazyData: true
 URL: https://www.promidat.com
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr

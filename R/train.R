@@ -873,7 +873,7 @@ train.glm <- function(formula,  data, family = binomial, weights, subset, na.act
 #'                    The coefficients are always returned on the original scale. Default is standardize=TRUE.
 #'                    If variables are in the same units already, you might not wish to standardize.
 #'                    See details below for y standardization with family="gaussian".
-#' @param alpha The elasticnet mixing parameter, with 0≤α≤ 1. The penalty is defined as (1-α)/2||β||_2^2+α||β||_1 .alpha=1 is the lasso penalty, and alpha=0 the ridge penalty.
+#' @param alpha The elasticnet mixing parameter. alpha=1 is the lasso penalty, and alpha=0 the ridge penalty.
 #' @param family Either a character string representing one of the built-in families, or else a glm() family object.
 #'               For more information, see Details section below or the documentation for response type (above).
 #' @param cv True or False. Perform cross-validation to find the best value of the penalty parameter lambda and save this value in the model.

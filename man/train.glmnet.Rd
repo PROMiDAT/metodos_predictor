@@ -24,7 +24,7 @@ The coefficients are always returned on the original scale. Default is standardi
 If variables are in the same units already, you might not wish to standardize.
 See details below for y standardization with family="gaussian".}
 
-\item{alpha}{The elasticnet mixing parameter, with 0≤α≤ 1. The penalty is defined as (1-α)/2||β||_2^2+α||β||_1 .alpha=1 is the lasso penalty, and alpha=0 the ridge penalty.}
+\item{alpha}{The elasticnet mixing parameter. alpha=1 is the lasso penalty, and alpha=0 the ridge penalty.}
 
 \item{family}{Either a character string representing one of the built-in families, or else a glm() family object.
 For more information, see Details section below or the documentation for response type (above).}

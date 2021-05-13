@@ -216,18 +216,26 @@ predict.xgb.Booster.prmdt <- function(object, newdata, type = "class", missing =
   selector <- which(colnames(newdata) == var.pred)
 
   if(length(.colnames) == 1 && .colnames == "."){
-    .colnames <- colnames(newdata[,-selector, drop = FALSE])
+    if(length(selector) != 0){
+      .colnames <- colnames(newdata[,-selector, drop = FALSE])
+    }
+    else{
+      .colnames <- colnames(newdata)
+    }
   }
 
-  test_aux <- newdata %>% select(c(.colnames,var.pred))  %>% select_on_class(c("numeric","integer", "factor"))
+  #test_aux <- newdata %>% select(c(.colnames,var.pred))  %>% select_on_class(c("numeric","integer", "factor"))
+  test_aux <- newdata %>% select(c(.colnames))  %>% select_on_class(c("numeric","integer", "factor"))
   test_aux[] <- lapply(test_aux, as.numeric)
 
-  if(min(test_aux[,var.pred]) != 0){
-    test_aux[,var.pred]  <- test_aux[,var.pred]  - 1
-  }
 
-  selector <- which(colnames(test_aux) == var.pred)
-  test_aux  <- xgb.DMatrix(data = data.matrix(test_aux[,-selector]), label = data.matrix(test_aux[,selector]))
+  # if(min(test_aux[,var.pred]) != 0){
+  #   test_aux[,var.pred]  <- test_aux[,var.pred]  - 1
+  # }
+
+  #selector <- which(colnames(test_aux) == var.pred)
+  #test_aux  <- xgb.DMatrix(data = data.matrix(test_aux[,-selector]), label = data.matrix(test_aux[,selector]))
+  test_aux  <- xgb.DMatrix(data = data.matrix(test_aux))
 
   ans <- predict(original_model(object), test_aux, missing, outputmargin, ntreelimit, predleaf, predcontrib, approxcontrib, predinteraction, reshape, ...)
 
@@ -239,7 +247,8 @@ predict.xgb.Booster.prmdt <- function(object, newdata, type = "class", missing =
     }else{
       ans <- ifelse(ans > 0.5, 2, 1)
     }
-    ans <- numeric_to_predict(newdata[,var.pred], ans)
+    #ans <- numeric_to_predict(newdata[,var.pred], ans)
+    ans <- numeric_to_predict(predic.var = ans, niveles = object$prmdt$levels)
   }
 
   if(type == "prob"){

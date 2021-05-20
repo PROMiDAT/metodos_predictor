@@ -112,7 +112,10 @@ original_model <- function(x){
 #' @keywords internal
 #'
 get_test_less_predict <- function(data, var.pred){
-  data[,-which(colnames(data) == var.pred)]
+  if(var.pred %in% colnames(data)){
+    return(data[,-which(colnames(data) == var.pred)])
+  }
+  return(data)
 }
 
 

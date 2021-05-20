@@ -140,12 +140,21 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
 
   var.predict <- object$prmdt$var.pred
   selector <- which(colnames(newdata) == var.predict)
-  suppressWarnings(newdata <- cbind(dummy.data.frame(newdata[, -selector, drop = FALSE], drop = FALSE,
-                                                     dummy.classes = c("factor","character")), newdata[selector]))
 
-  selector <- which(colnames(newdata) == var.predict)
+  if(length(selector) != 0){
+    suppressWarnings(newdata <- dummy.data.frame(newdata[, -selector, drop = FALSE], drop = FALSE,
+                                                       dummy.classes = c("factor","character")))
+  }
+  else{
+    suppressWarnings(newdata <- dummy.data.frame(newdata, drop = FALSE,
+                                                       dummy.classes = c("factor","character")))
+  }
 
-  ans <- neuralnet::compute(original_model(object), newdata[, -selector])
+
+  #selector <- which(colnames(newdata) == var.predict)
+
+  #ans <- neuralnet::compute(original_model(object), newdata[, -selector])
+  ans <- neuralnet::compute(original_model(object), newdata)
 
   if(type == "all"){
     return(create.prediction(object, ans))
@@ -156,7 +165,8 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
 
   if(type == "class"){
     ans <- max_col(ans)
-    ans <- numeric_to_predict(newdata[, selector], ans)
+    #ans <- numeric_to_predict(newdata[, selector], ans)
+    ans <- numeric_to_predict(predic.var = ans, niveles = object$prmdt$levels)
     ans <- type_correction(object, ans, type == "class")
   }
 

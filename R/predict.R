@@ -302,7 +302,9 @@ predict.glm.prmdt <- function(object, newdata, type = "class", se.fit = FALSE, d
 #' @keywords internal
 #'
 predict.glmnet.prmdt <- function(object, newdata, type = "class", s = NULL,...){
-  testing <- as.matrix(get_test_less_predict(newdata, object$prmdt$var.pred))
+  newdata <- get_test_less_predict(newdata, object$prmdt$var.pred)
+  #Importante usar model.matrix, también Convierte a dummy
+  testing <- model.matrix( ~., newdata)[,-1]
   if(is.null(s) && !is.null(object$prmdt$lambda.min)){
     s <- object$prmdt$lambda.min
   }

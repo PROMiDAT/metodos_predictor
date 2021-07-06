@@ -643,7 +643,7 @@ train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = T
     m[[.name]] <- my.list[[.name]]
   }
   m$... <- NULL
-  m$probability <- is.null(m$probability) || m$probability
+  m$probability <- ifelse(is.null(m$probability), TRUE, m$probability)
   model <- eval(m, envir = parent.frame())
   create.model(model, formula, data, "svm.prmdt")
 }

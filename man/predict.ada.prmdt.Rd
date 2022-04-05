@@ -4,10 +4,19 @@
 \alias{predict.ada.prmdt}
 \title{predict.ada.prmdt}
 \usage{
-\method{predict}{ada.prmdt}(object, newdata, type = "class",
-  n.iter = NULL, ...)
+\method{predict}{ada.prmdt}(object, newdata, type = "class", n.iter = NULL, ...)
+}
+\arguments{
+\item{object}{a \code{\link[ada]{ada}} model object for which prediction is desired.}
+
+\item{newdata}{an optional data frame in which to look for variables with which to predict.}
+
+\item{type}{type of prediction 'prob' or 'class' (default).}
+
+\item{n.iter}{number of iterations to consider for the prediction. By default this is iter from the ada call (n.iter< iter).}
+
+\item{...}{additional arguments affecting the predictions produced.}
 }
 \description{
-predict.ada.prmdt
+Return prediction for a \code{\link[ada]{ada}} model.
 }
-\keyword{internal}

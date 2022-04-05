@@ -4,8 +4,7 @@
 \alias{train.svm}
 \title{train.svm}
 \usage{
-train.svm(formula, data, ..., subset, na.action = na.omit,
-  scale = TRUE)
+train.svm(formula, data, ..., subset, na.action = na.omit, scale = TRUE)
 }
 \arguments{
 \item{formula}{a symbolic description of the model to be fit.}

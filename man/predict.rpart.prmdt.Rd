@@ -4,10 +4,19 @@
 \alias{predict.rpart.prmdt}
 \title{predict.rpart.prmdt}
 \usage{
-\method{predict}{rpart.prmdt}(object, newdata, type = "class",
-  na.action = na.pass, ...)
+\method{predict}{rpart.prmdt}(object, newdata, type = "class", na.action = na.pass, ...)
+}
+\arguments{
+\item{object}{a \code{\link[rpart]{rpart}} model object for which prediction is desired.}
+
+\item{newdata}{an optional data frame in which to look for variables with which to predict.}
+
+\item{type}{type of prediction 'prob' or 'class' (default).}
+
+\item{na.action}{a function to determine what should be done with missing values in newdata. The default is to pass them down the tree using surrogates in the way selected when the model was built. Other possibilities are na.omit and na.fail.}
+
+\item{...}{additional arguments affecting the predictions produced.}
 }
 \description{
-predict.rpart.prmdt
+Return prediction for a \code{\link[rpart]{rpart}} model.
 }
-\keyword{internal}

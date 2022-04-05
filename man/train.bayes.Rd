@@ -4,8 +4,7 @@
 \alias{train.bayes}
 \title{train.bayes}
 \usage{
-train.bayes(formula, data, laplace = 0, ..., subset,
-  na.action = na.pass)
+train.bayes(formula, data, laplace = 0, ..., subset, na.action = na.pass)
 }
 \arguments{
 \item{formula}{A formula of the form class ~ x1 + x2 + .... Interactions are not allowed.}

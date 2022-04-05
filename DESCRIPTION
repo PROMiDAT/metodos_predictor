@@ -1,7 +1,7 @@
 Package: traineR
 Type: Package
 Title: Predictive Models Homologator
-Version: 1.0.1
+Version: 1.0.2
 Authors@R: c(
     person("Oldemar", "Rodriguez R.", email = "oldemar.rodriguez@ucr.ac.cr", role = c("aut","cre")),
     person("Andres", "Navarro D.", role = c("ctb","prg")))
@@ -24,7 +24,5 @@ Description: Methods to unify the different ways of creating predictive models a
        Support Vector Machines and Bayesian Methods.
 License: GPL (>=2)
 Encoding: UTF-8
-LazyData: true
-URL: http://www.promidat.com
-RoxygenNote: 6.1.1
-VignetteBuilder: knitr
+URL: https://www.promidat.com
+RoxygenNote: 7.1.2

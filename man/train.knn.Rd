@@ -4,10 +4,18 @@
 \alias{train.knn}
 \title{train.knn}
 \usage{
-train.knn(formula, data, kmax = 11, ks = NULL, distance = 2,
-  kernel = "optimal", ykernel = NULL, scale = TRUE,
+train.knn(
+  formula,
+  data,
+  kmax = 11,
+  ks = NULL,
+  distance = 2,
+  kernel = "optimal",
+  ykernel = NULL,
+  scale = TRUE,
   contrasts = c(unordered = "contr.dummy", ordered = "contr.ordinal"),
-  ...)
+  ...
+)
 }
 \arguments{
 \item{formula}{A formula object.}

@@ -4,13 +4,33 @@
 \alias{train.xgboost}
 \title{train.xgboost}
 \usage{
-train.xgboost(formula, data, nrounds, watchlist = list(), obj = NULL,
-  feval = NULL, verbose = 1, print_every_n = 1L,
-  early_stopping_rounds = NULL, maximize = NULL, save_period = NULL,
-  save_name = "xgboost.model", xgb_model = NULL, callbacks = list(),
-  eval_metric = "mlogloss", extra_params = NULL, booster = "gbtree",
-  objective = NULL, eta = 0.3, gamma = 0, max_depth = 6,
-  min_child_weight = 1, subsample = 1, colsample_bytree = 1, ...)
+train.xgboost(
+  formula,
+  data,
+  nrounds,
+  watchlist = list(),
+  obj = NULL,
+  feval = NULL,
+  verbose = 1,
+  print_every_n = 1L,
+  early_stopping_rounds = NULL,
+  maximize = NULL,
+  save_period = NULL,
+  save_name = "xgboost.model",
+  xgb_model = NULL,
+  callbacks = list(),
+  eval_metric = "mlogloss",
+  extra_params = NULL,
+  booster = "gbtree",
+  objective = NULL,
+  eta = 0.3,
+  gamma = 0,
+  max_depth = 6,
+  min_child_weight = 1,
+  subsample = 1,
+  colsample_bytree = 1,
+  ...
+)
 }
 \arguments{
 \item{formula}{a symbolic description of the model to be fit.}

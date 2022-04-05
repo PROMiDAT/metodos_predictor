@@ -4,8 +4,7 @@
 \alias{train.nnet}
 \title{train.nnet}
 \usage{
-train.nnet(formula, data, weights, ..., subset, na.action,
-  contrasts = NULL)
+train.nnet(formula, data, weights, ..., subset, na.action, contrasts = NULL)
 }
 \arguments{
 \item{formula}{A formula of the form class ~ x1 + x2 + ...}

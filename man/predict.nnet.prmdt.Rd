@@ -6,7 +6,15 @@
 \usage{
 \method{predict}{nnet.prmdt}(object, newdata, type = "class", ...)
 }
-\description{
-predict.nnet.prmdt
+\arguments{
+\item{object}{a \code{\link[nnet]{nnet}} model object for which prediction is desired.}
+
+\item{newdata}{an optional data frame in which to look for variables with which to predict.}
+
+\item{type}{type of prediction 'prob' or 'class' (default).}
+
+\item{...}{additional arguments affecting the predictions produced.}
 }
-\keyword{internal}
+\description{
+Return prediction for a \code{\link[nnet]{nnet}} model.
+}

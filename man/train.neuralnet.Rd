@@ -4,13 +4,27 @@
 \alias{train.neuralnet}
 \title{train.neuralnet}
 \usage{
-train.neuralnet(formula, data, hidden = 1, threshold = 0.01,
-  stepmax = 1e+05, rep = 1, startweights = NULL,
-  learningrate.limit = NULL, learningrate.factor = list(minus = 0.5,
-  plus = 1.2), learningrate = NULL, lifesign = "none",
-  lifesign.step = 1000, algorithm = "rprop+", err.fct = "sse",
-  act.fct = "logistic", linear.output = TRUE, exclude = NULL,
-  constant.weights = NULL, likelihood = FALSE)
+train.neuralnet(
+  formula,
+  data,
+  hidden = 1,
+  threshold = 0.01,
+  stepmax = 1e+05,
+  rep = 1,
+  startweights = NULL,
+  learningrate.limit = NULL,
+  learningrate.factor = list(minus = 0.5, plus = 1.2),
+  learningrate = NULL,
+  lifesign = "none",
+  lifesign.step = 1000,
+  algorithm = "rprop+",
+  err.fct = "sse",
+  act.fct = "logistic",
+  linear.output = TRUE,
+  exclude = NULL,
+  constant.weights = NULL,
+  likelihood = FALSE
+)
 }
 \arguments{
 \item{formula}{a symbolic description of the model to be fitted.}
@@ -71,6 +85,7 @@ the parameter information was taken from the original function \code{\link[neura
 }
 \examples{
 
+\dontrun{
 data("iris")
 
 n <- seq_len(nrow(iris))
@@ -80,12 +95,10 @@ data.test <- iris[-.sample,]
 
 modelo.neuralnet <- train.neuralnet(Species~., data.train,hidden = c(10, 14, 13),
                                     linear.output = FALSE, threshold = 0.01, stepmax = 1e+06)
-modelo.neuralnet
 prob <- predict(modelo.neuralnet, data.test, type = "prob")
-prob
 prediccion <- predict(modelo.neuralnet, data.test, type = "class")
-prediccion
 confusion.matrix(data.test, prediccion)
+}
 
 }
 \seealso{

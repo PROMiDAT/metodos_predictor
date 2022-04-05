@@ -14,4 +14,3 @@
 \description{
 Plotting prmdt models
 }
-\keyword{internal}

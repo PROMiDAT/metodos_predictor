@@ -4,10 +4,26 @@
 \alias{train.glm}
 \title{train.glm}
 \usage{
-train.glm(formula, data, family = binomial, weights, subset, na.action,
-  start = NULL, etastart, mustart, offset, control = list(...),
-  model = TRUE, method = "glm.fit", x = FALSE, y = TRUE,
-  singular.ok = TRUE, contrasts = NULL, ...)
+train.glm(
+  formula,
+  data,
+  family = binomial,
+  weights,
+  subset,
+  na.action,
+  start = NULL,
+  etastart,
+  mustart,
+  offset,
+  control = list(...),
+  model = TRUE,
+  method = "glm.fit",
+  x = FALSE,
+  y = TRUE,
+  singular.ok = TRUE,
+  contrasts = NULL,
+  ...
+)
 }
 \arguments{
 \item{formula}{an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. The details of model specification are given under ‘Details’.}

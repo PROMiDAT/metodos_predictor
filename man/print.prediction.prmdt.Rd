@@ -14,4 +14,3 @@
 \description{
 Printing prmdt prediction object
 }
-\keyword{internal}

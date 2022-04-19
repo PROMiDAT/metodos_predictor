@@ -160,7 +160,6 @@ prp(model, extra = 104, branch.type = 2,
     box.col = c("pink", "palegreen3", "cyan")[model$frame$yval])
 ```
 
-
 ### Bayesian Method
 
 **Modeling:**
@@ -329,38 +328,6 @@ general.indexes(mc = mc)
 ```{r}
 model <- train.nnet(Species~., data.train, size = 20)
 model
-```
-
-**Prediction as probability:**
-```{r}
-prediction <- predict(model, data.test , type = "prob")
-prediction
-```
-
-**Prediction as classification:**
-```{r}
-prediction <- predict(model, data.test , type = "class")
-prediction
-```
-
-**Confusion Matrix:**
-```{r}
-mc <- confusion.matrix(data.test, prediction)
-mc
-```
-
-**Some Rates:**
-```{r}
-general.indexes(mc = mc)
-```
-
-### Neural Networks (neuralnet)
-
-**Modeling:**
-```{r}
-model <- train.neuralnet(Species~., data.train, hidden = c(5, 7, 6),
-                         linear.output = FALSE, threshold = 0.01, stepmax = 1e+06)
-summary(model)
 ```
 
 **Prediction as probability:**

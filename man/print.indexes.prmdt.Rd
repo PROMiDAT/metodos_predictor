@@ -14,4 +14,3 @@
 \description{
 Printing prmdt index object
 }
-\keyword{internal}

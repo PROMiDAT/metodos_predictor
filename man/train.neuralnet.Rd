@@ -87,6 +87,7 @@ the parameter information was taken from the original function \code{\link[neura
 
 \dontrun{
 data("iris")
+
 n <- seq_len(nrow(iris))
 .sample <- sample(n, length(n) * 0.75)
 data.train <- iris[.sample,]
@@ -94,11 +95,8 @@ data.test <- iris[-.sample,]
 
 modelo.neuralnet <- train.neuralnet(Species~., data.train,hidden = c(10, 14, 13),
                                     linear.output = FALSE, threshold = 0.01, stepmax = 1e+06)
-modelo.neuralnet
 prob <- predict(modelo.neuralnet, data.test, type = "prob")
-prob
 prediccion <- predict(modelo.neuralnet, data.test, type = "class")
-prediccion
 confusion.matrix(data.test, prediccion)
 }
 

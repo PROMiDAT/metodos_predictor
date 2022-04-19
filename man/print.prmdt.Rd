@@ -14,4 +14,3 @@
 \description{
 Printing prmdt models
 }
-\keyword{internal}

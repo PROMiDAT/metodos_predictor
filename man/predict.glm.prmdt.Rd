@@ -15,7 +15,23 @@
   ...
 )
 }
-\description{
-predict.glm.prmdt
+\arguments{
+\item{object}{a \code{\link[stats]{glm}} model object for which prediction is desired.}
+
+\item{newdata}{an optional data frame in which to look for variables with which to predict.}
+
+\item{type}{type of prediction 'prob' or 'class' (default).}
+
+\item{se.fit}{logical switch indicating if standard errors are required.}
+
+\item{dispersion}{the dispersion of the GLM fit to be assumed in computing the standard errors. If omitted, that returned by summary applied to the object is used.}
+
+\item{terms}{with type = "terms" by default all terms are returned. A character vector specifies which terms are to be returned.}
+
+\item{na.action}{function determining what should be done with missing values in newdata. The default is to predict NA.}
+
+\item{...}{additional arguments affecting the predictions produced.}
 }
-\keyword{internal}
+\description{
+Return prediction for a \code{\link[stats]{glm}} model.
+}

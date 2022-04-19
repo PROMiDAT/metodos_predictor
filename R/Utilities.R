@@ -163,7 +163,6 @@ print.indexes.prmdt <- function(x, ...){
   cat(out)
 }
 
-
 #' Plotting prmdt models
 #'
 #' @param x A prmdt models

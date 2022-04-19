@@ -18,6 +18,89 @@ create.model <- function(model, formula, data,  name = NULL){
   return(model)
 }
 
+#' train.qda
+#'
+#' @description Provides a wrapping function for the \code{\link[MASS]{qda}}.
+#'
+#' @param formula  A formula of the form groups ~ x1 + x2 + ... That is, the response is the grouping factor and the right hand side specifies the (non-factor) discriminators.
+#' @param data An optional data frame, list or environment from which variables specified in formula are preferentially to be taken.
+#' @param ... Arguments passed to or from other methods.
+#' @param subset An index vector specifying the cases to be used in the training sample. (NOTE: If given, this argument must be named.)
+#' @param na.action  Function to specify the action to be taken if NAs are found. The default action is for the procedure to fail.
+#'                   An alternative is na.omit, which leads to rejection of cases with missing values on any required variable.
+#'                   (NOTE: If given, this argument must be named.)
+#'
+#' @seealso The internal function is from package \code{\link[MASS]{qda}}.
+#'
+#' @return A object qda.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note The parameter information was taken from the original function \code{\link[MASS]{qda}}.
+#'
+#' @export
+#'
+#' @examples
+#'
+#' len <- nrow(iris)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- iris[sampl,]
+#' ttraining <- iris[-sampl,]
+#' model.qda <- train.qda(Species~.,ttraining)
+#' prediction <- predict(model.qda,ttesting)
+#' prediction
+#' general.indexes(ttesting,prediction)
+#'
+train.qda <- function(formula, data, ..., subset, na.action){
+  m <- match.call(expand.dots = T)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
+  }
+  m[[1L]] <- quote(MASS::qda)
+  model <- eval.parent(m)
+  create.model(model, formula, data, "qda.prmdt")
+}
+
+
+#' train.lda
+#'
+#' @description Provides a wrapping function for the \code{\link[MASS]{lda}}.
+#'
+#' @param formula  A formula of the form groups ~ x1 + x2 + ... That is, the response is the grouping factor and the right hand side specifies the (non-factor) discriminators.
+#' @param data An optional data frame, list or environment from which variables specified in formula are preferentially to be taken.
+#' @param ... Arguments passed to or from other methods.
+#' @param subset An index vector specifying the cases to be used in the training sample. (NOTE: If given, this argument must be named.)
+#' @param na.action  Function to specify the action to be taken if NAs are found. The default action is for the procedure to fail.
+#'                   An alternative is na.omit, which leads to rejection of cases with missing values on any required variable.
+#'                   (NOTE: If given, this argument must be named.)
+#'
+#' @seealso The internal function is from package \code{\link[MASS]{lda}}.
+#'
+#' @return A object lda.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note The parameter information was taken from the original function \code{\link[MASS]{lda}}.
+#'
+#' @export
+#'
+#' @examples
+#'
+#' len <- nrow(iris)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- iris[sampl,]
+#' ttraining <- iris[-sampl,]
+#' model.lda <- train.lda(Species~.,ttraining)
+#' prediction <- predict(model.lda,ttesting)
+#' prediction
+#' general.indexes(ttesting,prediction)
+#'
+train.lda <- function(formula, data, ..., subset, na.action){
+  m <- match.call(expand.dots = T)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
+  }
+  m[[1L]] <- quote(MASS::lda)
+  model <- eval.parent(m)
+  create.model(model, formula, data, "lda.prmdt")
+}
+
 #' train.ada
 #'
 #' @description Provides a wrapping function for the \code{\link[ada]{ada}}.
@@ -69,6 +152,61 @@ train.ada <- function(formula, data, ..., subset, na.action = na.rpart){
   m$... <- NULL
   model <- eval.parent(m)
   create.model(model, formula, data, "ada.prmdt")
+}
+
+
+#' train.adabag
+#'
+#' @description Provides a wrapping function for the \code{\link[adabag]{boosting}}.
+#'
+#' @param formula  a symbolic description of the model to be fit.
+#' @param data an optional data frame containing the variables in the model.
+#' @param boos if TRUE (by default), a bootstrap sample of the training set is drawn using the weights for each observation on that iteration.
+#'             If FALSE, every observation is used with its weights.
+#' @param mfinal an integer, the number of iterations for which boosting is run or the number of trees to use. Defaults to mfinal=100 iterations.
+#' @param coeflearn if 'Breiman'(by default), alpha=1/2ln((1-err)/err) is used. If 'Freund' alpha=ln((1-err)/err) is used.
+#'             In both cases the AdaBoost.M1 algorithm is used and alpha is the weight updating coefficient.
+#'             On the other hand, if coeflearn is 'Zhu' the SAMME algorithm is implemented with alpha=ln((1-err)/err)+ ln(nclasses-1).
+#' @param minsplit the minimum number of observations that must exist in a node in order for a split to be attempted.
+#' @param maxdepth Set the maximum depth of any node of the final tree, with the root node counted as depth 0. Values greater than 30 rpart will give nonsense results on 32-bit machines.
+#' @param ... arguments passed to rpart.control or adabag::boosting. For stumps, use rpart.control(maxdepth=1,cp=-1,minsplit=0,xval=0). maxdepth controls the depth of
+#'            trees, and cp controls the complexity of trees.
+#'
+#' @seealso The internal function is from package \code{\link[adabag]{boosting}}.
+#'
+#' @return A object adabag.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note The parameter information was taken from the original function \code{\link[adabag]{boosting}} and \code{\link[rpart]{rpart.control}}.
+#'
+#' @export
+#'
+#' @examples
+#'
+#'data <- iris
+#'n <- nrow(data)
+
+#'sam <- sample(1:n,n*0.75)
+#'training <- data[sam,]
+#'testing <- data[-sam,]
+
+#'model <- train.adabag(formula = Species~.,data = training,minsplit = 2,
+#' maxdepth = 30, mfinal = 10)
+#'predict <- predict(object = model,testing,type = "class")
+#'MC <- confusion.matrix(testing,predict)
+#'general.indexes(mc = MC)
+#'
+train.adabag <- function(formula, data, boos = TRUE, mfinal = 100, coeflearn = 'Breiman', minsplit = 20, maxdepth = 30,...){
+  m <- match.call(expand.dots = T)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
+  }
+  m$control <- rpart::rpart.control(minsplit = minsplit, maxdepth = maxdepth,...)
+  m[[1L]] <- quote(adabag::boosting)
+  m$... <- NULL
+  m$minsplit <- NULL
+  m$maxdepth <- NULL
+  model <- eval.parent(m)
+  create.model(model, formula, data, "adabag.prmdt")
 }
 
 #' train.rpart
@@ -523,7 +661,7 @@ train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = T
     m[[.name]] <- my.list[[.name]]
   }
   m$... <- NULL
-  m$probability <- is.null(m$probability) || m$probability
+  m$probability <- ifelse(is.null(m$probability), TRUE, m$probability)
   model <- eval(m, envir = parent.frame())
   create.model(model, formula, data, "svm.prmdt")
 }
@@ -590,7 +728,7 @@ train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = T
 #' @param ... other parameters to pass to params.
 #'
 #' @importFrom xgboost xgboost xgb.DMatrix xgb.train
-#' @importFrom dplyr %>% select
+#' @import dplyr
 #'
 #' @seealso The internal function is from package \code{\link[xgboost]{xgb.train}}.
 #'
@@ -633,7 +771,7 @@ train.xgboost <- function(formula, data, nrounds, watchlist = list(), obj = NULL
     .colnames <- colnames(data[,-selector, drop = FALSE])
   }
 
-  train_aux <- data %>% select(c(.colnames,var.predict)) %>% select_on_class(c("numeric","integer", "factor"))
+  train_aux <- data |> select(c(.colnames,var.predict)) |> select_on_class(c("numeric","integer", "factor"))
 
   train_aux[] <- lapply(train_aux, as.numeric)
 
@@ -675,8 +813,6 @@ train.xgboost <- function(formula, data, nrounds, watchlist = list(), obj = NULL
   create.model(model, formula, data, "xgb.Booster.prmdt")
 
 }
-
-
 
 #' train.glm
 #'
@@ -748,3 +884,65 @@ train.glm <- function(formula,  data, family = binomial, weights, subset, na.act
 }
 
 
+#' train.glmnet
+#'
+#' @description Provides a wrapping function for the \code{\link[glmnet]{glmnet}}.
+#'
+#' @param formula  A formula of the form groups ~ x1 + x2 + ... That is, the response is the grouping factor and the right hand side specifies the (non-factor) discriminators.
+#' @param data An optional data frame, list or environment from which variables specified in formula are preferentially to be taken.
+#' @param standardize Logical flag for x variable standardization, prior to fitting the model sequence.
+#'                    The coefficients are always returned on the original scale. Default is standardize=TRUE.
+#'                    If variables are in the same units already, you might not wish to standardize.
+#'                    See details below for y standardization with family="gaussian".
+#' @param alpha The elasticnet mixing parameter. alpha=1 is the lasso penalty, and alpha=0 the ridge penalty.
+#' @param family Either a character string representing one of the built-in families, or else a glm() family object.
+#'               For more information, see Details section below or the documentation for response type (above).
+#' @param cv True or False. Perform cross-validation to find the best value of the penalty parameter lambda and save this value in the model.
+#'           This value could be used in predict() function.
+#' @param ... Arguments passed to or from other methods.
+#'
+#' @seealso The internal function is from package \code{\link[glmnet]{glmnet}}.
+#'
+#' @return A object glmnet.prmdt with additional information to the model that allows to homogenize the results.
+#'
+#' @note The parameter information was taken from the original function \code{\link[glmnet]{glmnet}}.
+#'
+#' @importFrom stats model.matrix
+#'
+#' @export
+#'
+#' @examples
+#'
+#' len <- nrow(iris)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- iris[sampl,]
+#' ttraining <- iris[-sampl,]
+#' model.glmnet <- train.glmnet(Species~.,ttraining)
+#' prediction <- predict(model.glmnet,ttesting)
+#' prediction
+#' general.indexes(ttesting,prediction)
+#'
+train.glmnet <- function(formula, data, standardize = TRUE, alpha = 1,family = 'multinomial', cv = TRUE,...){
+  m <- match.call(expand.dots = T)
+  if (is.matrix(eval.parent(m$data))){
+    m$data <- as.data.frame(data)
+  }
+  m[[1L]] <- quote(glmnet::glmnet)
+  #Automaticamente convierte los factores en dummy excepto la variable a predecir. En la prediccion también se debe convertir en dummy
+  x <- model.matrix(formula,data)[,-1]
+  y <- data[,as.character(formula[[2]])]
+  m$x <- x
+  m$y <- y
+  m <- get.default.parameters(m,formals(train.glmnet))
+  m$formula <- m$data <- m$cv <- m$... <- NULL
+  model <- eval.parent(m)
+  model <- create.model(model, formula, data, "glmnet.prmdt")
+  #To find the best value of the penalty parameter lambda
+  if(cv == T){
+    model$prmdt$lambda.min <- cv.glmnet(x, y, standardize = standardize, alpha = alpha,family = family)$lambda.min
+  }
+  else{
+    model$prmdt$lambda.min <- NULL
+  }
+  return(model)
+}

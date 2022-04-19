@@ -9,6 +9,64 @@ create.prediction  <- function(model, prediction){
   return(prediction)
 }
 
+#' predict.qda.prmdt
+#'
+#' @description Return prediction for a \code{\link[MASS]{qda}} model.
+#'
+#' @param object a \code{\link[MASS]{qda}} model object for which prediction is desired.
+#' @param newdata an optional data frame in which to look for variables with which to predict.
+#' @param type type of prediction 'prob' or 'class' (default).
+#' @param ... additional arguments affecting the predictions produced.
+#'
+#' @importFrom MASS qda
+#'
+#' @export predict.qda.prmdt
+#' @export
+#'
+predict.qda.prmdt <- function(object, newdata, type = "class", ...){
+  if(type == "class"){
+    ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), ...)$class
+  }
+  else if(type == "prob"){
+    ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), ...)$posterior
+  }
+  else{
+    stop("invalid type for prediction")
+  }
+
+  ans <- type_correction(object, ans, type == "class")
+  return(create.prediction(object, ans))
+}
+
+#' predict.lda.prmdt
+#'
+#' @description Return prediction for a \code{\link[MASS]{lda}} model.
+#'
+#' @param object a \code{\link[MASS]{lda}} model object for which prediction is desired.
+#' @param newdata an optional data frame in which to look for variables with which to predict.
+#' @param type type of prediction 'prob' or 'class' (default).
+#' @param ... additional arguments affecting the predictions produced.
+#'
+#' @importFrom MASS lda
+#'
+#' @export predict.lda.prmdt
+#' @export
+#'
+predict.lda.prmdt <- function(object, newdata, type = "class", ...){
+  if(type == "class"){
+    ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), ...)$class
+  }
+  else if(type == "prob"){
+    ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), ...)$posterior
+  }
+  else{
+    stop("invalid type for prediction")
+  }
+
+  ans <- type_correction(object, ans, type == "class")
+  return(create.prediction(object, ans))
+}
+
 #' predict.ada.prmdt
 #'
 #' @description Return prediction for a \code{\link[ada]{ada}} model.
@@ -32,6 +90,35 @@ predict.ada.prmdt <- function(object, newdata, type = "class", n.iter = NULL, ..
     colnames(ans) <- object$prmdt$levels
   }else{
     ans <- type_correction(object, ans, type == "vector")
+  }
+  return(create.prediction(object, ans))
+}
+
+#' predict.adabag.prmdt
+#'
+#' @description Return prediction for a \code{\link[adabag]{boosting}} model.
+#'
+#' @param object a \code{\link[adabag]{boosting}} model object for which prediction is desired.
+#' @param newdata an optional data frame in which to look for variables with which to predict.
+#' @param type type of prediction 'prob' or 'class' (default).
+#' @param ... additional arguments affecting the predictions produced.
+#'
+#' @importFrom adabag boosting
+#'
+#' @export predict.adabag.prmdt
+#' @export
+#'
+predict.adabag.prmdt <- function(object, newdata, type = "class",...){
+  if(type == "class"){
+    ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), ...)$class
+    ans <- type_correction(object, ans, TRUE)
+  }
+  else if(type == "prob"){
+    ans <- predict(original_model(object), get_test_less_predict(newdata, object$prmdt$var.pred), ...)$prob
+    colnames(ans) <- object$prmdt$levels
+  }
+  else{
+    stop("invalid type for prediction")
   }
   return(create.prediction(object, ans))
 }
@@ -133,12 +220,21 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
 
   var.predict <- object$prmdt$var.pred
   selector <- which(colnames(newdata) == var.predict)
-  suppressWarnings(newdata <- cbind(dummy.data.frame(newdata[, -selector, drop = FALSE], drop = FALSE,
-                                                     dummy.classes = c("factor","character")), newdata[selector]))
 
-  selector <- which(colnames(newdata) == var.predict)
+  if(length(selector) != 0){
+    suppressWarnings(newdata <- dummy.data.frame(newdata[, -selector, drop = FALSE], drop = FALSE,
+                                                       dummy.classes = c("factor","character")))
+  }
+  else{
+    suppressWarnings(newdata <- dummy.data.frame(newdata, drop = FALSE,
+                                                       dummy.classes = c("factor","character")))
+  }
 
-  ans <- neuralnet::compute(original_model(object), newdata[, -selector])
+
+  #selector <- which(colnames(newdata) == var.predict)
+
+  #ans <- neuralnet::compute(original_model(object), newdata[, -selector])
+  ans <- neuralnet::compute(original_model(object), newdata)
 
   if(type == "all"){
     return(create.prediction(object, ans))
@@ -149,7 +245,8 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
 
   if(type == "class"){
     ans <- max_col(ans)
-    ans <- numeric_to_predict(newdata[, selector], ans)
+    #ans <- numeric_to_predict(newdata[, selector], ans)
+    ans <- numeric_to_predict(predic.var = ans, niveles = object$prmdt$levels)
     ans <- type_correction(object, ans, type == "class")
   }
 
@@ -265,18 +362,26 @@ predict.xgb.Booster.prmdt <- function(object, newdata, type = "class", missing =
   selector <- which(colnames(newdata) == var.pred)
 
   if(length(.colnames) == 1 && .colnames == "."){
-    .colnames <- colnames(newdata[,-selector, drop = FALSE])
+    if(length(selector) != 0){
+      .colnames <- colnames(newdata[,-selector, drop = FALSE])
+    }
+    else{
+      .colnames <- colnames(newdata)
+    }
   }
 
-  test_aux <- newdata %>% select(c(.colnames,var.pred))  %>% select_on_class(c("numeric","integer", "factor"))
+  #test_aux <- newdata |> select(c(.colnames,var.pred))  |> select_on_class(c("numeric","integer", "factor"))
+  test_aux <- newdata |> select(c(.colnames))  |> select_on_class(c("numeric","integer", "factor"))
   test_aux[] <- lapply(test_aux, as.numeric)
 
-  if(min(test_aux[,var.pred]) != 0){
-    test_aux[,var.pred]  <- test_aux[,var.pred]  - 1
-  }
 
-  selector <- which(colnames(test_aux) == var.pred)
-  test_aux  <- xgb.DMatrix(data = data.matrix(test_aux[,-selector]), label = data.matrix(test_aux[,selector]))
+  # if(min(test_aux[,var.pred]) != 0){
+  #   test_aux[,var.pred]  <- test_aux[,var.pred]  - 1
+  # }
+
+  #selector <- which(colnames(test_aux) == var.pred)
+  #test_aux  <- xgb.DMatrix(data = data.matrix(test_aux[,-selector]), label = data.matrix(test_aux[,selector]))
+  test_aux  <- xgb.DMatrix(data = data.matrix(test_aux))
 
   ans <- predict(original_model(object), test_aux, missing, outputmargin, ntreelimit, predleaf, predcontrib, approxcontrib, predinteraction, reshape, ...)
 
@@ -288,7 +393,8 @@ predict.xgb.Booster.prmdt <- function(object, newdata, type = "class", missing =
     }else{
       ans <- ifelse(ans > 0.5, 2, 1)
     }
-    ans <- numeric_to_predict(newdata[,var.pred], ans)
+    #ans <- numeric_to_predict(newdata[,var.pred], ans)
+    ans <- numeric_to_predict(predic.var = ans, niveles = object$prmdt$levels)
   }
 
   if(type == "prob"){
@@ -305,7 +411,6 @@ predict.xgb.Booster.prmdt <- function(object, newdata, type = "class", missing =
 
   return(create.prediction(object, ans))
 }
-
 
 #' predict.glm.prmdt
 #'
@@ -335,6 +440,42 @@ predict.glm.prmdt <- function(object, newdata, type = "class", se.fit = FALSE, d
     colnames(ans) <- levels.class
   }else{
     ans <- ifelse(ans > 0.5, levels.class[2], levels.class[1])
+    ans <- type_correction(object, ans, type == "class")
+  }
+  return(create.prediction(object, ans))
+}
+
+#' predict.glmnet.prmdt
+#'
+#' @description Return prediction for a \code{\link[glmnet]{glmnet}} model.
+#'
+#' @param object a \code{\link[glmnet]{glmnet}} model object for which prediction is desired.
+#' @param newdata an optional data frame in which to look for variables with which to predict.
+#' @param type type of prediction 'prob' or 'class' (default).
+#' @param s a \code{\link[glmnet]{cv.glmnet}} object (optional).
+#' @param ... additional arguments affecting the predictions produced.
+#'
+#' @importFrom glmnet glmnet cv.glmnet
+#' @importFrom stats model.matrix
+#'
+#' @export predict.glmnet.prmdt
+#' @export
+#'
+predict.glmnet.prmdt <- function(object, newdata, type = "class", s = NULL,...){
+  newdata <- get_test_less_predict(newdata, object$prmdt$var.pred)
+  #Importante usar model.matrix, también Convierte a dummy
+  testing <- model.matrix( ~., newdata)[,-1]
+  if(is.null(s) && !is.null(object$prmdt$lambda.min)){
+    s <- object$prmdt$lambda.min
+  }
+  if(type == "prob"){
+    ans <- predict(original_model(object), testing, s = s, type = "response", ...)
+  }
+  else{
+    ans <- predict(original_model(object), testing, s = s, type = type, ...)
+  }
+
+  if(!(is.null(object$prmdt$lambda.min) && is.null(s))){
     ans <- type_correction(object, ans, type == "class")
   }
   return(create.prediction(object, ans))

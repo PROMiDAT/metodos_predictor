@@ -123,6 +123,8 @@ get_test_less_predict <- function(data, var.pred){
 #' @param x A prmdt models
 #' @param ... optional arguments to print o format method
 #'
+#' @return a print information of a model.
+#'
 #' @export print.prmdt
 #' @export
 #'
@@ -134,6 +136,8 @@ print.prmdt <- function(x, ...){
 #'
 #' @param x A prmdt prediction object
 #' @param ... optional arguments to print o format method
+#'
+#' @return a print prediction of a model.
 #'
 #' @export print.prediction.prmdt
 #' @export
@@ -149,6 +153,8 @@ print.prediction.prmdt <- function(x, ...){
 #'
 #' @importFrom utils capture.output
 #'
+#' @return a print of the results of a prediction model.
+#'
 #' @export print.indexes.prmdt
 #' @export
 #'
@@ -163,11 +169,12 @@ print.indexes.prmdt <- function(x, ...){
   cat(out)
 }
 
-
 #' Plotting prmdt models
 #'
 #' @param x A prmdt models
 #' @param ... optional arguments to print o format method
+#'
+#' @return a plot of a model.
 #'
 #' @export plot.prmdt
 #' @export

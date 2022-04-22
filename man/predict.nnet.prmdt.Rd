@@ -15,6 +15,9 @@
 
 \item{...}{additional arguments affecting the predictions produced.}
 }
+\value{
+a vector or matrix of predictions for nnet model.
+}
 \description{
 Return prediction for a \code{\link[nnet]{nnet}} model.
 }

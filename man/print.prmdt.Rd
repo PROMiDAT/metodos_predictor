@@ -11,6 +11,9 @@
 
 \item{...}{optional arguments to print o format method}
 }
+\value{
+a print information of a model.
+}
 \description{
 Printing prmdt models
 }

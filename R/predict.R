@@ -20,6 +20,8 @@ create.prediction  <- function(model, prediction){
 #'
 #' @importFrom MASS qda
 #'
+#' @return a vector or matrix of predictions for qda model.
+#'
 #' @export predict.qda.prmdt
 #' @export
 #'
@@ -48,6 +50,8 @@ predict.qda.prmdt <- function(object, newdata, type = "class", ...){
 #' @param ... additional arguments affecting the predictions produced.
 #'
 #' @importFrom MASS lda
+#'
+#' @return a vector or matrix of predictions for lda model.
 #'
 #' @export predict.lda.prmdt
 #' @export
@@ -80,6 +84,8 @@ predict.lda.prmdt <- function(object, newdata, type = "class", ...){
 #' @importFrom stats na.pass predict
 #' @importFrom stringr str_detect
 #'
+#' @return a vector or matrix of predictions for ada model.
+#'
 #' @export predict.ada.prmdt
 #' @export
 #'
@@ -104,6 +110,8 @@ predict.ada.prmdt <- function(object, newdata, type = "class", n.iter = NULL, ..
 #' @param ... additional arguments affecting the predictions produced.
 #'
 #' @importFrom adabag boosting
+#'
+#' @return a vector or matrix of predictions adabag model.
 #'
 #' @export predict.adabag.prmdt
 #' @export
@@ -136,6 +144,8 @@ predict.adabag.prmdt <- function(object, newdata, type = "class",...){
 #'
 #' @importFrom stats na.pass predict
 #'
+#' @return a vector or matrix of predictions for bayes model.
+#'
 #' @export predict.bayes.prmdt
 #' @export
 #'
@@ -157,6 +167,8 @@ predict.bayes.prmdt <- function(object, newdata, type = "class", threshold = 0.0
 #'
 #' @importFrom stats na.pass predict
 #'
+#' @return a vector or matrix of predictions for knn model.
+#'
 #' @export predict.knn.prmdt
 #' @export
 #'
@@ -177,6 +189,8 @@ predict.knn.prmdt <- function(object, newdata, type = "class", ...){
 #' @param ... additional arguments affecting the predictions produced.
 #'
 #' @importFrom stats na.pass predict
+#'
+#' @return a vector or matrix of predictions for nnet model.
 #'
 #' @export predict.nnet.prmdt
 #' @export
@@ -208,6 +222,8 @@ predict.nnet.prmdt <- function(object, newdata, type = "class", ...){
 #'
 #' @importFrom stats na.pass predict
 #'
+#' @return a vector or matrix of predictions for neuralnet.
+#'
 #' @export predict.neuralnet.prmdt
 #' @export
 #'
@@ -229,7 +245,6 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
     suppressWarnings(newdata <- dummy.data.frame(newdata, drop = FALSE,
                                                        dummy.classes = c("factor","character")))
   }
-
 
   #selector <- which(colnames(newdata) == var.predict)
 
@@ -269,6 +284,8 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...){
 #'
 #' @importFrom stats na.pass predict
 #'
+#' @return a vector or matrix of predictions for randomforest model.
+#'
 #' @export predict.randomForest.prmdt
 #' @export
 #'
@@ -296,6 +313,8 @@ predict.randomForest.prmdt <- function(object, newdata, type = "class", norm.vot
 #' @param na.action a function to determine what should be done with missing values in newdata. The default is to pass them down the tree using surrogates in the way selected when the model was built. Other possibilities are na.omit and na.fail.
 #' @param ... additional arguments affecting the predictions produced.
 #'
+#' @return a vector or matrix of predictions for rpart model.
+#'
 #' @export predict.rpart.prmdt
 #' @export
 #'
@@ -317,6 +336,8 @@ predict.rpart.prmdt <- function(object, newdata, type = "class", na.action = na.
 #' @param ... additional arguments affecting the predictions produced.
 #'
 #' @importFrom stats na.pass predict na.omit
+#'
+#' @return a vector or matrix of predictionsfor svm model.
 #'
 #' @export predict.svm.prmdt
 #' @export
@@ -350,6 +371,8 @@ predict.svm.prmdt <- function(object, newdata, type = "class", decision.values =
 #' @param ... additional arguments affecting the predictions produced.
 #'
 #' @importFrom stats na.pass predict
+#'
+#' @return a vector or matrix of predictions for xgb model.
 #'
 #' @export predict.xgb.Booster.prmdt
 #' @export
@@ -426,6 +449,8 @@ predict.xgb.Booster.prmdt <- function(object, newdata, type = "class", missing =
 #' @param ... additional arguments affecting the predictions produced.
 #'
 #' @importFrom stats na.pass predict
+#'
+#' @return a vector or matrix of predictions for glm model.
 #'
 #' @export predict.glm.prmdt
 #' @export

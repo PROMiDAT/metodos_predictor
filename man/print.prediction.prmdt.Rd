@@ -11,6 +11,9 @@
 
 \item{...}{optional arguments to print o format method}
 }
+\value{
+a print prediction of a model.
+}
 \description{
 Printing prmdt prediction object
 }

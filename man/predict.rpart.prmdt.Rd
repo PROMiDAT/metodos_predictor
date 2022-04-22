@@ -17,6 +17,9 @@
 
 \item{...}{additional arguments affecting the predictions produced.}
 }
+\value{
+a vector or matrix of predictions for rpart model.
+}
 \description{
 Return prediction for a \code{\link[rpart]{rpart}} model.
 }

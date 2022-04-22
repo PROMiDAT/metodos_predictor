@@ -19,6 +19,9 @@
 
 \item{...}{additional arguments affecting the predictions produced.}
 }
+\value{
+a vector or matrix of predictions for bayes model.
+}
 \description{
 Return prediction for a \code{\link[e1071]{naiveBayes}} model.
 }

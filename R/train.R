@@ -546,21 +546,6 @@ train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts
 #'
 #' @export
 #'
-#' @examples
-#'
-#' data("iris")
-#'
-#' n <- seq_len(nrow(iris))
-#' .sample <- sample(n, length(n) * 0.75)
-#' data.train <- iris[.sample,]
-#' data.test <- iris[-.sample,]
-#'
-#' modelo.neuralnet <- train.neuralnet(Species~., data.train,hidden = c(10, 14, 13),
-#'                                     linear.output = FALSE, threshold = 0.01, stepmax = 1e+06)
-#' prob <- predict(modelo.neuralnet, data.test, type = "prob")
-#' prediccion <- predict(modelo.neuralnet, data.test, type = "class")
-#' confusion.matrix(data.test, prediccion)
-#'
 train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax = 1e+05, rep = 1, startweights = NULL, learningrate.limit = NULL,
                             learningrate.factor = list(minus = 0.5, plus = 1.2), learningrate = NULL, lifesign = "none", lifesign.step = 1000,
                             algorithm = "rprop+", err.fct = "sse", act.fct = "logistic", linear.output = TRUE, exclude = NULL, constant.weights = NULL,

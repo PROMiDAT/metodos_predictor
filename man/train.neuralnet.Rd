@@ -83,22 +83,6 @@ Provides a wrapping function for the \code{\link[neuralnet]{neuralnet}}.
 \note{
 the parameter information was taken from the original function \code{\link[neuralnet]{neuralnet}}.
 }
-\examples{
-
-data("iris")
-
-n <- seq_len(nrow(iris))
-.sample <- sample(n, length(n) * 0.75)
-data.train <- iris[.sample,]
-data.test <- iris[-.sample,]
-
-modelo.neuralnet <- train.neuralnet(Species~., data.train,hidden = c(10, 14, 13),
-                                    linear.output = FALSE, threshold = 0.01, stepmax = 1e+06)
-prob <- predict(modelo.neuralnet, data.test, type = "prob")
-prediccion <- predict(modelo.neuralnet, data.test, type = "class")
-confusion.matrix(data.test, prediccion)
-
-}
 \seealso{
 The internal function is from package \code{\link[neuralnet]{neuralnet}}.
 }

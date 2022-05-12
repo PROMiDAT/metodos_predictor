@@ -560,6 +560,8 @@ train.knn <- function(formula, data, kmax = 11, ks = NULL, distance = 2, kernel 
 #'
 train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts = NULL){
   m <- match.call(expand.dots = FALSE)
+  var.predict <- as.character(formula[2])
+
   if (is.matrix(eval.parent(m$data))){
     m$data <- as.data.frame(data)
   }
@@ -567,6 +569,9 @@ train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts
   my.list <- as.list(m$...)
   for(.name in names(my.list)) {
     m[[.name]] <- my.list[[.name]]
+  }
+  if(is.numeric(data[[var.predict]])) {
+    m$linout <- TRUE
   }
   m$... <- NULL
   model <- eval.parent(m)
@@ -660,10 +665,12 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
   m[[1L]] <- quote(neuralnet::neuralnet)
   my.list <- as.list(m$...)
   m$formula <- formula.aux
+  if(is.numeric(data[[var.predict]])) {
+    m$linear.output <- TRUE
+  }
   model <- eval(m, envir = environment())
 
   create.model(model, formula, aux_data, "neuralnet.prmdt")
-
 }
 
 #' train.svm

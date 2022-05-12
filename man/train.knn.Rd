@@ -13,7 +13,7 @@ train.knn(
   kernel = "optimal",
   ykernel = NULL,
   scale = TRUE,
-  contrasts = c(unordered = "contr.dummy", ordered = "contr.ordinal"),
+  contrasts = c(unordered = "kknn.contr.dummy", ordered = "kknn.contr.ordinal"),
   ...
 )
 }

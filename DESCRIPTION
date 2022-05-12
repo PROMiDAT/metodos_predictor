@@ -1,7 +1,7 @@
 Package: traineR
 Type: Package
 Title: Predictive Models Homologator
-Version: 1.7.3
+Version: 2.0.0
 Authors@R: c(
     person("Oldemar", "Rodriguez R.", email = "oldemar.rodriguez@ucr.ac.cr", role = c("aut","cre")),
     person("Andres", "Navarro D.", role = c("aut")),
@@ -19,14 +19,12 @@ Imports:
     MASS (>= 7.3-53),
     ada (>= 2.0-5),
     nnet (>= 7.3-12),
-    dummies (>= 1.5.6),
     stringr (>= 1.4.0),
     adabag,
     glmnet,
     ROCR,
+    gbm,
     ggplot2,
-    knitr, 
-    rmarkdown, 
     rpart.plot
 Description: Methods to unify the different ways of creating predictive models and their different predictive formats. It includes 
        methods such as K-Nearest Neighbors Schliep, K. P. (2004) <doi:10.5282/ubm/epub.1769>, Decision Trees Leo Breiman, Jerome H. Friedman, Richard A. Olshen, Charles J. Stone (2017) <doi:10.1201/9781315139470>, 

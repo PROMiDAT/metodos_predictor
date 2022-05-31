@@ -501,7 +501,7 @@ train.randomForest <- function(formula, data, ..., subset, na.action = na.fail){
 #' confusion.matrix(data.test, prediccion)
 #'
 train.knn <- function(formula, data, kmax = 11, ks = NULL, distance = 2, kernel = "optimal", ykernel = NULL,
-                      scale = TRUE, contrasts = c(unordered = "kknn.contr.dummy", ordered = "kknn.contr.ordinal"), ...){
+                      scale = TRUE, contrasts = c(unordered = "contr.dummy", ordered = "contr.ordinal"), ...){
 
   m <- match.call(expand.dots = FALSE)
   if (is.matrix(eval.parent(m$data))){

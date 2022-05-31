@@ -21,9 +21,16 @@ select_on_class <- function(.data, clases = "numeric") {
 
 #' contr.dummy
 #'
-#' @keywords internal
+#' @description Returns a matrix of contrasts for the \code{\link[kknn]{train.kknn}}.
 #'
-kknn.contr.dummy <- function (n, contrasts = TRUE) {
+#' @param n A vector containing levels of a factor, or the number of levels.
+#' @param contrasts A logical value indicating whether contrasts should be computed.
+#'
+#' @return A matrix with n rows and n-1 columns for contr.ordinal, a matrix with n rows and n columns for contr.dummy and a vector of length n for contr.metric.
+#'
+#' @export contr.dummy
+#'
+contr.dummy <- function (n, contrasts = TRUE) {
   if (length(n) <= 1) {
     if (is.numeric(n) && length(n) == 1 && n > 1)
       levels <- 1:n
@@ -38,9 +45,16 @@ kknn.contr.dummy <- function (n, contrasts = TRUE) {
 
 #' contr.ordinal
 #'
-#' @keywords internal
+#' @description Returns a matrix of contrasts for the \code{\link[kknn]{train.kknn}}.
 #'
-kknn.contr.ordinal <- function (n, contrasts = TRUE) {
+#' @param n A vector containing levels of a factor, or the number of levels.
+#' @param contrasts A logical value indicating whether contrasts should be computed.
+#'
+#' @return A matrix with n rows and n-1 columns for contr.ordinal, a matrix with n rows and n columns for contr.dummy and a vector of length n for contr.metric.
+#'
+#' @export contr.ordinal
+#'
+contr.ordinal <- function (n, contrasts = TRUE) {
   if (length(n) <= 1) {
     if (is.numeric(n) && length(n) == 1 && n > 1)
       levels <- 1:n
@@ -51,6 +65,30 @@ kknn.contr.ordinal <- function (n, contrasts = TRUE) {
   cont <- array(0.5, c(lenglev, lenglev - 1), list(levels,
                                                    NULL))
   cont[lower.tri(cont)] <- -0.5
+  cont
+}
+
+#' contr.metric
+#'
+#' @description Returns a matrix of contrasts for the \code{\link[kknn]{train.kknn}}.
+#'
+#' @param n A vector containing levels of a factor, or the number of levels.
+#' @param contrasts A logical value indicating whether contrasts should be computed.
+#'
+#' @return A matrix with n rows and n-1 columns for contr.ordinal, a matrix with n rows and n columns for contr.dummy and a vector of length n for contr.metric.
+#'
+#' @export contr.metric
+#'
+contr.metric <- function (n, contrasts = TRUE) {
+  if (length(n) <= 1) {
+    if (is.numeric(n) && length(n) == 1 && n > 1)
+      levels <- 1:n
+    else stop("contrasts are not defined for 0 degrees of freedom")
+  }
+  else levels <- n
+  lenglev <- length(levels)
+  cont <- array((1:lenglev) - (1 + lenglev)/2, c(lenglev, 1),
+                list(levels, NULL))
   cont
 }
 

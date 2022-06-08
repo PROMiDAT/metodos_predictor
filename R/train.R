@@ -675,24 +675,6 @@ train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts
 #'
 #' @export
 #'
-#' # Classification
-#' len <- nrow(iris)
-#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
-#' ttesting <- iris[sampl,]
-#' ttraining <- iris[-sampl,]
-#' model.neuralnet <- train.neuralnet(Species~., ttraining, linear.output = FALSE)
-#' prediction <- predict(model.neuralnet,ttesting)
-#' prediction
-#'
-#' # Regression
-#' len <- nrow(swiss)
-#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
-#' ttesting <- swiss[sampl,]
-#' ttraining <- swiss[-sampl,]
-#' model.neuralnet <- train.neuralnet(Infant.Mortality~., ttraining, linear.output = TRUE)
-#' prediction <- predict(model.neuralnet, ttesting)
-#' prediction
-#'
 train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax = 1e+05, rep = 1, startweights = NULL, learningrate.limit = NULL,
                             learningrate.factor = list(minus = 0.5, plus = 1.2), learningrate = NULL, lifesign = "none", lifesign.step = 1000,
                             algorithm = "rprop+", err.fct = "sse", act.fct = "logistic", linear.output = TRUE, exclude = NULL, constant.weights = NULL,

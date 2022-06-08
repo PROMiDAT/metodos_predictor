@@ -22,6 +22,7 @@ and the Root Mean Square Error, Mean Absolute Error, Relative Error and Correlat
 }
 \examples{
 
+# Classification
 data("iris")
 
 n <- seq_len(nrow(iris))
@@ -30,11 +31,17 @@ data.train <- iris[.sample,]
 data.test <- iris[-.sample,]
 
 modelo.knn <- train.knn(Species~., data.train)
-modelo.knn
-prob <- predict(modelo.knn, data.test, type = "prob")
-prob
 prediccion <- predict(modelo.knn, data.test, type = "class")
-prediccion
+general.indexes(data.test, prediccion)
+
+# Regression
+len <- nrow(swiss)
+sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+ttesting <- swiss[sampl,]
+ttraining <- swiss[-sampl,]
+model.knn <- train.knn(Infant.Mortality~.,ttraining)
+prediction <- predict(model.knn, ttesting)
+prediction
 general.indexes(data.test, prediccion)
 
 }

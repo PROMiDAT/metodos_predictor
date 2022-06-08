@@ -1,7 +1,7 @@
 Package: traineR
 Type: Package
-Title: Predictive Models Homologator
-Version: 2.0.1
+Title: Predictive (Classification and Regression) Models Homologator
+Version: 2.0.2
 Authors@R: c(
     person("Oldemar", "Rodriguez R.", email = "oldemar.rodriguez@ucr.ac.cr", role = c("aut","cre")),
     person("Andres", "Navarro D.", role = c("aut")),
@@ -26,7 +26,7 @@ Imports:
     gbm,
     ggplot2,
     rpart.plot
-Description: Methods to unify the different ways of creating predictive models and their different predictive formats. It includes 
+Description: Methods to unify the different ways of creating predictive models and their different predictive formats for classification and regression. It includes 
        methods such as K-Nearest Neighbors Schliep, K. P. (2004) <doi:10.5282/ubm/epub.1769>, Decision Trees Leo Breiman, Jerome H. Friedman, Richard A. Olshen, Charles J. Stone (2017) <doi:10.1201/9781315139470>, 
        ADA Boosting Esteban Alfaro, Matias Gamez, Noelia García (2013) <doi:10.18637/jss.v054.i02>, Extreme Gradient Boosting Chen & Guestrin (2016) <doi:10.1145/2939672.2939785>, 
        Random Forest Breiman (2001) <doi:10.1023/A:1010933404324>, Neural Networks Venables, W. N., & Ripley, B. D. (2002) <ISBN:0-387-95457-0>,

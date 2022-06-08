@@ -1,4 +1,3 @@
-
 #' create.model
 #'
 #' @keywords internal
@@ -50,9 +49,9 @@ create.model <- function(model, formula, data,  name = NULL){
 #' ttesting <- iris[sampl,]
 #' ttraining <- iris[-sampl,]
 #' model.qda <- train.qda(Species~.,ttraining)
-#' prediction <- predict(model.qda,ttesting)
+#' model.qda
+#' prediction <- predict(model.qda, ttesting)
 #' prediction
-#' general.indexes(ttesting,prediction)
 #'
 train.qda <- function(formula, data, ..., subset, na.action){
   m <- match.call(expand.dots = T)
@@ -63,7 +62,6 @@ train.qda <- function(formula, data, ..., subset, na.action){
   model <- eval.parent(m)
   create.model(model, formula, data, "qda.prmdt")
 }
-
 
 #' train.lda
 #'
@@ -92,9 +90,9 @@ train.qda <- function(formula, data, ..., subset, na.action){
 #' ttesting <- iris[sampl,]
 #' ttraining <- iris[-sampl,]
 #' model.lda <- train.lda(Species~.,ttraining)
+#' model.lda
 #' prediction <- predict(model.lda,ttesting)
 #' prediction
-#' general.indexes(ttesting,prediction)
 #'
 train.lda <- function(formula, data, ..., subset, na.action){
   m <- match.call(expand.dots = T)
@@ -142,7 +140,6 @@ train.lda <- function(formula, data, ..., subset, na.action){
 #' prob
 #' prediccion <- predict(modelo.ada, data.test , type = "class")
 #' prediccion
-#' confusion.matrix(data.test, prediccion)
 #'
 train.ada <- function(formula, data, ..., subset, na.action = na.rpart){
   m <- match.call(expand.dots = FALSE)
@@ -186,18 +183,18 @@ train.ada <- function(formula, data, ..., subset, na.action = na.rpart){
 #'
 #' @examples
 #'
-#'data <- iris
-#'n <- nrow(data)
+#' data <- iris
+#' n <- nrow(data)
 #'
-#'sam <- sample(1:n,n*0.75)
-#'training <- data[sam,]
-#'testing <- data[-sam,]
+#' sam <- sample(1:n,n*0.75)
+#' training <- data[sam,]
+#' testing <- data[-sam,]
 #'
-#'model <- train.adabag(formula = Species~.,data = training,minsplit = 2,
-#' maxdepth = 30, mfinal = 10)
-#'predict <- predict(object = model,testing,type = "class")
-#'MC <- confusion.matrix(testing,predict)
-#'general.indexes(mc = MC)
+#' model <- train.adabag(formula = Species~.,data = training,minsplit = 2,
+#'                       maxdepth = 30, mfinal = 10)
+#' model
+#' predict <- predict(object = model,testing,type = "class")
+#' predict
 #'
 train.adabag <- function(formula, data, boos = TRUE, mfinal = 100, coeflearn = 'Breiman', minsplit = 20, maxdepth = 30,...){
   m <- match.call(expand.dots = T)
@@ -246,17 +243,27 @@ train.adabag <- function(formula, data, boos = TRUE, mfinal = 100, coeflearn = '
 #'
 #' @examples
 #'
-#'data <- iris
-#'n <- nrow(data)
+#' # Classification
+#' data <- iris
+#' n <- nrow(data)
 #'
-#'sam <- sample(1:n,n*0.75)
-#'training <- data[sam,]
-#'testing <- data[-sam,]
+#' sam <- sample(1:n, n*0.75)
+#' training <- data[sam,]
+#' testing <- data[-sam,]
 #'
-#'model <- train.gbm(formula = Species ~ ., data = training)
-#'predict <- predict(object = model, testing)
-#'MC <- confusion.matrix(testing,predict)
-#'general.indexes(mc = MC)
+#' model <- train.gbm(formula = Species ~ ., data = training)
+#' model
+#' predict <- predict(object = model, testing)
+#' predict
+#'
+#' # Regression
+#' len <- nrow(swiss)
+#' sampl <- sample(x = 1:len,size = len*0.10,replace = FALSE)
+#' ttesting <- swiss[sampl,]
+#' ttraining <- swiss[-sampl,]
+#' model.gbm <- train.gbm(Infant.Mortality~., ttraining, distribution = "gaussian")
+#' prediction <- predict(model.gbm, ttesting)
+#' prediction
 #'
 train.gbm <- function(
   formula, data, distribution = "bernoulli", weights, var.monotone = NULL,
@@ -317,6 +324,7 @@ train.gbm <- function(
 #'
 #' @examples
 #'
+#' # Classification
 #' data("iris")
 #'
 #' n <- seq_len(nrow(iris))
@@ -330,7 +338,15 @@ train.gbm <- function(
 #' prob
 #' prediccion <- predict(modelo.rpart, data.test, type = "class")
 #' prediccion
-#' confusion.matrix(data.test, prediccion)
+#'
+#' # Regression
+#' len <- nrow(swiss)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- swiss[sampl,]
+#' ttraining <- swiss[-sampl,]
+#' model.rpart <- train.rpart(Infant.Mortality~.,ttraining)
+#' prediction <- predict(model.rpart,ttesting)
+#' prediction
 #'
 train.rpart <- function(formula, data, weights, subset, na.action = na.rpart, method, model = TRUE, x = FALSE, y = TRUE, parms, control, cost, ...){
   m <- match.call(expand.dots = FALSE)
@@ -371,6 +387,7 @@ train.rpart <- function(formula, data, weights, subset, na.action = na.rpart, me
 #'
 #' @examples
 #'
+#' # Classification
 #' data("iris")
 #'
 #' n <- seq_len(nrow(iris))
@@ -384,7 +401,15 @@ train.rpart <- function(formula, data, weights, subset, na.action = na.rpart, me
 #' prob
 #' prediccion <- predict(modelo.bayes, data.test, type = "class")
 #' prediccion
-#' confusion.matrix(data.test, prediccion)
+#'
+#' # Regression
+#' len <- nrow(swiss)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- swiss[sampl,]
+#' ttraining <- swiss[-sampl,]
+#' model.bayes <- train.bayes(Infant.Mortality~.,ttraining)
+#' prediction <- predict(model.bayes, ttesting)
+#' prediction
 #'
 train.bayes <- function(formula, data, laplace = 0, ..., subset, na.action = na.pass){
   m <- match.call(expand.dots = FALSE)
@@ -424,6 +449,7 @@ train.bayes <- function(formula, data, laplace = 0, ..., subset, na.action = na.
 #'
 #' @examples
 #'
+#' # Classification
 #' data("iris")
 #'
 #' n <- seq_len(nrow(iris))
@@ -437,7 +463,15 @@ train.bayes <- function(formula, data, laplace = 0, ..., subset, na.action = na.
 #' prob
 #' prediccion <- predict(modelo.rf, data.test, type = "class")
 #' prediccion
-#' confusion.matrix(data.test, prediccion)
+#'
+#' # Regression
+#' len <- nrow(swiss)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- swiss[sampl,]
+#' ttraining <- swiss[-sampl,]
+#' model.rf <- train.randomForest(Infant.Mortality~.,ttraining)
+#' prediction <- predict(model.rf, ttesting)
+#' prediction
 #'
 train.randomForest <- function(formula, data, ..., subset, na.action = na.fail){
   m <- match.call(expand.dots = FALSE)
@@ -485,6 +519,7 @@ train.randomForest <- function(formula, data, ..., subset, na.action = na.fail){
 #'
 #' @examples
 #'
+#' # Classification
 #' data("iris")
 #'
 #' n <- seq_len(nrow(iris))
@@ -498,7 +533,15 @@ train.randomForest <- function(formula, data, ..., subset, na.action = na.fail){
 #' prob
 #' prediccion <- predict(modelo.knn, data.test, type = "class")
 #' prediccion
-#' confusion.matrix(data.test, prediccion)
+#'
+#' # Regression
+#' len <- nrow(swiss)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- swiss[sampl,]
+#' ttraining <- swiss[-sampl,]
+#' model.knn <- train.knn(Infant.Mortality~.,ttraining)
+#' prediction <- predict(model.knn, ttesting)
+#' prediction
 #'
 train.knn <- function(formula, data, kmax = 11, ks = NULL, distance = 2, kernel = "optimal", ykernel = NULL,
                       scale = TRUE, contrasts = c(unordered = "contr.dummy", ordered = "contr.ordinal"), ...){
@@ -543,6 +586,7 @@ train.knn <- function(formula, data, kmax = 11, ks = NULL, distance = 2, kernel 
 #'
 #' @examples
 #'
+#' # Classification
 #' data("iris")
 #'
 #' n <- seq_len(nrow(iris))
@@ -556,7 +600,15 @@ train.knn <- function(formula, data, kmax = 11, ks = NULL, distance = 2, kernel 
 #' prob
 #' prediccion <- predict(modelo.nn, data.test, type = "class")
 #' prediccion
-#' confusion.matrix(data.test, prediccion)
+#'
+#' # Regression
+#' len <- nrow(swiss)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- swiss[sampl,]
+#' ttraining <- swiss[-sampl,]
+#' model.knn <- train.nnet(Infant.Mortality~.,ttraining, size = 20)
+#' prediction <- predict(model.knn, ttesting)
+#' prediction
 #'
 train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts = NULL){
   m <- match.call(expand.dots = FALSE)
@@ -622,6 +674,24 @@ train.nnet <- function(formula, data, weights, ..., subset, na.action, contrasts
 #' @note the parameter information was taken from the original function \code{\link[neuralnet]{neuralnet}}.
 #'
 #' @export
+#'
+#' # Classification
+#' len <- nrow(iris)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- iris[sampl,]
+#' ttraining <- iris[-sampl,]
+#' model.neuralnet <- train.neuralnet(Species~., ttraining, linear.output = FALSE)
+#' prediction <- predict(model.neuralnet,ttesting)
+#' prediction
+#'
+#' # Regression
+#' len <- nrow(swiss)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- swiss[sampl,]
+#' ttraining <- swiss[-sampl,]
+#' model.neuralnet <- train.neuralnet(Infant.Mortality~., ttraining, linear.output = TRUE)
+#' prediction <- predict(model.neuralnet, ttesting)
+#' prediction
 #'
 train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax = 1e+05, rep = 1, startweights = NULL, learningrate.limit = NULL,
                             learningrate.factor = list(minus = 0.5, plus = 1.2), learningrate = NULL, lifesign = "none", lifesign.step = 1000,
@@ -700,6 +770,7 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
 #'
 #' @examples
 #'
+#' # Classification
 #' data("iris")
 #'
 #' n <- seq_len(nrow(iris))
@@ -713,7 +784,15 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
 #' prob
 #' prediccion <- predict(modelo.svm, data.test , type = "class")
 #' prediccion
-#' confusion.matrix(data.test, prediccion)
+#'
+#' # Regression
+#' len <- nrow(swiss)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- swiss[sampl,]
+#' ttraining <- swiss[-sampl,]
+#' model.svm <- train.svm(Infant.Mortality~.,ttraining)
+#' prediction <- predict(model.svm, ttesting)
+#' prediction
 #'
 train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = TRUE){
   m <- match.call(expand.dots = FALSE)
@@ -803,6 +882,7 @@ train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = T
 #'
 #' @examples
 #'
+#' # Classification
 #' data("iris")
 #'
 #' n <- seq_len(nrow(iris))
@@ -816,7 +896,16 @@ train.svm <- function(formula, data, ..., subset, na.action = na.omit, scale = T
 #' prob
 #' prediccion <- predict(modelo.xg, data.test, type = "class")
 #' prediccion
-#' confusion.matrix(data.test, prediccion)
+#'
+#' # Regression
+#' len <- nrow(swiss)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- swiss[sampl,]
+#' ttraining <- swiss[-sampl,]
+#' model.xgb <- train.xgboost(Infant.Mortality~.,ttraining, nrounds = 79, maximize = FALSE)
+#' prediction <- predict(model.xgb, ttesting)
+#' prediction
+#'
 #'
 train.xgboost <- function(formula, data, nrounds, watchlist = list(), obj = NULL, feval = NULL,
                           verbose = 1, print_every_n = 1L, early_stopping_rounds = NULL, maximize = NULL,
@@ -914,6 +1003,7 @@ train.xgboost <- function(formula, data, nrounds, watchlist = list(), obj = NULL
 #'
 #' @examples
 #'
+#' # Classification
 #' data("Puromycin")
 #'
 #' n <- seq_len(nrow(Puromycin))
@@ -927,7 +1017,16 @@ train.xgboost <- function(formula, data, nrounds, watchlist = list(), obj = NULL
 #' prob
 #' prediccion <- predict(modelo.glm, data.test , type = "class")
 #' prediccion
-#' confusion.matrix(data.test, prediccion)
+#'
+#' # Regression
+#' len <- nrow(swiss)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- swiss[sampl,]
+#' ttraining <- swiss[-sampl,]
+#' model.glm <- train.glm(Infant.Mortality~.,ttraining, family = "gaussian")
+#' prediction <- predict(model.glm, ttesting)
+#' prediction
+#'
 #'
 train.glm <- function(formula,  data, family = binomial, weights, subset, na.action, start = NULL, etastart, mustart, offset, control = list(...),
                       model = TRUE, method = "glm.fit", x = FALSE, y = TRUE, singular.ok = TRUE, contrasts = NULL, ...){
@@ -975,6 +1074,7 @@ train.glm <- function(formula,  data, family = binomial, weights, subset, na.act
 #'
 #' @examples
 #'
+#' # Classification
 #' len <- nrow(iris)
 #' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
 #' ttesting <- iris[sampl,]
@@ -982,7 +1082,15 @@ train.glm <- function(formula,  data, family = binomial, weights, subset, na.act
 #' model.glmnet <- train.glmnet(Species~.,ttraining)
 #' prediction <- predict(model.glmnet,ttesting)
 #' prediction
-#' general.indexes(ttesting,prediction)
+#'
+#' # Regression
+#' len <- nrow(swiss)
+#' sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
+#' ttesting <- swiss[sampl,]
+#' ttraining <- swiss[-sampl,]
+#' model.glmnet <- train.glmnet(Infant.Mortality~.,ttraining, family = "gaussian")
+#' prediction <- predict(model.glmnet, ttesting)
+#' prediction
 #'
 train.glmnet <- function(formula, data, standardize = TRUE, alpha = 1, family = 'multinomial', cv = TRUE, ...){
   m <- match.call(expand.dots = T)

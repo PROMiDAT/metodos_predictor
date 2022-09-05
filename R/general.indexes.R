@@ -33,9 +33,9 @@
 #' ttesting <- swiss[sampl,]
 #' ttraining <- swiss[-sampl,]
 #' model.knn <- train.knn(Infant.Mortality~.,ttraining)
-#' prediction <- predict(model.knn, ttesting)
-#' prediction
-#' general.indexes(data.test, prediccion)
+#' prediccion <- predict(model.knn, ttesting)
+#' prediccion
+#' general.indexes(ttesting, prediccion)
 #'
 general.indexes <- function(newdata, prediction, mc = NULL){
   indexes <- list()

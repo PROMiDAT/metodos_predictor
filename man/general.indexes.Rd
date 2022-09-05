@@ -40,8 +40,8 @@ sampl <- sample(x = 1:len,size = len*0.20,replace = FALSE)
 ttesting <- swiss[sampl,]
 ttraining <- swiss[-sampl,]
 model.knn <- train.knn(Infant.Mortality~.,ttraining)
-prediction <- predict(model.knn, ttesting)
-prediction
-general.indexes(data.test, prediccion)
+prediccion <- predict(model.knn, ttesting)
+prediccion
+general.indexes(ttesting, prediccion)
 
 }

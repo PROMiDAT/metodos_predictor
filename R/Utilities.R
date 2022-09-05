@@ -260,10 +260,9 @@ dummy <- function (x, data = NULL, sep = "", drop = TRUE, fun = as.integer,
     name <- x
     x <- data[, name]
   }
-  if (drop == FALSE && class(x) == "factor") {
+  if (drop == FALSE && is.factor(x)) {
     x <- factor(x, levels = levels(x), exclude = NULL)
-  }
-  else {
+  } else {
     x <- factor(x, exclude = NULL)
   }
   if (length(levels(x)) < 2) {

@@ -1,7 +1,7 @@
 Package: traineR
 Type: Package
 Title: Predictive (Classification and Regression) Models Homologator
-Version: 2.0.4
+Version: 2.0.5
 Authors@R: c(
     person("Oldemar", "Rodriguez R.", email = "oldemar.rodriguez@ucr.ac.cr", role = c("aut","cre")),
     person("Andres", "Navarro D.", role = c("aut")),
@@ -35,4 +35,4 @@ Description: Methods to unify the different ways of creating predictive models a
 License: GPL (>=2)
 Encoding: UTF-8
 URL: https://www.promidat.com
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3

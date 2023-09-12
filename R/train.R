@@ -690,8 +690,7 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
   selector <- which(colnames(data) == var.predict)
   class.names <- levels(data[,selector])
 
-  suppressWarnings(data <- cbind(as.data.frame(dummy.data.frame(data[, -selector, drop = FALSE], drop = FALSE,
-                                                                      dummy.classes = c("factor","character"))), data[,selector]))
+  suppressWarnings(data <- cbind(as.data.frame(dummy.data.frame(data[, -selector, drop = FALSE])), data[,selector]))
   colnames(data) <- c(colnames(data)[-ncol(data)], var.predict)
 
   .vars <- all.vars(formula[-2])

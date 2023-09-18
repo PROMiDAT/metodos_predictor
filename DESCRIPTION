@@ -1,12 +1,12 @@
 Package: traineR
 Type: Package
 Title: Predictive (Classification and Regression) Models Homologator
-Version: 2.0.5
+Version: 2.0.7
 Authors@R: c(
     person("Oldemar", "Rodriguez R.", email = "oldemar.rodriguez@ucr.ac.cr", role = c("aut","cre")),
     person("Andres", "Navarro D.", role = c("aut")),
     person("Ariel", "Arroyo S.", role = c("aut")),
-    person("Diego", "Jimenez A.", role = c("ctb")))
+    person("Diego", "Jimenez A.", role = c("aut")))
 Depends: R (>= 3.5)
 Imports:
     neuralnet (>= 1.44.2),
@@ -34,5 +34,6 @@ Description: Methods to unify the different ways of creating predictive models a
        Logistic Regression Dobson, A. J., & Barnett, A. G. (2018) <doi:10.1201/9781315182780> and Penalized Logistic Regression Friedman, J. H., Hastie, T., & Tibshirani, R. (2010) <doi:10.18637/jss.v033.i01>.
 License: GPL (>=2)
 Encoding: UTF-8
-URL: https://www.promidat.com
+URL: https://promidat.website/,https://github.com/PROMiDAT/traineR
+BugReports: https://github.com/PROMiDAT/traineR/issues
 RoxygenNote: 7.2.3

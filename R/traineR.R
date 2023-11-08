@@ -31,5 +31,5 @@
 
 NULL
 utils::globalVariables(c(
-  "prop", "dummy"
+  "prop", "dummy", "x", "y"
 ))

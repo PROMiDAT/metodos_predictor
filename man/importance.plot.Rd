@@ -7,7 +7,7 @@
 importance.plot(model, col = "steelblue")
 }
 \arguments{
-\item{model}{fitted model object of class adabag.prmdt or boosting.}
+\item{model}{fitted model object.}
 
 \item{col}{the color of the chart bars.}
 }
@@ -15,7 +15,7 @@ importance.plot(model, col = "steelblue")
 A ggplot object.
 }
 \description{
-Function that graphs the importance of the variables for a boosting model.
+Function that graphs the importance of the variables.
 }
 \note{
 With this function we can identify how important the variables are for the generation of a predictive model.

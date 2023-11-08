@@ -186,12 +186,11 @@ categorical.predictive.power <- function(data, predict.variable, variable.to.com
   }
 }
 
-
 #' importance.plot
 #'
-#' @description Function that graphs the importance of the variables for a boosting model.
+#' @description Function that graphs the importance of the variables.
 #'
-#' @param model fitted model object of class adabag.prmdt or boosting.
+#' @param model fitted model object.
 #' @param col the color of the chart bars.
 #'
 #' @seealso \code{\link[ggplot2]{ggplot}}, \code{\link[traineR]{train.adabag}}, \code{\link[adabag]{boosting}}
@@ -238,11 +237,11 @@ importance.plot <- function(model, col = "steelblue") {
 
   df$y <- round(df$y, digits = 2)
   ggplot(data = df, aes(x = reorder(x, .data$y), y = y)) +
-    geom_bar(stat="identity", fill=col,width = 0.6)+
+    geom_bar(stat = "identity", fill = col, width = 0.6) +
     theme_minimal() +
-    labs(title= "Variable Importance",
-         y="Percentage of Importance", x = "Variable Names") +
-    scale_y_continuous(breaks=seq(0,100,10)) +
+    labs(title = "Variable Importance",
+         y = "Percentage of Importance", x = "Variable Names") +
+    scale_y_continuous(breaks = seq(0, 100, 10)) +
     coord_flip()
 }
 

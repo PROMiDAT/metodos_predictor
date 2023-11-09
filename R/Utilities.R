@@ -107,8 +107,9 @@ scaler <- function (df) {
   s <- apply(df, 2, sd)
 
   return(list(
-    "apl" = function(x) data.frame(t((t(x) - m) / s)),
-    "inv" = function(x) data.frame(t((t(x) * s) + m))
+    "apl"   = function(x) data.frame(t((t(x) - m) / s)),
+    "inv"   = function(x) data.frame(t((t(x) * s) + m)),
+    "invar" = function(x, v) x * s[v] + m[v]
   ))
 }
 

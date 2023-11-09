@@ -305,6 +305,8 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...) {
     suppressWarnings(newdata <- dummy.data.frame(newdata))
   }
 
+  suppressWarnings(newdata <- object$prmdt$scaledata$apl(newdata))
+
   if("prmdt.regression" %in% class(object)) {
     ans <- neuralnet::compute(original_model(object), newdata)
     if(type == "all"){
@@ -312,6 +314,7 @@ predict.neuralnet.prmdt <- function(object, newdata, type = "class", ...) {
     }
 
     ans <- ans$net.result[, 1]
+    ans <- object$prmdt$scaledata$invar(ans, var.predict)
     ans <- type_correction(object, ans, type == "class")
   } else {
     ans <- neuralnet::compute(original_model(object), newdata)

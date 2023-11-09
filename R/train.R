@@ -688,11 +688,12 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
 
   var.predict <- as.character(formula[2])
   selector <- which(colnames(data) == var.predict)
+  class.names <- levels(data[,selector])
+
   suppressWarnings(data <- cbind(as.data.frame(dummy.data.frame(data[, -selector, drop = FALSE])), data[,selector]))
+  colnames(data) <- c(colnames(data)[-ncol(data)], var.predict)
 
   selector <- which(colnames(data) == var.predict)
-  class.names <- levels(data[,selector])
-  colnames(data) <- c(colnames(data)[-ncol(data)], var.predict)
 
   .vars <- all.vars(formula[-2])
   if(length(.vars) == 1 && .vars == "."){
@@ -713,22 +714,14 @@ train.neuralnet <- function(formula, data, hidden = 1, threshold = 0.01, stepmax
   formula.aux <- update(formula, as.formula(paste0(var.predict,"~",paste0(.colnames[!(.colnames %in% var.predict)], collapse = "+"))))
 
   m <- match.call(expand.dots = FALSE)
-  m[[1L]] <- quote(neuralnet::neuralnet)
   m$data <- quote(data)
+  m[[1L]] <- quote(neuralnet::neuralnet)
   my.list <- as.list(m$...)
   m$formula <- formula.aux
   if(is.numeric(data[[var.predict]])) {
-    scaledata <- scaler(data)
-    data <- scaledata$apl(data)
     m$linear.output <- TRUE
-  } else {
-    scaledata <- scaler(data[, -selector])
-    aux <- data[[var.predict]]
-    data <- scaledata$apl(data[, -selector])
-    data[[var.predict]] <- aux
   }
   model <- eval(m, envir = environment())
-  model$prmdt$scaledata <- scaledata
 
   create.model(model, formula, aux_data, "neuralnet.prmdt")
 }
